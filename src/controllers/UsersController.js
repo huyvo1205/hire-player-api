@@ -1,7 +1,14 @@
 import httpStatus from "http-status";
 import ApiError from "../utils/ApiError";
 import catchAsync from "../utils/catchAsync";
-import { countUsers, deleteUserById, getUserById, queryUsers, updateUserById } from "../services/UsersService";
+import {
+  countUsers,
+  deleteUserById,
+  getUserById,
+  queryUsers,
+  updateUserById,
+  createUser as createUserService,
+} from "../services/UsersService";
 import pick from "../utils/pick";
 import { roles } from "../config/roles";
 
@@ -21,7 +28,7 @@ export const getUsers = catchAsync(async (req, res) => {
 });
 
 export const createUser = catchAsync(async (req, res) => {
-  const user = await createUser(req.body);
+  const user = await createUserService(req.body);
   res.status(httpStatus.CREATED).send({ user });
 });
 
@@ -30,7 +37,7 @@ export const createRootUser = catchAsync(async (req, res) => {
   if (usersCount > 0) {
     throw new ApiError(httpStatus.FORBIDDEN, "Forbidden");
   }
-  const user = await UsersService.createUser(
+  const user = await createUserService(
     {
       name: "root",
       email: process.env.ROOT_EMAIL || "root@test.com",
