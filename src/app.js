@@ -11,10 +11,28 @@ import winston from "./config/winston";
 import AppConf from "./config/application";
 import Messages from "./config/messages";
 import DB from "./config/db";
-import UsersRouter from "./routes/UsersRouter";
-import AuthRouter from "./routes/AuthRouter";
 import { jwtStrategy } from "./config/passport";
 import setupWebSocket from "./socket/setupWebSocket";
+import routes from "./routes";
+import Swagger from "./swagger/swaggerConfig";
+import HandlerErrorMiddleware from "./middlewares/HandlerErrorMiddleware";
+
+global.logger = winston;
+
+function normalizePort(val) {
+  const port = parseInt(val, 10);
+
+  if (Number.isNaN(port)) {
+    return val;
+  }
+
+  if (port >= 0) {
+    return port;
+  }
+
+  return false;
+}
+const port = normalizePort(process.env.PORT || "8082");
 
 const app = express();
 
@@ -32,86 +50,55 @@ app.use(
     credentials: AppConf.cors.credentials,
   })
 );
-
+Swagger.setupSwagger(app);
 app.use(passport.initialize());
 passport.use("jwt", jwtStrategy);
 
-app.use("/api/auth", AuthRouter);
-app.use("/api/users", UsersRouter);
-
-app.get("/healthcheck", function (req, res) {
+app.get("/healthcheck", (req, res) => {
   res.send("healthcheck!!! BE server is up!");
 });
 
-app.use(function (req, res, next) {
+app.use("/api", routes);
+
+app.use((req, res, next) => {
   next(createError(404));
 });
 
-app.use(function (err, req, res, next) {
-  res.locals.message = err.message;
-  res.locals.error = req.app.get("env") === "development" ? err : {};
+app.use(HandlerErrorMiddleware.errorMiddleware);
 
-  const status = err.status || err.statusCode || 500;
-  const message = err.message || Messages["en"].unexpected_error;
-
-  const line = `${status} - ${req.method} - ${message} - ${req.originalUrl} - ${
-    req.ip
-  } - ${req.user && req.user.email}`;
-  winston.error(line);
-  console.log(line);
-  res.status(status);
-  res.json({ error: message });
-});
-
-const port = normalizePort(process.env.PORT || "8082");
 app.set("port", port);
-
-const server = http.createServer(app);
-server.on("error", onError);
-server.on("listening", onListening);
-setupWebSocket(server);
-
-mongoose.connect(DB.mongoose.url, DB.mongoose.options).then(() => {
-  server.listen(port);
-});
-
-function normalizePort(val) {
-  const port = parseInt(val, 10);
-
-  if (isNaN(port)) {
-    return val;
-  }
-
-  if (port >= 0) {
-    return port;
-  }
-
-  return false;
-}
 
 function onError(error) {
   if (error.syscall !== "listen") {
     throw error;
   }
-
-  const bind = typeof port === "string" ? "Pipe " + port : "Port " + port;
-
+  const bind = typeof port === "string" ? `Pipe ${port}` : `Port ${port}`;
   switch (error.code) {
     case "EACCES":
-      console.error(Messages["en"].invalid_permission(bind));
+      console.error(Messages.en.invalid_permission(bind));
       process.exit(1);
+      break;
     case "EADDRINUSE":
-      console.error(Messages["en"].port_in_use(bind));
+      console.error(Messages.en.port_in_use(bind));
       process.exit(1);
+      break;
     default:
       throw error;
   }
 }
+const server = http.createServer(app);
 
-function onListening() {
+server.on("error", onError);
+server.on("listening", () => {
   const addr = server.address();
-  const bind = typeof addr === "string" ? "pipe " + addr : "port " + addr.port;
-  console.log(Messages["en"].started_app(bind));
-}
+  const bind = typeof addr === "string" ? `pipe ${addr}` : `port ${addr.port}`;
+  console.log(Messages.en.started_app(bind));
+});
+
+setupWebSocket(server);
+
+mongoose.connect(DB.mongoose.url, DB.mongoose.options).then(() => {
+  server.listen(port);
+});
 
 module.exports = server;

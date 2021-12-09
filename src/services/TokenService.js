@@ -1,10 +1,15 @@
 import jwt from "jsonwebtoken";
 import moment from "moment";
 import config from "../config/config";
-import Token from "../models/Token";
+import Token from "../models/TokenModel";
 import { tokenTypes } from "../config/tokens";
 
-export const generateToken = (userId, expires, type, secret = config.jwt.secret) => {
+export const generateToken = (
+  userId,
+  expires,
+  type,
+  secret = config.jwt.secret
+) => {
   const payload = {
     sub: userId,
     iat: moment().unix(),
@@ -14,7 +19,13 @@ export const generateToken = (userId, expires, type, secret = config.jwt.secret)
   return jwt.sign(payload, secret);
 };
 
-export const saveToken = async (token, userId, expires, type, blacklisted = false) => {
+export const saveToken = async (
+  token,
+  userId,
+  expires,
+  type,
+  blacklisted = false
+) => {
   const tokenDoc = await Token.create({
     token,
     user: userId,
@@ -46,9 +57,7 @@ export const generateAuthTokens = async (user) => {
     accessTokenExpires,
     tokenTypes.ACCESS
   );
-
   await saveToken(accessToken, user.id, accessTokenExpires, tokenTypes.ACCESS);
-
   return {
     access: {
       token: accessToken,

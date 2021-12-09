@@ -1,14 +1,11 @@
 import passport from "passport";
-import httpStatus from "http-status";
-import ApiError from "../utils/ApiError";
+import * as CreateError from "http-errors";
 import { rolePermissions } from "../config/roles";
 
 const verifyCallback =
   (req, resolve, reject, requiredPermissions) => async (err, user, info) => {
     if (err || info || !user) {
-      return reject(
-        new ApiError(httpStatus.UNAUTHORIZED, "Please authenticate")
-      );
+      return reject(new CreateError.Unauthorized("Please authenticate"));
     }
     req.user = user;
 
@@ -22,7 +19,7 @@ const verifyCallback =
       );
 
       if (!checked || req.params.userId === user.id) {
-        return reject(new ApiError(httpStatus.FORBIDDEN, "Forbidden"));
+        return reject(new CreateError.Forbidden("Forbidden"));
       }
     }
 
@@ -31,8 +28,8 @@ const verifyCallback =
 
 const auth =
   (...requiredPermissions) =>
-  async (req, res, next) => {
-    return new Promise((resolve, reject) => {
+  async (req, res, next) =>
+    new Promise((resolve, reject) => {
       passport.authenticate(
         "jwt",
         { session: false },
@@ -43,6 +40,5 @@ const auth =
       .catch((err) => {
         next(err);
       });
-  };
 
 export default auth;

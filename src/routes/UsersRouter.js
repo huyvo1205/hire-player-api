@@ -11,7 +11,6 @@ import auth from "../middlewares/auth";
 import { permissions } from "../config/roles";
 
 const router = express.Router();
-
 router.get("/", auth(permissions.manageUsers), getUsers);
 router.post("/", auth(permissions.manageUsers), createUser);
 router.put("/:userId", auth(permissions.manageUsers), updateUser);

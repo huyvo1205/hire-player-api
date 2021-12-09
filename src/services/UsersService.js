@@ -1,6 +1,6 @@
 import httpStatus from "http-status";
 import ApiError from "../utils/ApiError";
-import User from "../models/User";
+import User from "../models/UserModel";
 
 export const createUser = async (userBody, isFirst = false) => {
   if (!isFirst && userBody.roles && userBody.roles.includes("root")) {
@@ -18,13 +18,9 @@ export const queryUsers = async (filter, options) => {
   return users;
 };
 
-export const getUserById = async (id) => {
-  return User.findById(id);
-};
+export const getUserById = async (id) => User.findById(id);
 
-export const getUserByEmail = async (email) => {
-  return User.findOne({ email });
-};
+export const getUserByEmail = async (email) => User.findOne({ email });
 
 export const updateUserById = async (userId, updateBody) => {
   const user = await getUserById(userId);
@@ -57,6 +53,4 @@ export const deleteUserById = async (userId) => {
   return user;
 };
 
-export const countUsers = async () => {
-  return User.countDocuments();
-};
+export const countUsers = async () => User.countDocuments();

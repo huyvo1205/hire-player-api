@@ -1,42 +1,39 @@
-import httpStatus from "http-status";
-import catchAsync from "../utils/catchAsync";
-import ApiError from "../utils/ApiError";
-import { generateAuthTokens } from "../services/TokenService";
-import {
-  loginUserWithEmailAndPassword,
-  logout as logoutService,
-  registerUser,
-} from "../services/AuthService";
+import * as CreateError from "http-errors";
+import AuthService from "../services/AuthService";
+import AuthValidator from "../validators/AuthValidator";
+import AuthHelper from "../helpers/AuthHelper";
 
-export const login = catchAsync(async (req, res) => {
-  const { email, password } = req.body;
-  const user = await loginUserWithEmailAndPassword(email, password);
-  const { access } = await generateAuthTokens(user);
-  res.send({ userInfo: user, token: access.token });
-});
-
-export const register = catchAsync(async (req, res) => {
-  const { name, email, password } = req.body;
-  if (!name || !email || !password) {
-    throw new ApiError(httpStatus.BAD_REQUEST, "Invalid params");
+class AuthController {
+  async login(req, res) {
+    const { email, password } = req.body;
+    const userInfo = await AuthValidator.validateUserLogin({ email, password });
+    const payload = { id: userInfo.id };
+    const { accessToken, refreshToken } = await AuthHelper.generateTokens(
+      payload
+    );
+    return res.status(200).send({ userInfo, accessToken, refreshToken });
   }
-  const user = await registerUser(name, email, password, []);
-  const { access } = await generateAuthTokens(user);
-  res.send({ userInfo: user, token: access.token });
-});
 
-export const logout = catchAsync(async (req, res) => {
-  await logoutService(req.body.refreshToken);
-  res.status(httpStatus.NO_CONTENT).send();
-});
+  async register(req, res) {
+    const data = await AuthValidator.validateCreateUser(req.body);
+    const userInfo = await AuthService.createUser(data);
+    const payload = { id: userInfo.id };
+    const { accessToken, refreshToken } = await AuthHelper.generateTokens(
+      payload
+    );
+    return res.status(200).send({ userInfo, accessToken, refreshToken });
+  }
 
-export const getProfile = catchAsync(async (req, res) => {
-  try {
-    if (!req.user) {
-      throw new Error();
-    }
+  async logout(req, res) {
+    const { refreshToken } = req.body;
+    await AuthService.removeToken(refreshToken);
+    return res.status(200).send({ userInfo: null });
+  }
+
+  getProfile(req, res) {
+    if (!req.user) throw new CreateError.NotFound("User not found");
     res.send({ userInfo: req.user });
-  } catch (error) {
-    throw new ApiError(httpStatus.UNAUTHORIZED, "Please authenticate");
   }
-});
+}
+
+export default new AuthController();

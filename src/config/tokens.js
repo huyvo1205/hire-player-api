@@ -1,3 +1,3 @@
 export const tokenTypes = {
-  ACCESS: 'access',
+  ACCESS: "access",
 };
