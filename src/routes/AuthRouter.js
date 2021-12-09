@@ -4,6 +4,7 @@ import { validateBody } from "../validators";
 import { AuthSchema } from "../schemas";
 import "express-async-errors";
 import auth from "../middlewares/auth";
+
 /**
  * @swagger
  * components:
@@ -164,6 +165,27 @@ router.post(
  */
 
 router.post("/logout", AuthController.logout);
+
+/**
+ * @swagger
+ * /api/auth/get-profile:
+ *   get:
+ *     security:
+ *       - bearerAuth: []
+ *     summary: Get Profile
+ *     tags: [GetProfile]
+ *     responses:
+ *       200:
+ *         description: The user was successfully get profile
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden
+ */
 router.get("/get-profile", auth(), AuthController.getProfile);
 
 export default router;
