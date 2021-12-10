@@ -41,11 +41,12 @@ import auth from "../middlewares/auth"
  *           default: false
  *         status:
  *           type: integer
- *           description: "ACTIVE: 1, INACTIVE: 2"
+ *           description: "ACTIVE: 1, INACTIVE: 2, VERIFIED: 3"
  *           default: 1
  *           enum:
  *           - 1
  *           - 2
+ *           - 3
  *         deletedAt:
  *           type: string
  *           format: "date-time"
@@ -120,6 +121,16 @@ router.post("/login", validateBody(AuthSchema.login), AuthController.login)
  *         required: true
  *       - name: email
  *         description: User's email
+ *         in: body
+ *         type: string
+ *         required: true
+ *       - name: hash
+ *         description: Hash take from API:/v1/auth/send-otp
+ *         in: body
+ *         type: string
+ *         required: true
+ *       - name: otp
+ *         description: Otp code get from Email
  *         in: body
  *         type: string
  *         required: true
@@ -199,5 +210,28 @@ router.post("/logout", AuthController.logout)
  *           <br> - ERROR_FORBIDDEN
  */
 router.get("/get-profile", auth(), AuthController.getProfile)
-
+/**
+ * @swagger
+ * /api/auth/send-otp:
+ *   post:
+ *     summary: Send Otp to Email
+ *     tags: [SendOtp]
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: email
+ *         description: Email
+ *         in: body
+ *         type: string
+ *         required: true
+ *     responses:
+ *       200:
+ *         description: The response has fields
+ *           <br> - hash
+ *           <br> - email
+ *           <br> - message=SEND_OTP_SUCCESS
+ *       500:
+ *         description: Server Error
+ */
+router.post("/send-otp", validateBody(AuthSchema.sendOtp), AuthController.sendOtp)
 export default router

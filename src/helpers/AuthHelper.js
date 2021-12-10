@@ -1,19 +1,23 @@
+import crypto from "crypto"
 import AuthService from "../services/AuthService"
+import {
+    HASH_SECRET,
+    ACCESS_TOKEN_LIFE,
+    ACCESS_TOKEN_SECRET,
+    REFRESH_TOKEN_LIFE,
+    REFRESH_TOKEN_SECRET
+} from "../config/tokens"
+import Mailer from "./MailerHelper"
 
 const jwt = require("jsonwebtoken")
 
-const accessTokenLife = process.env.ACCESS_TOKEN_LIFE || "24h"
-const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET || "access-token-secret"
-const refreshTokenLife = process.env.REFRESH_TOKEN_LIFE || "1y"
-const refreshTokenSecret = process.env.REFRESH_TOKEN_SECRET || "refresh-token-secret"
-
 class AuthHelper {
     async generateTokens(payload) {
-        const accessToken = jwt.sign(payload, accessTokenSecret, {
-            expiresIn: accessTokenLife
+        const accessToken = jwt.sign(payload, ACCESS_TOKEN_SECRET, {
+            expiresIn: ACCESS_TOKEN_LIFE
         })
-        const refreshToken = jwt.sign(payload, refreshTokenSecret, {
-            expiresIn: refreshTokenLife
+        const refreshToken = jwt.sign(payload, REFRESH_TOKEN_SECRET, {
+            expiresIn: REFRESH_TOKEN_LIFE
         })
 
         const refreshSave = {
@@ -27,11 +31,43 @@ class AuthHelper {
     }
 
     async verifyAccessToken(token) {
-        return jwt.verify(token, accessTokenSecret)
+        return jwt.verify(token, ACCESS_TOKEN_SECRET)
     }
 
     async verifyRefreshToken(token) {
-        return jwt.verify(token, refreshTokenSecret)
+        return jwt.verify(token, REFRESH_TOKEN_SECRET)
+    }
+
+    async generateHash(email) {
+        const key = email
+        const otp = await this.generateOtp()
+        const ttl = 1000 * 60 * 10 // 10 min
+        const expires = Date.now() + ttl
+        const data = `${key}.${otp}.${expires}`
+        const hash = this.hashOtp(data)
+
+        return {
+            hash: `${hash}.${expires}`,
+            otp,
+            email
+        }
+    }
+
+    async generateOtp() {
+        const otp = Math.floor(100000 + Math.random() * 900000)
+        return otp
+    }
+
+    hashOtp(data) {
+        return crypto.createHmac("sha256", HASH_SECRET).update(data).digest("hex")
+    }
+
+    async sendMail({ otp, email }) {
+        const to = email
+        const subject = `${otp} is your confirmation code on HirePlayer App`
+        const payload = { otp, email }
+        const result = await Mailer.sendMail({ to, subject, payload })
+        return result
     }
 }
 

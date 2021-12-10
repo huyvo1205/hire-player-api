@@ -1,7 +1,9 @@
 import * as CreateError from "http-errors"
 import * as _ from "lodash"
 import { ERROR_CODES } from "../constants/UserConstant"
+import { ERROR_CODES as ERROR_CODES_AUTH } from "../constants/GlobalConstant"
 import { UserModel } from "../models"
+import AuthHelper from "../helpers/AuthHelper"
 
 class AuthValidator {
     async validateCreateUser(body) {
@@ -24,6 +26,21 @@ class AuthValidator {
         const isCorrect = await user.isPasswordMatch(password)
         if (!isCorrect) throw new CreateError.BadRequest(ERROR_CODES.ERROR_UNAUTHORIZED)
         return user
+    }
+
+    validateOtp({ otp, hash, email }) {
+        const key = email
+        const [hashedOtp, expires] = hash.split(".")
+        if (Date.now() > +expires) throw new CreateError.BadRequest(ERROR_CODES_AUTH.ERROR_OTP_EXPIRED)
+        const data = `${key}.${Number(otp)}.${expires}`
+        const isValid = this.verifyOtp({ hashedOtp, data })
+        if (!isValid) throw new CreateError.BadRequest(ERROR_CODES_AUTH.ERROR_OTP_INVALID)
+        return isValid
+    }
+
+    verifyOtp({ hashedOtp, data }) {
+        const computedHash = AuthHelper.hashOtp(data)
+        return computedHash === hashedOtp
     }
 }
 

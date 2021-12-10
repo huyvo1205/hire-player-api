@@ -1,9 +1,11 @@
 const register = {
     type: "object",
-    required: ["firstName", "lastName", "email", "password"],
+    required: ["firstName", "lastName", "email", "password", "otp", "hash"],
     properties: {
         firstName: { type: "string", minLength: 1 },
         lastName: { type: "string", minLength: 1 },
+        hash: { type: "string", minLength: 1 },
+        otp: { type: "string", minLength: 1 },
         email: { type: "string", pattern: "^\\S+@\\S+\\.\\S+$" },
         password: {
             type: "string",
@@ -42,4 +44,15 @@ const logout = {
     }
 }
 
-export { register, login, refreshToken, logout }
+const sendOtp = {
+    type: "object",
+    required: ["email"],
+    properties: {
+        email: {
+            type: "string",
+            pattern: "^\\S+@\\S+\\.\\S+$"
+        }
+    }
+}
+
+export { register, login, refreshToken, logout, sendOtp }
