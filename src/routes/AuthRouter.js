@@ -85,15 +85,18 @@ const router = express.Router()
  *         required: true
  *     responses:
  *       200:
- *         description: The user was successfully login
+ *         description: The response has fields
+ *           <br> - userInfo
+ *           <br> - accessToken
+ *           <br> - refreshToken
+ *           <br> - message=LOGIN_SUCCESS
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/User'
  *       400:
  *         description: Bad Request
- *       404:
- *         description: Not Found
+ *           <br> - ERROR_INCORRECT_EMAIL_OR_PASSWORD
  */
 router.post("/login", validateBody(AuthSchema.login), AuthController.login)
 /**
@@ -127,13 +130,20 @@ router.post("/login", validateBody(AuthSchema.login), AuthController.login)
  *         required: true
  *     responses:
  *       200:
- *         description: The user was successfully register
+ *         description: The response has fields
+ *           <br> - userInfo
+ *           <br> - accessToken
+ *           <br> - refreshToken
+ *           <br> - message=REGISTER_SUCCESS
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/User'
  *       400:
  *         description: Bad Request
+ *           <br> - ERROR_PASSWORD_INVALID
+ *           <br> - ERROR_EMAIL_ALREADY_EXISTS
+ *
  */
 router.post("/register", validateBody(AuthSchema.register), AuthController.register)
 
@@ -153,7 +163,9 @@ router.post("/register", validateBody(AuthSchema.register), AuthController.regis
  *         required: true
  *     responses:
  *       200:
- *         description: The user was successfully logout
+ *         description: The response has fields
+ *           <br> - userInfo
+ *           <br> - message=LOGOUT_SUCCESS
  *       400:
  *         description: Bad Request
  *       404:
@@ -172,15 +184,19 @@ router.post("/logout", AuthController.logout)
  *     tags: [GetProfile]
  *     responses:
  *       200:
- *         description: The user was successfully get profile
+ *         description: The response has fields
+ *           <br> - userInfo
+ *           <br> - message=GET_PROFILE_SUCCESS
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/User'
  *       401:
  *         description: Unauthorized
+ *           <br> - ERROR_UNAUTHORIZED
  *       403:
  *         description: Forbidden
+ *           <br> - ERROR_FORBIDDEN
  */
 router.get("/get-profile", auth(), AuthController.getProfile)
 

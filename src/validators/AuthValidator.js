@@ -7,22 +7,22 @@ class AuthValidator {
     async validateCreateUser(body) {
         const { email, password } = body
         if (!password.match(/\d/) || !password.match(/[a-zA-Z]/)) {
-            throw new CreateError.BadRequest("Password must contain at least one letter and one number")
+            throw new CreateError.BadRequest(ERROR_CODES.ERROR_PASSWORD_INVALID)
         }
         const countEmail = await UserModel.countDocuments({
             email: email.toLowerCase()
         })
         if (countEmail) {
-            throw new CreateError.BadRequest(ERROR_CODES.EMAIL_ALREADY_EXISTS)
+            throw new CreateError.BadRequest(ERROR_CODES.ERROR_EMAIL_ALREADY_EXISTS)
         }
         return _.cloneDeep(body)
     }
 
     async validateUserLogin({ email, password }) {
         const user = await UserModel.findOne({ email })
-        if (!user) throw new CreateError.BadRequest(ERROR_CODES.UNAUTHORIZED)
+        if (!user) throw new CreateError.BadRequest(ERROR_CODES.ERROR_UNAUTHORIZED)
         const isCorrect = await user.isPasswordMatch(password)
-        if (!isCorrect) throw new CreateError.BadRequest(ERROR_CODES.UNAUTHORIZED)
+        if (!isCorrect) throw new CreateError.BadRequest(ERROR_CODES.ERROR_UNAUTHORIZED)
         return user
     }
 }

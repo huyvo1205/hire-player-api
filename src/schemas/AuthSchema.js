@@ -2,8 +2,8 @@ const register = {
     type: "object",
     required: ["firstName", "lastName", "email", "password"],
     properties: {
-        firstName: { type: "string" },
-        lastName: { type: "string" },
+        firstName: { type: "string", minLength: 1 },
+        lastName: { type: "string", minLength: 1 },
         email: { type: "string", pattern: "^\\S+@\\S+\\.\\S+$" },
         password: {
             type: "string",

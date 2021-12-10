@@ -21,23 +21,24 @@ function formatErrors(errors) {
     const newErrors = errors.map(error => {
         const { keyword, params } = error
         const { missingProperty } = params
+        console.log("error", error)
 
         if (keyword === "required") {
-            const message = `${missingProperty} is required`
+            const message = `error_${missingProperty}_is_required`.toUpperCase()
             return message
         }
 
         if (keyword === "pattern") {
             const field = error.instancePath.split("/")[1]
-            const message = `${field} invalid`
+            const message = `error_${field}_invalid`.toUpperCase()
             return message
         }
-        console.log("error", error)
+
         if (error.dataPath) {
             const paths = error.dataPath.split("/")
             if (paths.length > 0) {
                 const field = paths.splice(-1)
-                return `${field} invalid`
+                return `error_${field}_invalid`.toUpperCase()
             }
         }
 
@@ -45,11 +46,11 @@ function formatErrors(errors) {
             const paths = error.instancePath.split("/")
             if (paths.length > 0) {
                 const field = paths.splice(-1)
-                return `${field} ${error.message}`
+                return `error_${field}_${error.message}`.replace(/\s+/g, "_").toUpperCase()
             }
         }
 
-        return "error"
+        return "error_input_invalid".toUpperCase()
     })
     return [...newErrors]
 }

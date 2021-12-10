@@ -1,10 +1,11 @@
 import passport from "passport"
 import * as CreateError from "http-errors"
 import { rolePermissions } from "../config/roles"
+import { ERROR_CODES } from "../constants/GlobalConstant"
 
 const verifyCallback = (req, resolve, reject, requiredPermissions) => async (err, user, info) => {
     if (err || info || !user) {
-        return reject(new CreateError.Unauthorized("Please authenticate"))
+        return reject(new CreateError.Unauthorized(ERROR_CODES.ERROR_UNAUTHORIZED))
     }
     req.user = user
 
@@ -14,11 +15,11 @@ const verifyCallback = (req, resolve, reject, requiredPermissions) => async (err
         const checked = requiredPermissions.some(requiredPermission => userPermissions.includes(requiredPermission))
 
         if (!checked || req.params.userId === user.id) {
-            return reject(new CreateError.Forbidden("Forbidden"))
+            return reject(new CreateError.Forbidden(ERROR_CODES.ERROR_FORBIDDEN))
         }
     }
 
-    resolve()
+    return resolve()
 }
 
 const auth =
