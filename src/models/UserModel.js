@@ -26,6 +26,7 @@ const UserSchema = mongoose.Schema(
             default: STATUS.ACTIVE
         },
         deletedAt: { type: Date },
+        emailVerifiedAt: { type: Date },
         deletedBy: { type: ObjectId, default: null },
         email: {
             type: String,

@@ -50,6 +50,9 @@ import auth from "../middlewares/auth"
  *         deletedAt:
  *           type: string
  *           format: "date-time"
+ *         emailVerifiedAt:
+ *           type: string
+ *           format: "date-time"
  *         createdAt:
  *           type: string
  *           format: "date-time"

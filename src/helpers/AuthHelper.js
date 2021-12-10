@@ -1,4 +1,5 @@
 import crypto from "crypto"
+import * as CreateError from "http-errors"
 import AuthService from "../services/AuthService"
 import {
     HASH_SECRET,
@@ -8,6 +9,7 @@ import {
     REFRESH_TOKEN_SECRET
 } from "../config/tokens"
 import Mailer from "./MailerHelper"
+import { ERROR_CODES } from "../constants/GlobalConstant"
 
 const jwt = require("jsonwebtoken")
 
@@ -63,11 +65,16 @@ class AuthHelper {
     }
 
     async sendMail({ otp, email }) {
-        const to = email
-        const subject = `${otp} is your confirmation code on HirePlayer App`
-        const payload = { otp, email }
-        const result = await Mailer.sendMail({ to, subject, payload })
-        return result
+        try {
+            const to = email
+            const subject = `${otp} is your confirmation code on HirePlayer App`
+            const payload = { otp, email }
+            const result = await Mailer.sendMail({ to, subject, payload })
+            return result
+        } catch (error) {
+            console.error(error.message)
+            throw new CreateError.InternalServerError(ERROR_CODES.ERROR_SEND_MAIL)
+        }
     }
 }
 

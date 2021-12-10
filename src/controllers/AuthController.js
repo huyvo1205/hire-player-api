@@ -20,6 +20,7 @@ class AuthController {
         AuthValidator.validateOtp(params)
         /* update status for user */
         data.status = STATUS.VERIFIED
+        data.emailVerifiedAt = new Date()
         const userInfo = await AuthService.createUser(data)
         const payload = { id: userInfo.id }
         const { accessToken, refreshToken } = await AuthHelper.generateTokens(payload)
@@ -29,7 +30,7 @@ class AuthController {
     async sendOtp(req, res) {
         const { email } = req.body
         const { otp, hash } = await AuthHelper.generateHash(email)
-        AuthHelper.sendMail({ otp, email })
+        await AuthHelper.sendMail({ otp, email })
         return res.status(200).send({ hash, email, message: SUCCESS_CODES.SEND_OTP_SUCCESS })
     }
 
