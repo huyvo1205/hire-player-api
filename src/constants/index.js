@@ -1,4 +1,4 @@
-import UserConstant from "./UserConstant";
-import GlobalConstant from "./GlobalConstant";
+import UserConstant from "./UserConstant"
+import GlobalConstant from "./GlobalConstant"
 
-export { UserConstant, GlobalConstant };
+export { UserConstant, GlobalConstant }

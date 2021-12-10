@@ -1,9 +1,9 @@
-import express from "express";
-import AuthController from "../controllers/AuthController";
-import { validateBody } from "../validators";
-import { AuthSchema } from "../schemas";
-import "express-async-errors";
-import auth from "../middlewares/auth";
+import express from "express"
+import AuthController from "../controllers/AuthController"
+import { validateBody } from "../validators"
+import { AuthSchema } from "../schemas"
+import "express-async-errors"
+import auth from "../middlewares/auth"
 
 /**
  * @swagger
@@ -63,7 +63,7 @@ import auth from "../middlewares/auth";
  *           type: string
  */
 
-const router = express.Router();
+const router = express.Router()
 /**
  * @swagger
  * /api/auth/login:
@@ -95,7 +95,7 @@ const router = express.Router();
  *       404:
  *         description: Not Found
  */
-router.post("/login", validateBody(AuthSchema.login), AuthController.login);
+router.post("/login", validateBody(AuthSchema.login), AuthController.login)
 /**
  * @swagger
  * /api/auth/register:
@@ -135,11 +135,7 @@ router.post("/login", validateBody(AuthSchema.login), AuthController.login);
  *       400:
  *         description: Bad Request
  */
-router.post(
-  "/register",
-  validateBody(AuthSchema.register),
-  AuthController.register
-);
+router.post("/register", validateBody(AuthSchema.register), AuthController.register)
 
 /**
  * @swagger
@@ -164,7 +160,7 @@ router.post(
  *         description: Not Found
  */
 
-router.post("/logout", AuthController.logout);
+router.post("/logout", AuthController.logout)
 
 /**
  * @swagger
@@ -186,6 +182,6 @@ router.post("/logout", AuthController.logout);
  *       403:
  *         description: Forbidden
  */
-router.get("/get-profile", auth(), AuthController.getProfile);
+router.get("/get-profile", auth(), AuthController.getProfile)
 
-export default router;
+export default router

@@ -17,7 +17,18 @@
   }, 
   "root":true,
   "rules": {
-    "prettier/prettier": "error",
+    "prettier/prettier": [
+      "warn",
+      {
+          "arrowParens": "avoid",
+          "semi": false,
+          "trailingComma": "none",
+          "endOfLine": "lf",
+          "tabWidth": 4,
+          "printWidth": 120,
+          "useTabs": false
+      }
+  ],
     "class-methods-use-this": "off",
     "no-param-reassign": "off",
     "camelcase": "off",

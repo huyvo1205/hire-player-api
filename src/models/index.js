@@ -1,4 +1,4 @@
-import UserModel from "./UserModel";
-import TokenModel from "./TokenModel";
+import UserModel from "./UserModel"
+import TokenModel from "./TokenModel"
 
-export { UserModel, TokenModel };
+export { UserModel, TokenModel }

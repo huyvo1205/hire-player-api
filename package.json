@@ -6,7 +6,8 @@
         "build": "babel src --out-dir dist",
         "test": "SET \"NODE_ENV=test\" && mocha test",
         "start": "nodemon -L --inspect=0.0.0.0:9229 --exec babel-node --ignore 'dist/*' --ignore 'logs/*' --watch src src/app.js",
-        "lint": "eslint src"
+        "lint": "eslint src",
+        "lint:fix": "eslint --fix --ext js,jsx,ts,tsx ./"
     },
     "dependencies": {
         "@hapi/joi": "15.0.0",
