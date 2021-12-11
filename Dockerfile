@@ -12,7 +12,8 @@ RUN if [ "$NODE_ENV" = "development" ]; \
         fi
 # Copy app source code
 COPY . .
+RUN set -x && yarn run prestart:prod
 # Expose port and start application
 EXPOSE 3000
 
-CMD [ "yarn", "start" ]
+CMD [ "node", "dist/app.js" ]
