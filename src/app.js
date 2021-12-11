@@ -5,17 +5,16 @@ import express from "express"
 import path from "path"
 import morgan from "morgan"
 import cors from "cors"
-import mongoose from "mongoose"
 import passport from "passport"
 import winston from "./config/winston"
 import AppConf from "./config/application"
 import Messages from "./config/messages"
-import DB from "./config/db"
 import { jwtStrategy } from "./config/passport"
 import setupWebSocket from "./socket/setupWebSocket"
 import routes from "./routes"
 import Swagger from "./swagger/swaggerConfig"
 import HandlerErrorMiddleware from "./middlewares/HandlerErrorMiddleware"
+import "./database"
 
 global.logger = winston
 
@@ -32,7 +31,7 @@ function normalizePort(val) {
 
     return false
 }
-const port = normalizePort(process.env.PORT || "8082")
+const port = normalizePort(process.env.PORT || "3000")
 
 const app = express()
 
@@ -96,9 +95,5 @@ server.on("listening", () => {
 })
 
 setupWebSocket(server)
-
-mongoose.connect(DB.mongoose.url, DB.mongoose.options).then(() => {
-    server.listen(port)
-})
-
+server.listen(port)
 module.exports = server

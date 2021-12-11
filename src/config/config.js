@@ -10,6 +10,6 @@ export default {
         MAIL_PORT: process.env.MAIL_PORT || 587
     },
     CLIENT: {
-        CLIENT_URL: process.env.CLIENT_URL || "localhost://8082"
+        CLIENT_URL: process.env.NODE_ENV === "production" ? process.env.CLIENT_URL : "localhost://3000"
     }
 }
