@@ -5,7 +5,7 @@ import ConfigDB from "../config/db"
 let URL = ConfigDB.MONGODB_URL
 
 if (process.env.NODE_ENV === "production") {
-    URL = `mongodb://${ConfigDB.MONGO_USER}:${ConfigDB.MONGO_PASSWORD}@${ConfigDB.MONGO_IP}:${ConfigDB.MONGO_PORT}/${ConfigDB.MONGO_DB_NAME}?authSource=admin`
+    URL = `mongodb://${ConfigDB.MONGO_USER}:${ConfigDB.MONGO_PASSWORD}@${ConfigDB.MONGO_IP}:${ConfigDB.MONGO_PORT}/${ConfigDB.MONGO_DB_NAME}`
 }
 console.log("URL DATABASE: ", URL)
 mongoose.connect(URL, ConfigDB.MONGO_OPTIONS, err => {
