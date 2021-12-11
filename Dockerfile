@@ -1,12 +1,9 @@
 FROM node:lts-alpine
 # Create app directory
 WORKDIR /app
+ARG NODE_ENV
 # Install app dependencies
 COPY package.json yarn.lock ./
-RUN yarn install
-
-ARG NODE_ENV
-
 # install dev dependencies too
 RUN set -x && yarn --prod=false
 
