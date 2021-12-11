@@ -6,6 +6,7 @@ import path from "path"
 import morgan from "morgan"
 import cors from "cors"
 import passport from "passport"
+import mongoose from "mongoose"
 import winston from "./config/winston"
 import AppConf from "./config/application"
 import Messages from "./config/messages"
@@ -14,7 +15,7 @@ import setupWebSocket from "./socket/setupWebSocket"
 import routes from "./routes"
 import Swagger from "./swagger/swaggerConfig"
 import HandlerErrorMiddleware from "./middlewares/HandlerErrorMiddleware"
-import "./database"
+import Database from "./database"
 
 global.logger = winston
 
@@ -95,5 +96,14 @@ server.on("listening", () => {
 })
 
 setupWebSocket(server)
-server.listen(port)
+
+mongoose.connect(Database.URL, Database.MONGO_OPTIONS, err => {
+    if (err) {
+        console.log("Connect to database fail!")
+    } else {
+        server.listen(port)
+        console.log("Connect database Success!")
+    }
+})
+
 module.exports = server
