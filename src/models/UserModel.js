@@ -5,6 +5,7 @@ import * as CreateError from "http-errors"
 import toJSON from "./plugins/toJSON"
 import paginate from "./plugins/paginate"
 import { GENDER, STATUS } from "../constants/UserConstant"
+import { BCRYPT_SALT } from "../config/tokens"
 
 const { Schema } = mongoose
 const { ObjectId } = Schema.Types
@@ -73,7 +74,7 @@ UserSchema.methods.isPasswordMatch = async function (password) {
 UserSchema.pre("save", async function (next) {
     const user = this
     if (user.isModified("password")) {
-        user.password = await bcrypt.hash(user.password, 8)
+        user.password = await bcrypt.hash(user.password, Number(BCRYPT_SALT))
     }
     next()
 })

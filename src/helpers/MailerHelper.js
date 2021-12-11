@@ -4,11 +4,17 @@ import fs from "fs"
 import path from "path"
 import config from "../config/config"
 
-const sendMail = async ({ to, subject, payload }) => {
-    const html = await fs.readFileSync(path.resolve("src/templates/otp.template.html"), { encoding: "utf8" })
+const getHtmlToSend = async ({ payload, pathTemplate }) => {
+    if (!pathTemplate) return ""
+    const html = await fs.readFileSync(path.resolve(pathTemplate), { encoding: "utf8" })
     const template = handlebars.compile(html)
     const data = payload
     const htmlToSend = template(data)
+    return htmlToSend
+}
+
+const sendMail = async ({ to, subject, payload, pathTemplate }) => {
+    const htmlToSend = await getHtmlToSend({ payload, pathTemplate })
     const transporter = nodeMailer.createTransport({
         host: config.EMAIL.MAIL_HOST,
         port: config.EMAIL.MAIL_PORT,

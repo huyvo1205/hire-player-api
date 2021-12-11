@@ -218,7 +218,7 @@ router.get("/get-profile", auth(), AuthController.getProfile)
  * /api/auth/send-otp:
  *   post:
  *     summary: Send Otp to Email
- *     tags: [SendOtp]
+ *     tags: [Send Otp]
  *     produces:
  *       - application/json
  *     parameters:
@@ -237,4 +237,70 @@ router.get("/get-profile", auth(), AuthController.getProfile)
  *         description: Server Error
  */
 router.post("/send-otp", validateBody(AuthSchema.sendOtp), AuthController.sendOtp)
+/**
+ * @swagger
+ * /api/auth/request-reset-password:
+ *   post:
+ *     summary: Request Reset Password
+ *     tags: [Request Reset Password]
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: email
+ *         description: Email
+ *         in: body
+ *         type: string
+ *         required: true
+ *     responses:
+ *       200:
+ *         description: The response has fields
+ *           <br> - message=REQUEST_RESET_PASSWORD_SUCCESS
+ *       400:
+ *         description: Bad Request
+ *           <br> - ERROR_EMAIL_DOES_NOT_EXIST
+ *       500:
+ *         description: Server Error
+ */
+router.post(
+    "/request-reset-password",
+    validateBody(AuthSchema.requestResetPassword),
+    AuthController.requestResetPassword
+)
+/**
+ * @swagger
+ * /api/auth/reset-password:
+ *   post:
+ *     summary: Reset Password
+ *     tags: [Reset Password]
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: userId
+ *         description: userId
+ *         in: body
+ *         type: string
+ *         required: true
+ *       - name: token
+ *         description: token take from link send to Email from API /api/auth/request-reset-password
+ *         in: body
+ *         type: string
+ *         required: true
+ *       - name: password
+ *         description: password
+ *         in: body
+ *         type: string
+ *         required: true
+ *     responses:
+ *       200:
+ *         description: The response has fields
+ *           <br> - userInfo
+ *           <br> - message=RESET_PASSWORD_SUCCESS
+ *       400:
+ *         description: Bad Request
+ *           <br> - ERROR_INVALID_OR_EXPIRED_PASSWORD_RESET_TOKEN
+ *           <br> - ERROR_PASSWORD_INVALID
+ *       500:
+ *         description: Server Error
+ */
+router.post("/reset-password", validateBody(AuthSchema.resetPassword), AuthController.resetPassword)
 export default router

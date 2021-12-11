@@ -7,3 +7,4 @@ export const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET || "access-to
 export const REFRESH_TOKEN_LIFE = process.env.REFRESH_TOKEN_LIFE || "1y"
 export const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET || "refresh-token-secret"
 export const HASH_SECRET = process.env.HASH_SECRET || "hash-secret"
+export const BCRYPT_SALT = process.env.BCRYPT_SALT || 8

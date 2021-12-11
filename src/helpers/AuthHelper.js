@@ -64,12 +64,41 @@ class AuthHelper {
         return crypto.createHmac("sha256", HASH_SECRET).update(data).digest("hex")
     }
 
-    async sendMail({ otp, email }) {
+    async sendMailOtp({ otp, email }) {
         try {
+            const pathTemplate = "src/templates/SendOtpTemplate.html"
             const to = email
             const subject = `${otp} is your confirmation code on HirePlayer App`
             const payload = { otp, email }
-            const result = await Mailer.sendMail({ to, subject, payload })
+            const result = await Mailer.sendMail({ to, subject, payload, pathTemplate })
+            return result
+        } catch (error) {
+            console.error(error.message)
+            throw new CreateError.InternalServerError(ERROR_CODES.ERROR_SEND_MAIL)
+        }
+    }
+
+    async sendMailRequestResetPassword({ email, link }) {
+        try {
+            const pathTemplate = "src/templates/RequestResetPasswordTemplate.html"
+            const to = email
+            const subject = `Password Reset Request`
+            const payload = { link, email }
+            const result = await Mailer.sendMail({ to, subject, payload, pathTemplate })
+            return result
+        } catch (error) {
+            console.error(error.message)
+            throw new CreateError.InternalServerError(ERROR_CODES.ERROR_SEND_MAIL)
+        }
+    }
+
+    async sendMailResetPasswordSuccess({ email }) {
+        try {
+            const pathTemplate = "src/templates/ResetPasswordSuccess.html"
+            const to = email
+            const subject = `Password Reset Successfully`
+            const payload = { email }
+            const result = await Mailer.sendMail({ to, subject, payload, pathTemplate })
             return result
         } catch (error) {
             console.error(error.message)

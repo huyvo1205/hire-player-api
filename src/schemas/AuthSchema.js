@@ -1,3 +1,5 @@
+import { mongoObjectId } from "./SharedSchema"
+
 const register = {
     type: "object",
     required: ["firstName", "lastName", "email", "password", "otp", "hash"],
@@ -55,4 +57,27 @@ const sendOtp = {
     }
 }
 
-export { register, login, refreshToken, logout, sendOtp }
+const requestResetPassword = {
+    type: "object",
+    required: ["email"],
+    properties: {
+        email: {
+            type: "string",
+            pattern: "^\\S+@\\S+\\.\\S+$"
+        }
+    }
+}
+
+const resetPassword = {
+    type: "object",
+    required: ["userId", "token", "password"],
+    properties: {
+        userId: mongoObjectId,
+        token: { type: "string", minLength: 1 },
+        password: {
+            type: "string",
+            minLength: 8
+        }
+    }
+}
+export { register, login, refreshToken, logout, sendOtp, resetPassword, requestResetPassword }

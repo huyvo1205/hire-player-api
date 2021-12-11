@@ -8,5 +8,8 @@ export default {
         ADMIN_PASSWORD: process.env.ADMIN_PASSWORD || "your_password",
         MAIL_HOST: process.env.MAIL_HOST || "smtp.gmail.com",
         MAIL_PORT: process.env.MAIL_PORT || 587
+    },
+    CLIENT: {
+        CLIENT_URL: process.env.CLIENT_URL || "localhost://8082"
     }
 }

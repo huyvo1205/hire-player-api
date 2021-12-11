@@ -50,4 +50,9 @@ export const deleteUserById = async userId => {
     return user
 }
 
+export const updateUserByIdNotPermission = async (userId, updateBody) => {
+    const newUser = await User.findByIdAndUpdate(userId, updateBody, { new: true })
+    return newUser
+}
+
 export const countUsers = async () => User.countDocuments()
