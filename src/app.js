@@ -98,10 +98,10 @@ server.on("listening", () => {
 setupWebSocket(server)
 
 mongoose.connect(Database.URL, Database.MONGO_OPTIONS, err => {
+    server.listen(port)
     if (err) {
         console.log("Connect to database fail!")
     } else {
-        server.listen(port)
         console.log("Connect database Success!")
     }
 })
