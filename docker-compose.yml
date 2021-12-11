@@ -11,8 +11,6 @@ services:
             - "3000:3000"
         environment:
             - NODE_ENV=development
-            - MONGO_USER=${MONGO_USER}
-            - MONGO_PASSWORD=${MONGO_PASSWORD}
         volumes:
             - ./src:/app/src
             - .env:/app/.env
