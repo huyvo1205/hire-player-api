@@ -6,10 +6,10 @@ COPY package.json yarn.lock ./
 RUN yarn install
 
 ARG NODE_ENV
-RUN if [ "$NODE_ENV" = "development" ]; \
-        then yarn install; \
-        else yarn install --production; \
-        fi
+
+# install dev dependencies too
+RUN set -x && yarn --prod=false
+
 # Copy app source code
 COPY . .
 RUN set -x && yarn run prestart:prod
