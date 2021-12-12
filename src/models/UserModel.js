@@ -4,7 +4,7 @@ import bcrypt from "bcryptjs"
 import * as CreateError from "http-errors"
 import toJSON from "./plugins/toJSON"
 import paginate from "./plugins/paginate"
-import { GENDER, STATUS } from "../constants/UserConstant"
+import { GENDER, STATUS, ROLES } from "../constants/UserConstant"
 import { BCRYPT_SALT } from "../config/tokens"
 
 const { Schema } = mongoose
@@ -14,6 +14,7 @@ const UserSchema = mongoose.Schema(
     {
         fullName: { type: String, trim: true },
         nickName: { type: String, trim: true },
+        totalRecharge: { type: Number, default: 0 },
         gender: { type: Number, enum: Object.values(GENDER) },
         avatar: { type: String },
         playerInfo: { type: ObjectId, ref: "PlayerInfo" },
@@ -41,7 +42,7 @@ const UserSchema = mongoose.Schema(
                 }
             }
         },
-        roles: { type: [String] },
+        roles: { type: [Number], default: [ROLES.USER] },
         password: {
             type: String,
             required: true,

@@ -2,7 +2,7 @@ import winston from "../config/winston"
 import Messages from "../config/messages"
 
 const errorMiddleware = (error, req, res, next) => {
-    logger.error("error: ", error)
+    console.error("error: ", error)
     res.locals.message = error.message
     res.locals.error = req.app.get("env") === "development" ? error : {}
 

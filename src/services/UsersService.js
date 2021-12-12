@@ -1,7 +1,7 @@
 import httpStatus from "http-status"
 import ApiError from "../utils/ApiError"
 import User from "../models/UserModel"
-
+// router.get("/", auth(ROLE_PERMISSIONS.MANAGE_USERS), getUsers)
 export const createUser = async (userBody, isFirst = false) => {
     if (!isFirst && userBody.roles && userBody.roles.includes("root")) {
         throw new ApiError(httpStatus.FORBIDDEN, "Forbidden")

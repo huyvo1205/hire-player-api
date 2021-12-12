@@ -35,8 +35,11 @@ function normalizePort(val) {
 const port = normalizePort(process.env.PORT || "3000")
 
 const app = express()
-
-app.use(morgan("combined", { stream: winston.stream }))
+if (process.env.NODE_ENV === "production") {
+    app.use(morgan("combined", { stream: winston.stream }))
+} else {
+    app.use(morgan("dev"))
+}
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(express.static(path.join(__dirname, "public")))
@@ -57,16 +60,9 @@ passport.use("jwt", jwtStrategy)
 app.get("/healthcheck", (req, res) => {
     res.send("healthcheck!!! BE server is up!")
 })
-
-app.use("/api", routes)
-
-app.use((req, res, next) => {
-    next(createError(404))
-})
-
-app.use(HandlerErrorMiddleware.errorMiddleware)
-
 app.set("port", port)
+app.use("/api", routes)
+app.use(HandlerErrorMiddleware.errorMiddleware)
 
 function onError(error) {
     if (error.syscall !== "listen") {
@@ -96,14 +92,44 @@ server.on("listening", () => {
 })
 
 setupWebSocket(server)
-
+console.log("Database.MONGO_OPTIONS", Database.MONGO_OPTIONS)
+console.log("Database.URL", Database.URL)
 mongoose.connect(Database.URL, Database.MONGO_OPTIONS, err => {
     server.listen(port)
     if (err) {
+        console.error("Connect database Err:", err)
         console.log("Connect to database fail!")
     } else {
         console.log("Connect database Success!")
     }
+})
+
+function shutdown() {
+    server.close(err => {
+        if (err) {
+            console.error("SHUTDOWN ERROR", err)
+            process.exitCode = 1
+        }
+        process.exit()
+    })
+}
+
+process.on("uncaughtException", exception => {
+    console.error(exception)
+})
+
+process.on("unhandledRejection", reason => {
+    console.error(reason.stack || reason)
+})
+
+process.on("SIGINT", () => {
+    console.error("Got SIGINT (aka ctrl-c in docker). Graceful shutdown")
+    shutdown()
+})
+
+process.on("SIGTERM", () => {
+    console.error("Got SIGTERM (docker container stop). Graceful shutdown")
+    shutdown()
 })
 
 module.exports = server

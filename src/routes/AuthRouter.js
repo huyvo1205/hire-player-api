@@ -31,6 +31,8 @@ import auth from "../middlewares/auth"
  *         firstName:
  *           type: string
  *           required: true
+ *         totalRecharge:
+ *           type: number
  *         lastName:
  *           type: string
  *           required: true
