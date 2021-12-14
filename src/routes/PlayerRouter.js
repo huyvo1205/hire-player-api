@@ -206,6 +206,26 @@ router.post("/", validateBody(PlayerInfoSchema.createPlayerInfo), PlayerControll
 router.put("/:id", auth(), validateBody(PlayerInfoSchema.updatePlayerInfo), PlayerController.updatePlayerInfo)
 /**
  * @swagger
+ * /api/players/:id:
+ *   get:
+ *     summary: Get Detail Player Info
+ *     tags: [Get Detail Player Info]
+ *     responses:
+ *       200:
+ *         description: The response has fields
+ *           <br> - data{Player}
+ *           <br> - message=GET_DETAIL_PLAYER_INFO_SUCCESS
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Player'
+ *       404:
+ *         description: Not Found
+ *           <br> - ERROR_PLAYER_NOT_FOUND
+ */
+router.get("/:id", auth(), PlayerController.getDetailPlayerInfo)
+/**
+ * @swagger
  * /api/players/:id/upload-images:
  *   put:
  *     summary: Player Upload Images

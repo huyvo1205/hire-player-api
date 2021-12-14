@@ -2,11 +2,19 @@ import PlayerModel from "../models/PlayerModel"
 
 class PlayerService {
     async createPlayerInfo(data) {
-        return PlayerModel.create(data)
+        const newPlayer = await PlayerModel.create(data)
+        const player = await PlayerModel.findById(newPlayer.id).populate("user")
+        return player
     }
 
     async updatePlayerInfo(id, updateData) {
-        return PlayerModel.findByIdAndUpdate(id, updateData, { new: true })
+        await PlayerModel.updateOne({ _id: id }, updateData)
+        const player = await PlayerModel.findById(id).populate("user")
+        return player
+    }
+
+    async getDetailPlayerInfo(id) {
+        return PlayerModel.findOne({ _id: id }).populate("user")
     }
 
     async getListPlayerInfo(filter, options) {

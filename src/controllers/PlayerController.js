@@ -55,6 +55,16 @@ class PlayerController {
         })
     }
 
+    async getDetailPlayerInfo(req, res) {
+        const playerId = req.params.id
+        await PlayerValidator.validateUpdatePlayerInfo({ playerId })
+        const player = await PlayerService.getDetailPlayerInfo(playerId)
+        res.status(200).send({
+            data: player,
+            message: PlayerConstant.SUCCESS_CODES.GET_DETAIL_PLAYER_INFO_SUCCESS
+        })
+    }
+
     async uploadImagesPlayerInfo(req, res) {
         const KEY = "IMAGES"
         const playerId = req.params.id
