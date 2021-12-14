@@ -8,7 +8,8 @@ logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-
+# File upload
+src/public
 # Runtime data
 pids
 *.pid
