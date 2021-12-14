@@ -7,11 +7,12 @@ import FileHelper from "../helpers/FileHelper"
 
 class PlayerController {
     async getPlayersInfo(req, res) {
-        const { userId, status } = req.query
+        const { userId, status, typePlayer } = req.query
         const filter = {}
         if (userId) filter.user = userId
         if (status) filter.status = status
-        const options = pick(req.query, ["sortBy", "limit", "page"])
+        if (typePlayer) filter.typePlayer = typePlayer
+        const options = pick(req.query, ["sortBy", "limit", "page", "populate"])
         const players = await PlayerService.getListPlayerInfo(filter, options)
         return res.status(200).send({
             data: players,

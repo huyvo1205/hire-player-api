@@ -41,6 +41,13 @@ import "express-async-errors"
  *           enum:
  *           - 1
  *           - 2
+ *         typePlayer:
+ *           type: integer
+ *           description: "VIP: 1, HOT: 2, NEW: 3"
+ *           enum:
+ *           - 1
+ *           - 2
+ *           - 3
  *         isOnline:
  *           type: boolean
  *         status:
@@ -78,6 +85,10 @@ const router = express.Router()
  *         description: "Status Player: ACTIVE: 1, INACTIVE: 2"
  *         in: query
  *         type: integer
+ *       - name: typePlayer
+ *         description: "Type Player: VIP: 1, HOT: 2, NEW: 3"
+ *         in: query
+ *         type: integer
  *       - name: sortBy
  *         description: "Sorting criteria using the format: sortField:(desc|asc). Multiple sorting criteria should be separated by commas (,)"
  *         in: query
@@ -90,6 +101,10 @@ const router = express.Router()
  *         description: "Current page (default = 1)"
  *         in: query
  *         type: string
+ *       - name: populate
+ *         description: "Populate data fields. Hierarchy of fields should be separated by (.). Multiple populating criteria should be separated by commas (,)"
+ *         in: query
+ *         type: string
  *     responses:
  *       200:
  *         description: The response has fields
@@ -98,7 +113,7 @@ const router = express.Router()
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/PaymentSetting'
+ *               $ref: '#/components/schemas/Player'
  */
 router.get("/", auth(), PlayerController.getPlayersInfo)
 /**
