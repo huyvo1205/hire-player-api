@@ -14,7 +14,7 @@ const UserSchema = mongoose.Schema(
     {
         fullName: { type: String, trim: true },
         nickName: { type: String, trim: true },
-        totalRecharge: { type: Number, default: 0 },
+        money: { type: Number, default: 0 },
         gender: { type: Number, enum: Object.values(GENDER) },
         avatar: { type: String },
         playerInfo: { type: ObjectId, ref: "PlayerInfo" },
