@@ -204,5 +204,37 @@ router.post("/", validateBody(PlayerInfoSchema.createPlayerInfo), PlayerControll
  *           <br> - ERROR_PLAYER_NOT_FOUND
  */
 router.put("/:id", auth(), validateBody(PlayerInfoSchema.updatePlayerInfo), PlayerController.updatePlayerInfo)
+/**
+ * @swagger
+ * /api/players/:id/upload-images:
+ *   put:
+ *     summary: Player Upload Images
+ *     tags: [Player Upload Images]
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: images
+ *         description: "Key files upload is: images"
+ *         in: form
+ *         type: file
+ *     responses:
+ *       200:
+ *         description: The response has fields
+ *           <br> - data{Player}
+ *           <br> - message=UPLOAD_IMAGES_SUCCESS
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Player'
+ *       400:
+ *         description: Bad Request
+ *           <br> - ERROR_KEY_UPLOAD_INVALID
+ *           <br> - ERROR_MIMETYPE_INVALID
+ *       404:
+ *         description: Not Found
+ *           <br> - ERROR_PLAYER_NOT_FOUND
+ *       500:
+ *         description: Internal Server
+ */
 router.post("/:id/upload-images", PlayerController.uploadImagesPlayerInfo)
 export default router
