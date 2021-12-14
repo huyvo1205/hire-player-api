@@ -1,6 +1,5 @@
 import "./config/bootstrap"
 import http from "http"
-import createError from "http-errors"
 import express from "express"
 import path from "path"
 import morgan from "morgan"
@@ -18,6 +17,7 @@ import HandlerErrorMiddleware from "./middlewares/HandlerErrorMiddleware"
 import Database from "./database"
 
 global.logger = winston
+global.baseDir = __dirname
 
 function normalizePort(val) {
     const port = parseInt(val, 10)
@@ -41,8 +41,8 @@ if (process.env.NODE_ENV === "production") {
     app.use(morgan("dev"))
 }
 app.use(express.json())
+app.use(express.static(path.join(__dirname, "./public")))
 app.use(express.urlencoded({ extended: false }))
-app.use(express.static(path.join(__dirname, "public")))
 app.disable("x-powered-by")
 app.use(
     cors({

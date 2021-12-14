@@ -1,4 +1,5 @@
 import * as CreateError from "http-errors"
+import url from "url"
 import AuthService from "../services/AuthService"
 import AuthValidator from "../validators/AuthValidator"
 import AuthHelper from "../helpers/AuthHelper"
@@ -48,7 +49,8 @@ class AuthController {
 
     async requestResetPassword(req, res) {
         const { email } = req.body
-        const link = await AuthValidator.validateRequestResetPassword({ email })
+        const host = url.format({ protocol: req.protocol, host: req.get("host") })
+        const link = await AuthValidator.validateRequestResetPassword({ email, host })
         await AuthHelper.sendMailRequestResetPassword({ email, link })
         return res.status(200).send({ message: SUCCESS_CODES.REQUEST_RESET_PASSWORD_SUCCESS })
     }

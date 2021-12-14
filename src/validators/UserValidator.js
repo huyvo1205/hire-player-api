@@ -4,7 +4,7 @@ import { ERROR_CODES as ERROR_CODES_PAYMENT } from "../constants/PaymentSettingC
 import UserModel from "../models/UserModel"
 import PaymentSettingModel from "../models/PaymentSettingModel"
 
-class AuthValidator {
+class UserValidator {
     async validateCreatePaymentSettings({ methods = [], userId = "" }) {
         const countUser = await UserModel.countDocuments({ _id: userId })
         if (!countUser) throw new CreateError.BadRequest(ERROR_CODES.ERROR_USER_NOT_FOUND)
@@ -24,4 +24,4 @@ class AuthValidator {
     }
 }
 
-export default new AuthValidator()
+export default new UserValidator()

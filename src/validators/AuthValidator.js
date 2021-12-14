@@ -47,7 +47,7 @@ class AuthValidator {
         return computedHash === hashedOtp
     }
 
-    async validateRequestResetPassword({ email }) {
+    async validateRequestResetPassword({ email, host }) {
         const user = await UserModel.findOne({ email })
         if (!user) throw new CreateError.BadRequest(ERROR_CODES.ERROR_EMAIL_DOES_NOT_EXIST)
         const token = await TokenModel.findOne({ user: user.id })
@@ -55,7 +55,7 @@ class AuthValidator {
         const resetToken = crypto.randomBytes(32).toString("hex")
         const hash = await bcrypt.hash(resetToken, Number(BCRYPT_SALT))
         await new TokenModel({ user: user.id, hash }).save()
-        const link = `${Config.CLIENT.CLIENT_URL}/password-reset?token=${resetToken}&id=${user.id}`
+        const link = `${host}/password-reset?token=${resetToken}&id=${user.id}`
         return link
     }
 
