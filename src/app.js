@@ -36,7 +36,7 @@ const port = normalizePort(process.env.PORT || "3000")
 
 const app = express()
 if (process.env.NODE_ENV === "production") {
-    app.use(morgan("combined", { stream: winston.stream }))
+    app.use(morgan("combined"))
 } else {
     app.use(morgan("dev"))
 }
