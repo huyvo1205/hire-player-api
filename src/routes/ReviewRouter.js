@@ -105,7 +105,7 @@ const router = express.Router()
  *             schema:
  *               $ref: '#/components/schemas/Review'
  */
-router.get("/", auth(), ReviewController.getReviews)
+router.get("/", ReviewController.getReviews)
 /**
  * @swagger
  * /api/reviews/:id:
@@ -128,12 +128,14 @@ router.get("/", auth(), ReviewController.getReviews)
  *         description: Not Found
  *           <br> - ERROR_REVIEW_NOT_FOUND
  */
-router.get("/:id", auth(), ReviewController.getDetailReview)
+router.get("/:id", ReviewController.getDetailReview)
 /**
  * @swagger
  * /api/reviews:
  *   post:
  *     summary: Create Review
+ *     security:
+ *       - bearerAuth: []
  *     tags: [Create Review]
  *     produces:
  *       - application/json
@@ -182,6 +184,8 @@ router.post("/", auth(), validateBody(ReviewSchema.createReview), ReviewControll
  * /api/reviews/:id:
  *   put:
  *     summary: Update Review
+ *     security:
+ *       - bearerAuth: []
  *     tags: [Update Review]
  *     produces:
  *       - application/json
@@ -230,6 +234,8 @@ router.put("/:id", auth(), validateBody(ReviewSchema.updateReview), ReviewContro
  * /api/reviews/:id:
  *   delete:
  *     summary: Delete Review
+ *     security:
+ *       - bearerAuth: []
  *     tags: [Delete Review]
  *     produces:
  *       - application/json

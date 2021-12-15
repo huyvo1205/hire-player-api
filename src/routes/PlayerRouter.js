@@ -75,8 +75,6 @@ const router = express.Router()
  * /api/players:
  *   get:
  *     summary: Get Players
- *     security:
- *       - bearerAuth: []
  *     tags: [Get Players]
  *     produces:
  *       - application/json
@@ -133,7 +131,7 @@ const router = express.Router()
  *             schema:
  *               $ref: '#/components/schemas/Player'
  */
-router.get("/", auth(), PlayerController.getPlayersInfo)
+router.get("/", PlayerController.getPlayersInfo)
 /**
  * @swagger
  * /api/players:
@@ -243,8 +241,6 @@ router.put("/:id", auth(), validateBody(PlayerInfoSchema.updatePlayerInfo), Play
  * /api/players/:id:
  *   get:
  *     summary: Get Detail Player Info
- *     security:
- *       - bearerAuth: []
  *     tags: [Get Detail Player Info]
  *     produces:
  *       - application/json
@@ -267,7 +263,7 @@ router.put("/:id", auth(), validateBody(PlayerInfoSchema.updatePlayerInfo), Play
  *         description: Not Found
  *           <br> - ERROR_PLAYER_NOT_FOUND
  */
-router.get("/:id", auth(), PlayerController.getDetailPlayerInfo)
+router.get("/:id", PlayerController.getDetailPlayerInfo)
 /**
  * @swagger
  * /api/players/:id/upload-images:
