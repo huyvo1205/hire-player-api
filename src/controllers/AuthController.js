@@ -1,10 +1,12 @@
 import * as CreateError from "http-errors"
 import url from "url"
+import axios from "axios"
 import AuthService from "../services/AuthService"
 import AuthValidator from "../validators/AuthValidator"
 import AuthHelper from "../helpers/AuthHelper"
 import { ERROR_CODES, SUCCESS_CODES, STATUS } from "../constants/UserConstant"
 import { updateUserByIdNotPermission } from "../services/UsersService"
+import RequestBuilder from "../helpers/RequestBuilder"
 
 class AuthController {
     async login(req, res) {
@@ -12,7 +14,7 @@ class AuthController {
         const userInfo = await AuthValidator.validateUserLogin({ email, password })
         const payload = { id: userInfo.id }
         const { accessToken, refreshToken } = await AuthHelper.generateTokens(payload)
-        return res.status(200).send({ userInfo, accessToken, refreshToken, message: SUCCESS_CODES.LOGIN_SUCCESS })
+        return res.status(200).send({ data: userInfo, accessToken, refreshToken, message: SUCCESS_CODES.LOGIN_SUCCESS })
     }
 
     async register(req, res) {
@@ -26,7 +28,23 @@ class AuthController {
         const userInfo = await AuthService.createUser(data)
         const payload = { id: userInfo.id }
         const { accessToken, refreshToken } = await AuthHelper.generateTokens(payload)
-        return res.status(200).send({ userInfo, accessToken, refreshToken, message: SUCCESS_CODES.REGISTER_SUCCESS })
+        const host = url.format({ protocol: req.protocol, host: req.get("host") })
+        const createDataPlayer = { playerName: userInfo.userName, userId: userInfo.id }
+        const path = `${host}/api/players`
+        const headers = { Authorization: `Bearer ${accessToken}` }
+        const options = RequestBuilder.withHeaders(headers).makePOST(createDataPlayer).build(path)
+        /* create player for user */
+        try {
+            axios(options)
+        } catch (error) {
+            console.error("error create player: ", error)
+            return res
+                .status(200)
+                .send({ data: userInfo, accessToken, refreshToken, message: SUCCESS_CODES.REGISTER_SUCCESS })
+        }
+        return res
+            .status(200)
+            .send({ data: userInfo, accessToken, refreshToken, message: SUCCESS_CODES.REGISTER_SUCCESS })
     }
 
     async sendOtp(req, res) {
@@ -39,12 +57,12 @@ class AuthController {
     async logout(req, res) {
         const { refreshToken } = req.body
         await AuthService.removeToken(refreshToken)
-        return res.status(200).send({ userInfo: null, message: SUCCESS_CODES.LOGOUT_SUCCESS })
+        return res.status(200).send({ data: null, message: SUCCESS_CODES.LOGOUT_SUCCESS })
     }
 
     getProfile(req, res) {
         if (!req.user) throw new CreateError.NotFound(ERROR_CODES.ERROR_USER_NOT_FOUND)
-        res.status(200).send({ userInfo: req.user, message: SUCCESS_CODES.GET_PROFILE_SUCCESS })
+        res.status(200).send({ data: req.user, message: SUCCESS_CODES.GET_PROFILE_SUCCESS })
     }
 
     async requestResetPassword(req, res) {
@@ -61,7 +79,12 @@ class AuthController {
         const dataUpdate = { password: newPassword }
         const newUser = await updateUserByIdNotPermission(userId, dataUpdate)
         await AuthHelper.sendMailResetPasswordSuccess({ email: newUser.email })
-        return res.status(200).send({ userInfo: newUser, message: SUCCESS_CODES.RESET_PASSWORD_SUCCESS })
+        return res.status(200).send({ data: newUser, message: SUCCESS_CODES.RESET_PASSWORD_SUCCESS })
+    }
+
+    async migrateData(req, res) {
+        const results = await AuthService.migrateData()
+        return res.status(200).send(results)
     }
 }
 

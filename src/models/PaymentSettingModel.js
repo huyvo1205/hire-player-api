@@ -27,7 +27,7 @@ const PaymentSettingSchema = mongoose.Schema(
     { timestamps: true }
 )
 
-PaymentSettingSchema.plugin(toJSON())
+PaymentSettingSchema.plugin(toJSON(false))
 PaymentSettingSchema.plugin(paginate)
 
 const PaymentSettingModel = mongoose.model("PaymentSetting", PaymentSettingSchema, COLLECTION_PAYMENT_SETTINGS)

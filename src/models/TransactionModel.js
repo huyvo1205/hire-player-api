@@ -33,7 +33,7 @@ TransactionSchema.plugin(autoIncrement.plugin, {
     startAt: 100,
     incrementBy: 1
 })
-TransactionSchema.plugin(toJSON())
+TransactionSchema.plugin(toJSON(false))
 TransactionSchema.plugin(paginate)
 
 const TransactionModel = mongoose.model("Transaction", TransactionSchema)

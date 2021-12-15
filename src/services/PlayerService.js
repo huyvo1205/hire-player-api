@@ -18,8 +18,8 @@ class PlayerService {
     }
 
     async getListPlayerInfo(filter, options) {
-        const paymentSettings = await PlayerModel.paginate(filter, options)
-        return paymentSettings
+        const players = await PlayerModel.paginate(filter, options)
+        return players
     }
 }
 

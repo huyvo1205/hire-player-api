@@ -16,6 +16,6 @@ const tokenSchema = mongoose.Schema(
     { timestamps: true }
 )
 tokenSchema.index({ user: 1, accessToken: 1 })
-tokenSchema.plugin(toJSON())
+tokenSchema.plugin(toJSON(false))
 const TokenModel = mongoose.model("Token", tokenSchema)
 export default TokenModel

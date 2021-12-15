@@ -2,7 +2,7 @@ import { mongoObjectId } from "./SharedSchema"
 
 const createPlayerInfo = {
     type: "object",
-    required: ["gameName", "userId", "costPerHour"],
+    required: ["userId"],
     properties: {
         gameName: { type: "string" },
         rank: { type: "string" },

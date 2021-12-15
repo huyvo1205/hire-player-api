@@ -7,19 +7,27 @@ import { ERROR_CODES as ERROR_CODES_AUTH } from "../constants/GlobalConstant"
 import { UserModel, TokenModel } from "../models"
 import AuthHelper from "../helpers/AuthHelper"
 import { BCRYPT_SALT } from "../config/tokens"
-import Config from "../config/config"
 
 class AuthValidator {
     async validateCreateUser(body) {
-        const { email, password } = body
+        const { email, password, userName } = body
         if (!password.match(/\d/) || !password.match(/[a-zA-Z]/)) {
             throw new CreateError.BadRequest(ERROR_CODES.ERROR_PASSWORD_INVALID)
+        }
+        if (!userName.match(/^(?=.{8,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$/)) {
+            throw new CreateError.BadRequest(ERROR_CODES.ERROR_USERNAME_INVALID)
         }
         const countEmail = await UserModel.countDocuments({
             email: email.toLowerCase()
         })
         if (countEmail) {
             throw new CreateError.BadRequest(ERROR_CODES.ERROR_EMAIL_ALREADY_EXISTS)
+        }
+        const countUserName = await UserModel.countDocuments({
+            userName
+        })
+        if (countUserName) {
+            throw new CreateError.BadRequest(ERROR_CODES.ERROR_USERNAME_ALREADY_EXISTS)
         }
         return _.cloneDeep(body)
     }

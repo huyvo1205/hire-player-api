@@ -40,13 +40,24 @@ const paginate = schema => {
         let docsPromise = this.find(filter).sort(sort).skip(skip).limit(limit)
 
         if (options.populate) {
-            options.populate.split(",").forEach(populateOption => {
-                docsPromise = docsPromise.populate(
-                    populateOption
-                        .split(".")
-                        .reverse()
-                        .reduce((a, b) => ({ path: b, populate: a }))
-                )
+            // options.populate.split(",").forEach(populateOption => {
+            //     docsPromise = docsPromise.populate(
+            //         populateOption
+            //             .split(".")
+            //             .reverse()
+            //             .reduce((a, b) => ({ path: b, populate: a }))
+            //     )
+            // })
+
+            /* fix only support populate 1 level */
+            const [fieldPopulate, selectFields = ""] = options.populate.split(":")
+            const select = selectFields
+                .split(",")
+                .map(item => item.trim())
+                .join(" ")
+            docsPromise.populate({
+                path: fieldPopulate.trim(),
+                select
             })
         }
 

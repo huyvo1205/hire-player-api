@@ -21,13 +21,10 @@ class PlayerController {
     }
 
     async createPlayerInfo(req, res) {
-        const { gameName, rank, costPerHour, description, userId } = req.body
+        const { userId } = req.body
         await PlayerValidator.validateCreatePlayerInfo({ userId })
         const createData = {
-            gameName,
-            rank,
-            costPerHour,
-            description,
+            ...req.body,
             user: userId
         }
         const createPlayerInfo = await PlayerService.createPlayerInfo(createData)
@@ -39,15 +36,8 @@ class PlayerController {
 
     async updatePlayerInfo(req, res) {
         const playerId = req.params.id
-        const { gameName, rank, costPerHour, description } = req.body
         await PlayerValidator.validateUpdatePlayerInfo({ playerId })
-
-        const updateData = {
-            gameName,
-            rank,
-            costPerHour,
-            description
-        }
+        const updateData = { ...req.body }
         const updatePlayerInfo = await PlayerService.updatePlayerInfo(playerId, updateData)
         res.status(200).send({
             data: updatePlayerInfo,

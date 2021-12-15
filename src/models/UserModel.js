@@ -13,13 +13,11 @@ const { ObjectId } = Schema.Types
 const UserSchema = mongoose.Schema(
     {
         fullName: { type: String, trim: true },
-        nickName: { type: String, trim: true },
+        userName: { type: String, trim: true, required: true, unique: true },
         money: { type: Number, default: 0 },
         gender: { type: Number, enum: Object.values(GENDER) },
         avatar: { type: String },
-        playerInfo: { type: ObjectId, ref: "PlayerInfo" },
-        firstName: { type: String, required: true, trim: true },
-        lastName: { type: String, required: true, trim: true },
+        player: { type: ObjectId, ref: "Player" },
         googleId: { type: String },
         isOnline: { type: Boolean, default: false },
         status: {
@@ -59,7 +57,7 @@ const UserSchema = mongoose.Schema(
     { timestamps: true }
 )
 
-UserSchema.plugin(toJSON())
+UserSchema.plugin(toJSON(false))
 UserSchema.plugin(paginate)
 
 UserSchema.statics.isEmailTaken = async function (email, excludeUserId) {

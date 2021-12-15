@@ -15,6 +15,8 @@ import "express-async-errors"
  *           type: string
  *         gameName:
  *           type: string
+ *         playerName:
+ *           type: string
  *         user:
  *           type: string
  *         rank:
@@ -73,6 +75,8 @@ const router = express.Router()
  * /api/players:
  *   get:
  *     summary: Get Players
+ *     security:
+ *       - bearerAuth: []
  *     tags: [Get Players]
  *     produces:
  *       - application/json
@@ -80,31 +84,45 @@ const router = express.Router()
  *       - name: userId
  *         description: "User Id"
  *         in: query
- *         type: string
+ *         schema:
+ *              type: string
  *       - name: status
  *         description: "Status Player: ACTIVE: 1, INACTIVE: 2"
  *         in: query
- *         type: integer
+ *         schema:
+ *              type: integer
  *       - name: typePlayer
  *         description: "Type Player: VIP: 1, HOT: 2, NEW: 3"
  *         in: query
- *         type: integer
+ *         schema:
+ *              type: integer
  *       - name: sortBy
  *         description: "Sorting criteria using the format: sortField:(desc|asc). Multiple sorting criteria should be separated by commas (,)"
  *         in: query
- *         type: string
+ *         schema:
+ *              type: string
  *       - name: limit
  *         description: "Maximum number of results per page (default = 10)"
  *         in: query
- *         type: string
+ *         schema:
+ *              type: string
  *       - name: page
  *         description: "Current page (default = 1)"
  *         in: query
- *         type: string
+ *         schema:
+ *              type: string
  *       - name: populate
- *         description: "Populate data fields. Hierarchy of fields should be separated by (.). Multiple populating criteria should be separated by commas (,)"
+ *         description: "Populate data fields. Only support 1 level and custom take fields
+ *                       <br> EXAMPLE_1: populate=user:firstName,lastName
+ *                       <br> -> populate user and only take 2 fields firstName, lastName
+ *                       <br> EXAMPLE_2: populate=user:-firstName,-lastName
+ *                       <br> -> populate user and take all fields except firstName, lastName
+ *                       <br> EXAMPLE_3: populate=user
+ *                       <br> -> populate user and take all fields
+ *                      "
  *         in: query
- *         type: string
+ *         schema:
+ *              type: string
  *     responses:
  *       200:
  *         description: The response has fields
@@ -121,6 +139,8 @@ router.get("/", auth(), PlayerController.getPlayersInfo)
  * /api/players:
  *   post:
  *     summary: Create Player Info
+ *     security:
+ *       - bearerAuth: []
  *     tags: [Create Player Info]
  *     produces:
  *       - application/json
@@ -128,26 +148,29 @@ router.get("/", auth(), PlayerController.getPlayersInfo)
  *       - name: gameName
  *         description: Player's gameName
  *         in: body
- *         type: string
- *         required: true
+ *         schema:
+ *              type: string
  *       - name: userId
  *         description: User Id
  *         in: body
- *         type: string
+ *         schema:
+ *              type: string
  *         required: true
  *       - name: costPerHour
  *         description: Cost Per Hour
  *         in: body
- *         type: number
- *         required: true
+ *         schema:
+ *              type: number
  *       - name: description
  *         description: Player's description
  *         in: body
- *         type: string
+ *         schema:
+ *              type: string
  *       - name: rank
  *         description: Player's rank
  *         in: body
- *         type: string
+ *         schema:
+ *              type: string
  *     responses:
  *       201:
  *         description: The response has fields
@@ -170,26 +193,37 @@ router.post("/", validateBody(PlayerInfoSchema.createPlayerInfo), PlayerControll
  * /api/players/:id:
  *   put:
  *     summary: Update Player Info
+ *     security:
+ *       - bearerAuth: []
  *     tags: [Update Player Info]
  *     produces:
  *       - application/json
  *     parameters:
+ *       - name: id
+ *         description: Player Id
+ *         in: path
+ *         schema:
+ *              type: string
  *       - name: gameName
  *         description: Player's gameName
  *         in: body
- *         type: string
+ *         schema:
+ *              type: string
  *       - name: costPerHour
  *         description: Cost Per Hour
  *         in: body
- *         type: number
+ *         schema:
+ *              type: number
  *       - name: description
  *         description: Player's description
  *         in: body
- *         type: string
+ *         schema:
+ *              type: string
  *       - name: rank
  *         description: Player's rank
  *         in: body
- *         type: string
+ *         schema:
+ *              type: string
  *     responses:
  *       200:
  *         description: The response has fields
@@ -209,7 +243,17 @@ router.put("/:id", auth(), validateBody(PlayerInfoSchema.updatePlayerInfo), Play
  * /api/players/:id:
  *   get:
  *     summary: Get Detail Player Info
+ *     security:
+ *       - bearerAuth: []
  *     tags: [Get Detail Player Info]
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: id
+ *         description: Player Id
+ *         in: path
+ *         schema:
+ *              type: string
  *     responses:
  *       200:
  *         description: The response has fields
@@ -229,14 +273,22 @@ router.get("/:id", auth(), PlayerController.getDetailPlayerInfo)
  * /api/players/:id/upload-images:
  *   put:
  *     summary: Player Upload Images
+ *     security:
+ *       - bearerAuth: []
  *     tags: [Player Upload Images]
  *     produces:
  *       - application/json
  *     parameters:
+ *       - name: id
+ *         description: "Player Id"
+ *         in: path
+ *         schema:
+ *              type: string
  *       - name: images
  *         description: "Key files upload is: images"
  *         in: form
- *         type: file
+ *         schema:
+ *              type: file
  *     responses:
  *       200:
  *         description: The response has fields

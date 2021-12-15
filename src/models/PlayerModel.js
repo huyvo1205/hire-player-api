@@ -8,7 +8,8 @@ const { ObjectId } = Schema.Types
 const PlayerSchema = mongoose.Schema(
     {
         gameName: { type: String, trim: true },
-        user: { type: ObjectId, ref: "User", required: true },
+        playerName: { type: String, trim: true, required: true, index: true, unique: true },
+        user: { type: ObjectId, ref: "User", required: true, index: true },
         rank: { type: String, trim: true },
         description: { type: String, trim: true },
         costPerHour: { type: Number, default: 0 },
@@ -34,13 +35,16 @@ const PlayerSchema = mongoose.Schema(
         typePlayer: {
             type: Number,
             enum: Object.values(PlayerInfoConstant.TYPES),
+            index: true,
             default: PlayerInfoConstant.TYPES.NEW
         }
     },
     { timestamps: true }
 )
 
-PlayerSchema.plugin(toJSON())
+PlayerSchema.plugin(toJSON(false))
 PlayerSchema.plugin(paginate)
+PlayerSchema.index({ createdAt: -1 })
+PlayerSchema.index({ updatedAt: -1 })
 const PlayerModel = mongoose.model("Player", PlayerSchema)
 export default PlayerModel

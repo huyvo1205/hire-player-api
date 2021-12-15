@@ -1,7 +1,7 @@
 import mongoose from "mongoose"
 import toJSON from "./plugins/toJSON"
 import paginate from "./plugins/paginate"
-import PlayerInfoConstant from "../constants/PlayerInfoConstant"
+import PlayerInfoConstant from "../constants/PlayerConstant"
 
 const { Schema } = mongoose
 const { ObjectId } = Schema.Types
@@ -33,7 +33,7 @@ const HirePlayerSchema = mongoose.Schema(
     { timestamps: true }
 )
 
-HirePlayerSchema.plugin(toJSON())
+HirePlayerSchema.plugin(toJSON(false))
 HirePlayerSchema.plugin(paginate)
 
 const HirePlayerModel = mongoose.model("PlayerInfo", HirePlayerSchema)

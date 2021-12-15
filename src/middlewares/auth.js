@@ -7,8 +7,9 @@ const verifyCallback = (req, resolve, reject, requiredPermissions) => async (err
     if (err || info || !user) {
         return reject(new CreateError.Unauthorized(ERROR_CODES.ERROR_UNAUTHORIZED))
     }
-
+    const bearerToken = req.headers.authorization || req.headers["x-access-token"]
     req.user = user
+    req.bearerToken = bearerToken
 
     if (requiredPermissions.length) {
         const userPermissions = user.roles.map(role => PERMISSIONS[role]).flat()

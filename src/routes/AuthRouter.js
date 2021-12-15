@@ -14,10 +14,6 @@ import auth from "../middlewares/auth"
  *       properties:
  *         id:
  *           type: string
- *         fullName:
- *           type: string
- *         nickName:
- *           type: string
  *         gender:
  *           type: integer
  *           description: "MALE: 1, FEMALE: 2"
@@ -26,9 +22,9 @@ import auth from "../middlewares/auth"
  *           - 2
  *         avatar:
  *           type: string
- *         playerInfo:
+ *         player:
  *           type: string
- *         firstName:
+ *         userName:
  *           type: string
  *           required: true
  *         money:
@@ -82,17 +78,19 @@ const router = express.Router()
  *       - name: email
  *         description: User's email
  *         in: body
- *         type: string
+ *         schema:
+ *              type: string
  *         required: true
  *       - name: password
  *         description: User's password
  *         in: body
- *         type: string
+ *         schema:
+ *              type: string
  *         required: true
  *     responses:
  *       200:
  *         description: The response has fields
- *           <br> - userInfo
+ *           <br> - data{User}
  *           <br> - accessToken
  *           <br> - refreshToken
  *           <br> - message=LOGIN_SUCCESS
@@ -114,40 +112,40 @@ router.post("/login", validateBody(AuthSchema.login), AuthController.login)
  *     produces:
  *       - application/json
  *     parameters:
- *       - name: firstName
- *         description: User's firstName
+ *       - name: userName
+ *         description: User's userName
  *         in: body
- *         type: string
- *         required: true
- *       - name: lastName
- *         description: User's lastName
- *         in: body
- *         type: string
+ *         schema:
+ *              type: string
  *         required: true
  *       - name: email
  *         description: User's email
  *         in: body
- *         type: string
+ *         schema:
+ *              type: string
  *         required: true
  *       - name: hash
  *         description: Hash take from API:/v1/auth/send-otp
  *         in: body
- *         type: string
+ *         schema:
+ *              type: string
  *         required: true
  *       - name: otp
  *         description: Otp code get from Email
  *         in: body
- *         type: string
+ *         schema:
+ *              type: string
  *         required: true
  *       - name: password
  *         description: User's password
  *         in: body
- *         type: string
+ *         schema:
+ *              type: string
  *         required: true
  *     responses:
  *       200:
  *         description: The response has fields
- *           <br> - userInfo
+ *           <br> - data{User}
  *           <br> - accessToken
  *           <br> - refreshToken
  *           <br> - message=REGISTER_SUCCESS
@@ -158,7 +156,9 @@ router.post("/login", validateBody(AuthSchema.login), AuthController.login)
  *       400:
  *         description: Bad Request
  *           <br> - ERROR_PASSWORD_INVALID
+ *           <br> - ERROR_USERNAME_INVALID
  *           <br> - ERROR_EMAIL_ALREADY_EXISTS
+ *           <br> - ERROR_USERNAME_ALREADY_EXISTS
  *
  */
 router.post("/register", validateBody(AuthSchema.register), AuthController.register)
@@ -175,21 +175,20 @@ router.post("/register", validateBody(AuthSchema.register), AuthController.regis
  *       - name: refreshToken
  *         description: refreshToken
  *         in: body
- *         type: string
+ *         schema:
+ *              type: string
  *         required: true
  *     responses:
  *       200:
  *         description: The response has fields
- *           <br> - userInfo
+ *           <br> - data{User}
  *           <br> - message=LOGOUT_SUCCESS
  *       400:
  *         description: Bad Request
  *       404:
  *         description: Not Found
  */
-
 router.post("/logout", AuthController.logout)
-
 /**
  * @swagger
  * /api/auth/get-profile:
@@ -201,7 +200,7 @@ router.post("/logout", AuthController.logout)
  *     responses:
  *       200:
  *         description: The response has fields
- *           <br> - userInfo
+ *           <br> - data{User}
  *           <br> - message=GET_PROFILE_SUCCESS
  *         content:
  *           application/json:
@@ -227,7 +226,8 @@ router.get("/get-profile", auth(), AuthController.getProfile)
  *       - name: email
  *         description: Email
  *         in: body
- *         type: string
+ *         schema:
+ *              type: string
  *         required: true
  *     responses:
  *       200:
@@ -251,7 +251,8 @@ router.post("/send-otp", validateBody(AuthSchema.sendOtp), AuthController.sendOt
  *       - name: email
  *         description: Email
  *         in: body
- *         type: string
+ *         schema:
+ *              type: string
  *         required: true
  *     responses:
  *       200:
@@ -280,22 +281,25 @@ router.post(
  *       - name: userId
  *         description: userId
  *         in: body
- *         type: string
+ *         schema:
+ *              type: string
  *         required: true
  *       - name: token
  *         description: token take from link send to Email from API /api/auth/request-reset-password
  *         in: body
- *         type: string
+ *         schema:
+ *              type: string
  *         required: true
  *       - name: password
  *         description: password
  *         in: body
- *         type: string
+ *         schema:
+ *              type: string
  *         required: true
  *     responses:
  *       200:
  *         description: The response has fields
- *           <br> - userInfo
+ *           <br> - data{User}
  *           <br> - message=RESET_PASSWORD_SUCCESS
  *       400:
  *         description: Bad Request
@@ -305,4 +309,5 @@ router.post(
  *         description: Server Error
  */
 router.post("/reset-password", validateBody(AuthSchema.resetPassword), AuthController.resetPassword)
+router.post("/migrate-data", AuthController.migrateData)
 export default router
