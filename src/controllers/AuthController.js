@@ -1,12 +1,11 @@
 import * as CreateError from "http-errors"
 import url from "url"
-import axios from "axios"
 import AuthService from "../services/AuthService"
+import PlayerService from "../services/PlayerService"
 import AuthValidator from "../validators/AuthValidator"
 import AuthHelper from "../helpers/AuthHelper"
 import { ERROR_CODES, SUCCESS_CODES, STATUS } from "../constants/UserConstant"
 import { updateUserByIdNotPermission } from "../services/UsersService"
-import RequestBuilder from "../helpers/RequestBuilder"
 
 class AuthController {
     async login(req, res) {
@@ -28,19 +27,12 @@ class AuthController {
         const userInfo = await AuthService.createUser(data)
         const payload = { id: userInfo.id }
         const { accessToken, refreshToken } = await AuthHelper.generateTokens(payload)
-        const host = url.format({ protocol: req.protocol, host: req.get("host") })
-        const createDataPlayer = { playerName: userInfo.userName, userId: userInfo.id }
-        const path = `${host}/api/players`
-        const headers = { Authorization: `Bearer ${accessToken}` }
-        const options = RequestBuilder.withHeaders(headers).makePOST(createDataPlayer).build(path)
+        const createDataPlayer = { playerName: userInfo.userName, user: userInfo.id }
         /* create player for user */
-        try {
-            axios(options)
-        } catch (error) {
-            console.error("error create player: ", error)
-            return res
-                .status(200)
-                .send({ data: userInfo, accessToken, refreshToken, message: SUCCESS_CODES.REGISTER_SUCCESS })
+        const player = await PlayerService.createPlayerInfo(createDataPlayer)
+        if (player) {
+            userInfo.player = player.id
+            await userInfo.save()
         }
         return res
             .status(200)
