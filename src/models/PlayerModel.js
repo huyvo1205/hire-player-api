@@ -15,6 +15,7 @@ const PlayerSchema = mongoose.Schema(
         costPerHour: { type: Number, default: 0 },
         totalTimeHired: { type: Number, default: 0 },
         completionRate: { type: Number, default: 0 },
+        avgRating: { type: Number, default: 0 },
         timeReceiveHire: [],
         isReceiveHire: { type: Boolean, default: true },
         timeMaxHire: { type: Number, default: 0 },
@@ -39,7 +40,7 @@ const PlayerSchema = mongoose.Schema(
             default: PlayerInfoConstant.TYPES.NEW
         }
     },
-    { timestamps: true }
+    { versionKey: false, timestamps: true }
 )
 
 PlayerSchema.plugin(toJSON(false))

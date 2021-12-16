@@ -1,7 +1,9 @@
 import ReviewConstant from "../constants/ReviewConstant"
 import PlayerValidator from "../validators/PlayerValidator"
 import ReviewService from "../services/ReviewService"
+import PlayerService from "../services/PlayerService"
 import pick from "../utils/pick"
+import ReviewHelper from "../helpers/ReviewHelper"
 
 class ReviewController {
     async getReviews(req, res) {
@@ -28,6 +30,11 @@ class ReviewController {
             receiver: receiverId
         }
         const createReview = await ReviewService.createReview(createData)
+        /* update avg rating for player */
+        const playerId = receiverId
+        const avgRating = await ReviewHelper.calculateAvgRating({ playerId })
+        const updateDataPlayer = { avgRating }
+        await PlayerService.updatePlayerInfo(playerId, updateDataPlayer)
         res.status(201).send({
             data: createReview,
             message: ReviewConstant.SUCCESS_CODES.CREATE_REVIEW_SUCCESS

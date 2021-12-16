@@ -25,13 +25,10 @@ class AuthService {
     }
 
     async migrateData() {
-        const users = await UserModel.find({})
-        let count = 0
-        for (const user of users) {
-            count += 1
-            const userName = `Best_Cao_Thu${count}`
-            await UserModel.updateOne({ _id: user.id }, { $set: { userName } })
-            await PlayerModel.updateOne({ user: user.id }, { $set: { playerName: userName } })
+        const players = await PlayerModel.find({})
+        for (const player of players) {
+            const userId = player.user
+            await UserModel.updateOne({ _id: userId }, { $set: { player: player.id } })
         }
     }
 }

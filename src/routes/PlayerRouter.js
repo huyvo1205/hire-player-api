@@ -29,6 +29,8 @@ import "express-async-errors"
  *           type: number
  *         completionRate:
  *           type: number
+ *         avgRating:
+ *           type: number
  *         isReceiveHire:
  *           type: boolean
  *         playerVerified:
