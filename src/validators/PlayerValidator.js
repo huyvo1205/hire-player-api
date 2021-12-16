@@ -21,9 +21,9 @@ class PlayerValidator {
     }
 
     async validateCreateReview({ reviewerId, receiverId }) {
-        const countReviewer = await UserModel.countDocuments({ _id: reviewerId })
+        const countReviewer = await PlayerModel.countDocuments({ _id: reviewerId })
         if (!countReviewer) throw new CreateError.NotFound(PlayerConstant.ERROR_CODES.ERROR_USER_REVIEWER_NOT_FOUND)
-        const countReceiver = await UserModel.countDocuments({ _id: receiverId })
+        const countReceiver = await PlayerModel.countDocuments({ _id: receiverId })
         if (!countReceiver) throw new CreateError.NotFound(PlayerConstant.ERROR_CODES.ERROR_USER_RECEIVER_NOT_FOUND)
     }
 
