@@ -4,73 +4,7 @@ import { validateBody } from "../validators"
 import PlayerInfoSchema from "../schemas/PlayerSchema"
 import auth from "../middlewares/auth"
 import "express-async-errors"
-/**
- * @swagger
- * components:
- *   schemas:
- *     Player:
- *       type: object
- *       properties:
- *         id:
- *           type: string
- *         gameName:
- *           type: string
- *         playerName:
- *           type: string
- *         user:
- *           type: string
- *         rank:
- *           type: string
- *         description:
- *           type: string
- *         costPerHour:
- *           type: number
- *         totalTimeHired:
- *           type: number
- *         completionRate:
- *           type: number
- *         avgRating:
- *           type: number
- *         isReceiveHire:
- *           type: boolean
- *         playerVerified:
- *           type: boolean
- *         timeReceiveHire:
- *           type: array
- *         images:
- *           type: array
- *         statusHire:
- *           type: integer
- *           description: "READY: 1, BUSY: 2"
- *           enum:
- *           - 1
- *           - 2
- *         typePlayer:
- *           type: integer
- *           description: "VIP: 1, HOT: 2, NEW: 3"
- *           enum:
- *           - 1
- *           - 2
- *           - 3
- *         isOnline:
- *           type: boolean
- *         status:
- *           type: integer
- *           description: "ACTIVE: 1, INACTIVE: 2"
- *           default: 1
- *           enum:
- *           - 1
- *           - 2
- *         deletedAt:
- *           type: string
- *           format: "date-time"
- *         createdAt:
- *           type: string
- *           format: "date-time"
- *         updatedAt:
- *           type: string
- *           format: "date-time"
- */
+
 const router = express.Router()
 /**
  * @swagger
