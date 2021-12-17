@@ -131,63 +131,9 @@ const router = express.Router()
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Player'
+ *               $ref: '#/components/schemas/User'
  */
 router.get("/", PlayerController.getPlayersInfo)
-/**
- * @swagger
- * /api/players:
- *   post:
- *     summary: Create Player Info
- *     security:
- *       - bearerAuth: []
- *     tags: [Create Player Info]
- *     produces:
- *       - application/json
- *     parameters:
- *       - name: gameName
- *         description: Player's gameName
- *         in: body
- *         schema:
- *              type: string
- *       - name: userId
- *         description: User Id
- *         in: body
- *         schema:
- *              type: string
- *         required: true
- *       - name: costPerHour
- *         description: Cost Per Hour
- *         in: body
- *         schema:
- *              type: number
- *       - name: description
- *         description: Player's description
- *         in: body
- *         schema:
- *              type: string
- *       - name: rank
- *         description: Player's rank
- *         in: body
- *         schema:
- *              type: string
- *     responses:
- *       201:
- *         description: The response has fields
- *           <br> - data{Player}
- *           <br> - message=CREATE_PLAYER_INFO_SUCCESS
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Player'
- *       400:
- *         description: Bad Request
- *           <br> - ERROR_USER_ALREADY_CREATE_PLAYER_INFO
- *       404:
- *         description: Not Found
- *           <br> - ERROR_USER_NOT_FOUND
- */
-router.post("/", validateBody(PlayerInfoSchema.createPlayerInfo), PlayerController.createPlayerInfo)
 /**
  * @swagger
  * /api/players/:id:
@@ -227,12 +173,12 @@ router.post("/", validateBody(PlayerInfoSchema.createPlayerInfo), PlayerControll
  *     responses:
  *       200:
  *         description: The response has fields
- *           <br> - data{Player}
+ *           <br> - data{User}
  *           <br> - message=UPDATE_PLAYER_INFO_SUCCESS
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Player'
+ *               $ref: '#/components/schemas/User'
  *       404:
  *         description: Not Found
  *           <br> - ERROR_PLAYER_NOT_FOUND
@@ -255,12 +201,12 @@ router.put("/:id", auth(), validateBody(PlayerInfoSchema.updatePlayerInfo), Play
  *     responses:
  *       200:
  *         description: The response has fields
- *           <br> - data{Player}
+ *           <br> - data{User}
  *           <br> - message=GET_DETAIL_PLAYER_INFO_SUCCESS
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Player'
+ *               $ref: '#/components/schemas/User'
  *       404:
  *         description: Not Found
  *           <br> - ERROR_PLAYER_NOT_FOUND
@@ -290,12 +236,12 @@ router.get("/:id", PlayerController.getDetailPlayerInfo)
  *     responses:
  *       200:
  *         description: The response has fields
- *           <br> - data{Player}
+ *           <br> - data{User}
  *           <br> - message=UPLOAD_IMAGES_SUCCESS
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Player'
+ *               $ref: '#/components/schemas/User'
  *       400:
  *         description: Bad Request
  *           <br> - ERROR_KEY_UPLOAD_INVALID

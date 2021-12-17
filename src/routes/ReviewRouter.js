@@ -121,7 +121,7 @@ router.get("/", ReviewController.getReviews)
  *         schema:
  *              type: string
  *     responses:
- *       201:
+ *       200:
  *         description: The response has fields
  *           <br> - message=GET_DETAIL_REVIEW_SUCCESS
  *       404:
@@ -216,7 +216,7 @@ router.post("/", auth(), validateBody(ReviewSchema.createReview), ReviewControll
  *         schema:
  *              type: string
  *     responses:
- *       201:
+ *       200:
  *         description: The response has fields
  *           <br> - data{Review}
  *           <br> - message=UPDATE_REVIEW_SUCCESS
@@ -246,7 +246,7 @@ router.put("/:id", auth(), validateBody(ReviewSchema.updateReview), ReviewContro
  *         schema:
  *              type: string
  *     responses:
- *       201:
+ *       200:
  *         description: The response has fields
  *           <br> - message=DELETE_REVIEW_SUCCESS
  *       404:

@@ -13,7 +13,7 @@ const tokenSchema = mongoose.Schema(
             required: true
         }
     },
-    { timestamps: true }
+    { versionKey: false, timestamps: true }
 )
 tokenSchema.index({ user: 1, accessToken: 1 })
 tokenSchema.plugin(toJSON(false))

@@ -30,7 +30,7 @@ const HirePlayerSchema = mongoose.Schema(
             default: PlayerInfoConstant.STATUS.ACTIVE
         }
     },
-    { timestamps: true }
+    { versionKey: false, timestamps: true }
 )
 
 HirePlayerSchema.plugin(toJSON(false))

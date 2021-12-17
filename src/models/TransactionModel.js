@@ -25,7 +25,7 @@ const TransactionSchema = mongoose.Schema(
         transactionAt: { type: Date, default: null },
         deletedAt: { type: Date, default: null }
     },
-    { timestamps: true }
+    { versionKey: false, timestamps: true }
 )
 TransactionSchema.plugin(autoIncrement.plugin, {
     model: "Transaction",

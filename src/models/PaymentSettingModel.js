@@ -24,7 +24,7 @@ const PaymentSettingSchema = mongoose.Schema(
         },
         deletedAt: { type: Date }
     },
-    { timestamps: true }
+    { versionKey: false, timestamps: true }
 )
 
 PaymentSettingSchema.plugin(toJSON(false))

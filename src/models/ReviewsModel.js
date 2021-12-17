@@ -10,8 +10,8 @@ const ReviewSchema = mongoose.Schema(
     {
         starPoint: { type: Number, default: 0 },
         content: { type: String, trim: true, maxlength: 255 },
-        reviewer: { type: ObjectId, ref: "Player", required: true },
-        receiver: { type: ObjectId, ref: "Player", required: true, index: true },
+        reviewer: { type: ObjectId, ref: "User", required: true },
+        receiver: { type: ObjectId, ref: "User", required: true, index: true },
         deletedAt: { type: Date, default: null },
         status: {
             type: Number,

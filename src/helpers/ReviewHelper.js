@@ -5,6 +5,7 @@ import ReviewsModel from "../models/ReviewsModel"
 class ReviewHelper {
     async calculateAvgRating({ playerId }) {
         /* get all reviews of playerId */
+        /* TODO: edit group data aggregate */
         const reviews = await ReviewsModel.find({ receiver: playerId }).select("starPoint")
         const sumStarPoint = _.sumBy(reviews, item => item.starPoint)
         const avgRating = sumStarPoint / reviews.length

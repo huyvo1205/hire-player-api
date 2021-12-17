@@ -1,25 +1,23 @@
-import PlayerModel from "../models/PlayerModel"
+import UserModel from "../models/UserModel"
 
 class PlayerService {
     async createPlayerInfo(data) {
-        const newPlayer = await PlayerModel.create(data)
-        const player = await PlayerModel.findById(newPlayer.id).populate("user")
-        return player
+        const newUser = await UserModel.create(data)
+        return newUser
     }
 
     async updatePlayerInfo(id, updateData) {
-        await PlayerModel.updateOne({ _id: id }, updateData)
-        const player = await PlayerModel.findById(id).populate("user")
-        return player
+        const newUser = await UserModel.findByIdAndUpdate(id, updateData, { new: true })
+        return newUser
     }
 
     async getDetailPlayerInfo(id) {
-        return PlayerModel.findOne({ _id: id }).populate("user")
+        return UserModel.findOne({ _id: id })
     }
 
     async getListPlayerInfo(filter, options) {
-        const players = await PlayerModel.paginate(filter, options)
-        return players
+        const users = await UserModel.paginate(filter, options)
+        return users
     }
 }
 

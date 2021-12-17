@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import PlayerConstant from "../constants/PlayerConstant"
 import PlayerValidator from "../validators/PlayerValidator"
 import PlayerService from "../services/PlayerService"
@@ -8,29 +9,16 @@ import FileHelper from "../helpers/FileHelper"
 class PlayerController {
     async getPlayersInfo(req, res) {
         const { userId, status, typePlayer } = req.query
-        const filter = {}
-        if (userId) filter.user = userId
-        if (status) filter.status = status
-        if (typePlayer) filter.typePlayer = typePlayer
+        const filter = { isPlayer: true }
+        if (userId) filter._id = userId
+        if (status) filter["playerInfo.status"] = status
+        if (typePlayer) filter["playerInfo.typePlayer"] = typePlayer
+
         const options = pick(req.query, ["sortBy", "limit", "page", "populate"])
         const players = await PlayerService.getListPlayerInfo(filter, options)
         return res.status(200).send({
             data: players,
             message: PlayerConstant.SUCCESS_CODES.GET_PLAYER_INFO_SUCCESS
-        })
-    }
-
-    async createPlayerInfo(req, res) {
-        const { userId } = req.body
-        await PlayerValidator.validateCreatePlayerInfo({ userId })
-        const createData = {
-            ...req.body,
-            user: userId
-        }
-        const createPlayerInfo = await PlayerService.createPlayerInfo(createData)
-        res.status(201).send({
-            data: createPlayerInfo,
-            message: PlayerConstant.SUCCESS_CODES.CREATE_PLAYER_INFO_SUCCESS
         })
     }
 
@@ -46,9 +34,9 @@ class PlayerController {
     }
 
     async getDetailPlayerInfo(req, res) {
-        const playerId = req.params.id
-        await PlayerValidator.validateUpdatePlayerInfo({ playerId })
-        const player = await PlayerService.getDetailPlayerInfo(playerId)
+        const userId = req.params.id
+        await PlayerValidator.validateUpdatePlayerInfo({ userId })
+        const player = await PlayerService.getDetailPlayerInfo(userId)
         res.status(200).send({
             data: player,
             message: PlayerConstant.SUCCESS_CODES.GET_DETAIL_PLAYER_INFO_SUCCESS

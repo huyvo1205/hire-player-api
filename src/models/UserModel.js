@@ -6,6 +6,7 @@ import toJSON from "./plugins/toJSON"
 import paginate from "./plugins/paginate"
 import { GENDER, STATUS, ROLES } from "../constants/UserConstant"
 import { BCRYPT_SALT } from "../config/tokens"
+import PlayerInfoConstant from "../constants/PlayerConstant"
 
 const { Schema } = mongoose
 const { ObjectId } = Schema.Types
@@ -17,9 +18,42 @@ const UserSchema = mongoose.Schema(
         money: { type: Number, default: 0 },
         gender: { type: Number, enum: Object.values(GENDER) },
         avatar: { type: String },
-        player: { type: ObjectId, ref: "Player" },
+        playerInfo: {
+            gameName: { type: String, trim: true },
+            playerName: { type: String, trim: true, index: true, unique: true },
+            rank: { type: String, trim: true },
+            description: { type: String, trim: true },
+            playerAvatar: {},
+            costPerHour: { type: Number, default: 0 },
+            totalTimeHired: { type: Number, default: 0 },
+            completionRate: { type: Number, default: 0 },
+            avgRating: { type: Number, default: 0 },
+            timeReceiveHire: [],
+            isReceiveHire: { type: Boolean, default: true },
+            timeMaxHire: { type: Number, default: 0 },
+            images: [],
+            statusHire: {
+                type: Number,
+                enum: Object.values(PlayerInfoConstant.STATUS_HIRE),
+                default: PlayerInfoConstant.STATUS_HIRE.READY
+            },
+            playerVerified: { type: Boolean, default: false },
+            deletedAt: { type: Date, default: null },
+            status: {
+                type: Number,
+                enum: Object.values(PlayerInfoConstant.STATUS),
+                default: PlayerInfoConstant.STATUS.ACTIVE
+            },
+            typePlayer: {
+                type: Number,
+                enum: Object.values(PlayerInfoConstant.TYPES),
+                index: true,
+                default: PlayerInfoConstant.TYPES.NEW
+            }
+        },
         googleId: { type: String },
         isOnline: { type: Boolean, default: false },
+        isPlayer: { type: Boolean, default: false },
         status: {
             type: Number,
             enum: Object.values(STATUS),
@@ -54,7 +88,7 @@ const UserSchema = mongoose.Schema(
             private: true
         }
     },
-    { timestamps: true }
+    { versionKey: false, timestamps: true }
 )
 
 UserSchema.plugin(toJSON(false))

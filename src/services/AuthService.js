@@ -2,7 +2,6 @@
 /* eslint-disable no-await-in-loop */
 import UserModel from "../models/UserModel"
 import TokenModel from "../models/TokenModel"
-import PlayerModel from "../models/PlayerModel"
 
 class AuthService {
     async removeToken(refreshToken) {
@@ -24,13 +23,7 @@ class AuthService {
         return refreshToken
     }
 
-    async migrateData() {
-        const players = await PlayerModel.find({})
-        for (const player of players) {
-            const userId = player.user
-            await UserModel.updateOne({ _id: userId }, { $set: { player: player.id } })
-        }
-    }
+    async migrateData() {}
 }
 
 export default new AuthService()

@@ -4,7 +4,6 @@ import { validateBody } from "../validators"
 import { AuthSchema } from "../schemas"
 import "express-async-errors"
 import auth from "../middlewares/auth"
-
 /**
  * @swagger
  * components:
@@ -34,7 +33,54 @@ import auth from "../middlewares/auth"
  *           required: true
  *         googleId:
  *           type: string
+ *         playerInfo:
+ *           type: object
+ *           properties:
+ *              gameName:
+ *                type: string
+ *              playerName:
+ *                type: string
+ *              user:
+ *                type: string
+ *              rank:
+ *                type: string
+ *              playerAvatar:
+ *                type: object
+ *              description:
+ *                type: string
+ *              costPerHour:
+ *                type: number
+ *              totalTimeHired:
+ *                type: number
+ *              completionRate:
+ *                type: number
+ *              avgRating:
+ *                type: number
+ *              isReceiveHire:
+ *                type: boolean
+ *              playerVerified:
+ *                type: boolean
+ *              timeReceiveHire:
+ *                type: array
+ *              images:
+ *                type: array
+ *              statusHire:
+ *                type: integer
+ *                description: "READY: 1, BUSY: 2"
+ *                enum:
+ *                - 1
+ *                - 2
+ *              typePlayer:
+ *                type: integer
+ *                description: "VIP: 1, HOT: 2, NEW: 3"
+ *                enum:
+ *                - 1
+ *                - 2
+ *                - 3
  *         isOnline:
+ *           type: boolean
+ *           default: false
+ *         isPlayer:
  *           type: boolean
  *           default: false
  *         status:
@@ -64,7 +110,6 @@ import auth from "../middlewares/auth"
  *         email:
  *           type: string
  */
-
 const router = express.Router()
 /**
  * @swagger
