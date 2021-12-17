@@ -17,7 +17,7 @@ const UserSchema = mongoose.Schema(
         userName: { type: String, trim: true, required: true, unique: true },
         money: { type: Number, default: 0 },
         gender: { type: Number, enum: Object.values(GENDER) },
-        avatar: { type: String },
+        avatar: {},
         playerInfo: {
             gameName: { type: String, trim: true },
             playerName: { type: String, trim: true, index: true, unique: true },

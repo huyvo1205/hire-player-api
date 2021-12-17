@@ -20,7 +20,7 @@ import auth from "../middlewares/auth"
  *           - 1
  *           - 2
  *         avatar:
- *           type: string
+ *           type: object
  *         player:
  *           type: string
  *         userName:
