@@ -3,10 +3,10 @@ import * as _ from "lodash"
 import ReviewsModel from "../models/ReviewsModel"
 
 class ReviewHelper {
-    async calculateAvgRating({ playerId }) {
-        /* get all reviews of playerId */
+    async calculateAvgRating({ userId }) {
+        /* get all reviews of userId */
         /* TODO: edit group data aggregate */
-        const reviews = await ReviewsModel.find({ receiver: playerId }).select("starPoint")
+        const reviews = await ReviewsModel.find({ receiver: userId }).select("starPoint")
         const sumStarPoint = _.sumBy(reviews, item => item.starPoint)
         const avgRating = sumStarPoint / reviews.length
         return avgRating || 0

@@ -31,10 +31,10 @@ class ReviewController {
         }
         const createReview = await ReviewService.createReview(createData)
         /* update avg rating for player */
-        const playerId = receiverId
-        const avgRating = await ReviewHelper.calculateAvgRating({ playerId })
-        const updateDataPlayer = { avgRating }
-        await PlayerService.updatePlayerInfo(playerId, updateDataPlayer)
+        const userId = receiverId
+        const avgRating = await ReviewHelper.calculateAvgRating({ userId })
+        const updateDataPlayer = { "playerInfo.avgRating": avgRating }
+        await PlayerService.updatePlayerInfo(userId, updateDataPlayer)
         res.status(201).send({
             data: createReview,
             message: ReviewConstant.SUCCESS_CODES.CREATE_REVIEW_SUCCESS
