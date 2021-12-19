@@ -8,10 +8,7 @@ const register = {
         hash: { type: "string", minLength: 1 },
         otp: { type: "string", minLength: 1 },
         email: { type: "string", pattern: "^\\S+@\\S+\\.\\S+$" },
-        password: {
-            type: "string",
-            minLength: 8
-        }
+        password: { type: "string" }
     }
 }
 
