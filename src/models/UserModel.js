@@ -20,7 +20,7 @@ const UserSchema = mongoose.Schema(
         avatar: {},
         playerInfo: {
             gameName: { type: String, trim: true },
-            playerName: { type: String, trim: true, index: true, unique: true },
+            playerName: { type: String, trim: true, index: true },
             rank: { type: String, trim: true },
             description: { type: String, trim: true },
             playerAvatar: {},

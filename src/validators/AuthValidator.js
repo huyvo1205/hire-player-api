@@ -14,7 +14,7 @@ class AuthValidator {
         if (!password.match(/\d/) || !password.match(/[a-zA-Z]/)) {
             throw new CreateError.BadRequest(ERROR_CODES.ERROR_PASSWORD_INVALID)
         }
-        if (!userName.match(/^(?=.{8,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$/)) {
+        if (!userName.match(/^(?=.{6,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$/)) {
             throw new CreateError.BadRequest(ERROR_CODES.ERROR_USERNAME_INVALID)
         }
         const countEmail = await UserModel.countDocuments({
