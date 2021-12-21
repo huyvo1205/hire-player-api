@@ -40,8 +40,6 @@ import auth from "../middlewares/auth"
  *                type: string
  *              playerName:
  *                type: string
- *              user:
- *                type: string
  *              rank:
  *                type: string
  *              playerAvatar:

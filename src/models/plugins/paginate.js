@@ -48,16 +48,21 @@ const paginate = schema => {
             //             .reduce((a, b) => ({ path: b, populate: a }))
             //     )
             // })
-
-            /* fix only support populate 1 level */
-            const [fieldPopulate, selectFields = ""] = options.populate.split(":")
-            const select = selectFields
-                .split(",")
-                .map(item => item.trim())
-                .join(" ")
-            docsPromise.populate({
-                path: fieldPopulate.trim(),
-                select
+            // populate=player|customer
+            const arrayPopulate = options.populate.split("|")
+            arrayPopulate.forEach(populateItem => {
+                /* fix only support populate 1 level */
+                const [fieldPopulate, selectFields = ""] = populateItem.split(":")
+                const select = selectFields
+                    .split(",")
+                    .map(item => item.trim())
+                    .join(" ")
+                console.log("fieldPopulate", fieldPopulate)
+                console.log("select", select)
+                docsPromise.populate({
+                    path: fieldPopulate.trim(),
+                    select
+                })
             })
         }
 

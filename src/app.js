@@ -15,6 +15,7 @@ import routes from "./routes"
 import Swagger from "./swagger/swaggerConfig"
 import HandlerErrorMiddleware from "./middlewares/HandlerErrorMiddleware"
 import Database from "./database"
+import SocketServer from "./socket/SocketServer"
 
 global.logger = winston
 global.baseDir = __dirname
@@ -41,7 +42,6 @@ if (process.env.NODE_ENV === "production") {
     app.use(morgan("dev"))
 }
 app.use(express.json())
-
 app.use(express.static(path.resolve("src/public")))
 app.use(express.urlencoded({ extended: false }))
 app.disable("x-powered-by")
@@ -64,7 +64,6 @@ app.get("/healthcheck", (req, res) => {
 app.set("port", port)
 app.use("/api", routes)
 app.use(HandlerErrorMiddleware.errorMiddleware)
-
 function onError(error) {
     if (error.syscall !== "listen") {
         throw error
@@ -92,7 +91,8 @@ server.on("listening", () => {
     console.log(Messages.en.started_app(bind))
 })
 
-setupWebSocket(server)
+// setupWebSocket(server)
+SocketServer.initSocket(server)
 console.log("Database.MONGO_OPTIONS", Database.MONGO_OPTIONS)
 console.log("Database.URL", Database.URL)
 mongoose.connect(Database.URL, Database.MONGO_OPTIONS, err => {
