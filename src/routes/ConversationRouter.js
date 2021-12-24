@@ -45,6 +45,74 @@ import "express-async-errors"
  *           type: string
  *           format: "date-time"
  */
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Notification:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: string
+ *         content:
+ *           type: string
+ *           description: "Content notify"
+ *         customer:
+ *           type: string
+ *           description: "User Id"
+ *         player:
+ *           type: string
+ *           description: "User Id"
+ *         image:
+ *           type: object
+ *           description: "Image to display"
+ *         isRead:
+ *           type: boolean
+ *           description: "User is read notify"
+ *         action:
+ *           type: integer
+ *           description: "REQUEST_HIRE: 1 -> When customer request hire
+ *                       <br> ACCEPT_HIRE: 2 -> When player accept hire
+ *                       <br> PLAYER_CANCEL_HIRE: 3 -> When player cancel hire
+ *                       <br> CUSTOMER_CANCEL_HIRE: 4 -> When customer cancel hire
+ *                       <br> REQUEST_COMPLAIN: 5 -> When customer|player request complain
+ *                       <br> Data will be added later...
+ *                      "
+ *           enum:
+ *           - 1
+ *           - 2
+ *           - 3
+ *           - 4
+ *           - 5
+ *         href:
+ *           type: string
+ *           description: "action === REQUEST_HIRE: 1 -> hires/:id
+ *                       <br> action ===  ACCEPT_HIRE: 2 -> hires/:id
+ *                       <br> action ===  PLAYER_CANCEL_HIRE: 3 -> hires/:id
+ *                       <br> action ===  CUSTOMER_CANCEL_HIRE: 4 -> hires/:id
+ *                       <br> action ===  REQUEST_COMPLAIN: 5 -> conversation/:id
+ *                       <br> Data will be added later...
+ *                      "
+ *         payload:
+ *           type: object
+ *           properties:
+ *              conversationId:
+ *                type: string
+ *                description: "conversationId"
+ *              hireId:
+ *                type: string
+ *                description: "hireId"
+ *         deletedAt:
+ *           type: string
+ *           format: "date-time"
+ *         createdAt:
+ *           type: string
+ *           format: "date-time"
+ *         updatedAt:
+ *           type: string
+ *           format: "date-time"
+ */
 const router = express.Router()
 /**
  * @swagger
@@ -247,7 +315,7 @@ router.put("/:id", validateBody(ConversationSchema.updateConversation), Conversa
  *         description: Not Found
  *           <br> - ERROR_CONVERSATION_NOT_FOUND
  */
-router.delete("/:id", ConversationController.deleteConversation)
+router.delete("/:id", auth(), ConversationController.deleteConversation)
 /**
  * @swagger
  * /api/conversations/:id/message:
@@ -306,7 +374,7 @@ router.delete("/:id", ConversationController.deleteConversation)
  *             schema:
  *               $ref: '#/components/schemas/Message'
  */
-router.get("/:id/message", ConversationController.getConversationMessages)
+router.get("/:id/message", auth(), ConversationController.getConversationMessages)
 /**
  * @swagger
  * /api/conversations/:id/message:
@@ -364,7 +432,43 @@ router.get("/:id/message", ConversationController.getConversationMessages)
  */
 router.post(
     "/:id/message",
+    auth(),
     validateBody(ConversationSchema.createConversationMessage),
     ConversationController.createConversationMessage
 )
+/**
+ * @swagger
+ * /api/conversations/:id/complain:
+ *   post:
+ *     summary: Create Request Complain
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [Create Request Complain]
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: hireId
+ *         description: "hireId"
+ *         in: body
+ *         schema:
+ *              type: string
+ *         required: true
+ *     responses:
+ *       201:
+ *         description: The response has fields
+ *           <br> - data{empty}
+ *           <br> - message=CREATE_COMPLAIN_SUCCESS
+ *       404:
+ *         description: Not Found
+ *           <br> - ERROR_USER_NOT_FOUND
+ *           <br> - ERROR_CONVERSATION_NOT_FOUND
+ *           <br> - ERROR_HIRE_NOT_FOUND
+ */
+router.post(
+    "/:id/complain",
+    auth(),
+    validateBody(ConversationSchema.createComplain),
+    ConversationController.handleComplainConversation
+)
+router.get("/:id/message/readers", auth(), ConversationController.readerMessages)
 export default router

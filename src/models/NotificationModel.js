@@ -11,18 +11,14 @@ const NotificationSchema = new Schema(
         customer: { type: ObjectId, ref: "User" },
         player: { type: ObjectId, ref: "User" },
         content: String,
-        action: Number, // playerCancel, accept, create
+        action: { type: Number, enum: Object.values(NotificationConstant.ACTIONS) },
         href: String, // hires/61976bbda6125e5448f0e01e
         payload: {
             conversationId: { type: ObjectId, ref: "Conversation", index: true },
             hireId: { type: ObjectId, ref: "Hire", index: true }
         },
-        type: {
-            type: Number,
-            enum: Object.values(NotificationConstant.TYPES),
-            default: NotificationConstant.TYPES.NORMAL
-        },
         image: {},
+        deletedAt: Date,
         isRead: { type: Boolean, default: false }
     },
     { versionKey: false, timestamps: true }

@@ -26,7 +26,7 @@ const updateConversation = {
 
 const createConversationMessage = {
     type: "object",
-    required: ["body", "type", "senderId"],
+    required: ["body", "type"],
     properties: {
         senderId: mongoObjectId,
         type: { type: "number", enum: Object.values(MessageConstant.TYPES) },
@@ -40,4 +40,18 @@ const createConversationMessage = {
     }
 }
 
-export default { createConversation, updateConversation, createConversationMessage }
+const createComplain = {
+    type: "object",
+    required: ["userId", "hireId"],
+    properties: {
+        userId: mongoObjectId,
+        hireId: mongoObjectId
+    }
+}
+
+export default {
+    createComplain,
+    createConversation,
+    updateConversation,
+    createConversationMessage
+}

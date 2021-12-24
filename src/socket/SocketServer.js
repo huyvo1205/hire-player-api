@@ -22,6 +22,7 @@ const initSocket = server => {
         return next()
     })
     global.io = io
+    global.UsersOnline = UsersOnline
     console.log("+Socket.io Server running...")
 
     io.on("connection", socket => {

@@ -31,7 +31,7 @@ class ConversationValidator {
         if (type === MessageConstant.TYPES.TEXT && !body.content) {
             throw new CreateError.BadRequest(ConversationConstant.ERROR_CODES.ERROR_BODY_INVALID)
         }
-        return { sender }
+        return { sender, conversation }
     }
 
     async validateUpdateConversation({ conversationId, latestMessageId }) {

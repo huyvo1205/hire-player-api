@@ -104,7 +104,10 @@ import auth from "../middlewares/auth"
  *         deletedBy:
  *           type: string
  *         roles:
- *           type: array
+ *          type: array
+ *          items:
+ *            type: number
+ *            description: "ROOT: 1, ADMIN: 2, USER: 3, default: 3"
  *         email:
  *           type: string
  */

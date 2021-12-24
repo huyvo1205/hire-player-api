@@ -18,7 +18,8 @@ const HireSchema = mongoose.Schema(
         hireStep: {
             type: Number,
             enum: Object.values(HireConstant.HIRE_STEPS),
-            default: HireConstant.HIRE_STEPS.WAITING
+            default: HireConstant.HIRE_STEPS.WAITING,
+            index: true
         },
         isCompleteSoon: { type: Boolean, default: false },
         rate: Number,

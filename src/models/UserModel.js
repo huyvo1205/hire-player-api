@@ -74,7 +74,7 @@ const UserSchema = mongoose.Schema(
                 }
             }
         },
-        roles: { type: [Number], default: [ROLES.USER] },
+        roles: { type: [Number], default: [ROLES.USER], enum: Object.values(ROLES) },
         password: {
             type: String,
             required: true,

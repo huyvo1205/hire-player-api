@@ -28,7 +28,8 @@ const ConversationSchema = new Schema(
             conversation: ObjectId,
             sender: ObjectId,
             createdAt: Date,
-            updatedAt: Date
+            updatedAt: Date,
+            unreadStatus: {}
         }
     },
     { versionKey: false, timestamps: true }

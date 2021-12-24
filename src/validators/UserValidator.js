@@ -22,6 +22,12 @@ class UserValidator {
         if (!paymentSetting) throw new CreateError.BadRequest(ERROR_CODES_PAYMENT.ERROR_PAYMENT_SETTING_NOT_FOUND)
         return { methods }
     }
+
+    async validateUser(id) {
+        const user = await UserModel.findById({ _id: id })
+        if (!user) throw new CreateError.NotFound(ERROR_CODES.ERROR_USER_NOT_FOUND)
+        return user
+    }
 }
 
 export default new UserValidator()

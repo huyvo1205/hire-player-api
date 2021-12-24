@@ -1,10 +1,19 @@
 /* eslint-disable no-underscore-dangle */
+/* eslint-disable no-restricted-syntax */
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-undef */
 import ConversationConstant from "../constants/ConversationConstant"
 import ConversationValidator from "../validators/ConversationValidator"
+import HireValidator from "../validators/HireValidator"
+import UserValidator from "../validators/UserValidator"
 import ConversationService from "../services/ConversationService"
 import MessageService from "../services/MessageService"
 import pick from "../utils/pick"
 import ConversationHelper from "../helpers/ConversationHelper"
+import NotificationService from "../services/NotificationService"
+import NotificationConstant from "../constants/NotificationConstant"
+import { ROLES } from "../constants/UserConstant"
+import { UserModel } from "../models"
 
 class ConversationController {
     async getConversations(req, res) {
@@ -73,26 +82,36 @@ class ConversationController {
 
     /* message of conversation */
     async createConversationMessage(req, res) {
+        const userIdLogin = req.user.id
         const conversationId = req.params.id
-        const { type, body, senderId } = req.body
-        const { sender } = await ConversationValidator.validateCreateConversationMessage({
-            conversationId,
-            type,
-            body,
-            senderId
-        })
+        const { type, body } = req.body
+        const { sender, conversation: oldConversation } = await ConversationValidator.validateCreateConversationMessage(
+            {
+                conversationId,
+                type,
+                body,
+                senderId: userIdLogin
+            }
+        )
         const createData = {
             conversation: conversationId,
-            sender: senderId,
+            sender: userIdLogin,
             body
         }
         const createMessage = await MessageService.createMessage(createData, false)
         /* update latestMessage for conversation */
         const messageObject = createMessage.toObject()
         messageObject.id = messageObject._id
+        messageObject.unreadStatus = oldConversation.members.reduce(
+            (preValue, currentValue) => ({ ...preValue, [currentValue]: 1 }),
+            {}
+        )
+        delete messageObject.unreadStatus[`${userIdLogin}`]
         delete messageObject._id
+
         const updateData = { latestMessage: messageObject }
         const newConversation = await ConversationService.updateConversation(conversationId, updateData)
+
         return res.status(201).send({
             data: {
                 conversation: newConversation,
@@ -116,6 +135,64 @@ class ConversationController {
         return res.status(200).send({
             data: messages,
             message: ConversationConstant.SUCCESS_CODES.GET_CONVERSATIONS_SUCCESS
+        })
+    }
+
+    async readerMessages(req, res) {
+        const conversationId = req.params.id
+        const userIdLogin = req.user.id
+        const conversation = await ConversationValidator.validateGetConversation({ conversationId })
+        const newLatestMessage = { ...conversation.latestMessage }
+        const newUnreadStatus = { ...newLatestMessage.unreadStatus }
+        delete newUnreadStatus[`${userIdLogin}`]
+        newLatestMessage.unreadStatus = newUnreadStatus
+        const dataUpdate = { latestMessage: newLatestMessage }
+        const newConversation = await ConversationService.updateConversation(conversationId, dataUpdate)
+        newConversation.members.forEach(member => {
+            const socketId = global.UsersOnline[`${member.toString()}`] || null
+            if (socketId) {
+                /* emit event when user online */
+                global.io.to(socketId).emit("onConversations", newConversation)
+            }
+        })
+
+        return res.status(200).send({
+            message: ConversationConstant.SUCCESS_CODES.READER_MESSAGES_SUCCESS
+        })
+    }
+
+    async handleComplainConversation(req, res) {
+        const conversationId = req.params.id
+        const { user } = req
+        const { hireId } = req.body
+        const conversation = await ConversationValidator.validateGetConversation({ conversationId })
+        await HireValidator.validateGetHire({ hireId })
+        /* create notify */
+        const createNotifyData = {
+            customer: conversation.customer,
+            player: conversation.player,
+            content: `${user.userName} request complain.`,
+            action: NotificationConstant.ACTIONS.REQUEST_COMPLAIN,
+            href: `conversation/${conversationId}`,
+            payload: {
+                conversationId: conversation.id,
+                hireId
+            },
+            image: user.avatar
+        }
+
+        const notify = await NotificationService.createNotification(createNotifyData)
+        /* get users admin */
+        const usersAdmin = await UserModel.find({ roles: { $in: [ROLES.ADMIN] } }).select("_id")
+        for (const userAdmin of usersAdmin) {
+            const socketId = global.UsersOnline[`${userAdmin.id}`] || null
+            if (socketId) {
+                global.io.to(socketId).emit("onNotifications", notify)
+            }
+        }
+        return res.status(200).send({
+            data: {},
+            message: ConversationConstant.SUCCESS_CODES.CREATE_COMPLAIN_SUCCESS
         })
     }
 }
