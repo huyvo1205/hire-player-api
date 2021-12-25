@@ -91,7 +91,7 @@ import "express-async-errors"
  *                       <br> action ===  ACCEPT_HIRE: 2 -> hires/:id
  *                       <br> action ===  PLAYER_CANCEL_HIRE: 3 -> hires/:id
  *                       <br> action ===  CUSTOMER_CANCEL_HIRE: 4 -> hires/:id
- *                       <br> action ===  REQUEST_COMPLAIN: 5 -> conversation/:id
+ *                       <br> action ===  REQUEST_COMPLAIN: 5 -> conversations/:id
  *                       <br> Data will be added later...
  *                      "
  *         payload:
@@ -135,6 +135,11 @@ const router = express.Router()
  *         in: query
  *         schema:
  *              type: integer
+ *       - name: ignoreIds
+ *         description: "Ignore Conversation Ids split by comma, Example: ignoreIds=61c32c28c40fc01392fc6278,61bdf45997d7f60737ec3b57"
+ *         in: query
+ *         schema:
+ *              type: string
  *       - name: searchText
  *         description: "Search Text: search playerName"
  *         in: query
@@ -470,5 +475,21 @@ router.post(
     validateBody(ConversationSchema.createComplain),
     ConversationController.handleComplainConversation
 )
-router.get("/:id/message/readers", auth(), ConversationController.readerMessages)
+/**
+ * @swagger
+ * /api/conversations/:id/message/readers:
+ *   post:
+ *     summary: Confirm Read Messages In Conversation
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [Confirm Read Messages In Conversation]
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *     responses:
+ *       201:
+ *         description: The response has fields
+ *           <br> - message=READER_MESSAGES_SUCCESS
+ */
+router.post("/:id/message/readers", auth(), ConversationController.readerMessages)
 export default router

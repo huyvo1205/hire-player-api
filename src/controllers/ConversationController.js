@@ -17,8 +17,14 @@ import { UserModel } from "../models"
 
 class ConversationController {
     async getConversations(req, res) {
-        const { playerId, customerId, status, searchText } = req.query
-        const filter = await ConversationHelper.getConversationFilter({ playerId, customerId, status, searchText })
+        const { playerId, customerId, status, searchText, ignoreIds } = req.query
+        const filter = await ConversationHelper.getConversationFilter({
+            playerId,
+            customerId,
+            status,
+            searchText,
+            ignoreIds
+        })
         const options = pick(req.query, ["sortBy", "limit", "page", "populate"])
         const conversations = await ConversationService.getListConversations(filter, options)
         return res.status(200).send({
@@ -173,7 +179,7 @@ class ConversationController {
             player: conversation.player,
             content: `${user.userName} request complain.`,
             action: NotificationConstant.ACTIONS.REQUEST_COMPLAIN,
-            href: `conversation/${conversationId}`,
+            href: `conversations/${conversationId}`,
             payload: {
                 conversationId: conversation.id,
                 hireId
