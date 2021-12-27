@@ -10,7 +10,7 @@ before_script:
 - docker info
 - apk update
 - apk upgrade
-- apk add python3 python-dev py-pip build-base
+- apk add --update --no-cache curl jq py3-configobj py3-pip py3-setuptools python3 python3-dev
 - pip install docker-compose
 
 build:
