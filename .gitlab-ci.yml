@@ -1,12 +1,19 @@
-image: docker
+image: docker:latest
+
+variables:
+  DOCKER_DRIVER: overlay
+
 services:
-    - docker:dind
-stages:
-    - test
-test:
-    stage: test
-    only: 
-        - main
-    script:
-        - docker-compose up -d --build
-        - sudo docker rmi $(sudo docker images -f "dangling=true" -q)
+- docker:dind
+
+before_script:
+- docker info
+- apk update
+- apk upgrade
+- apk add python python-dev py-pip build-base
+- pip install docker-compose
+
+build:
+  stage: build
+  script:
+  - docker-compose -f docker-compose.prod.yml up -d --build
