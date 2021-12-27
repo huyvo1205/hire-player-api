@@ -6,7 +6,7 @@ stages:
 test:
     stage: test
     only: 
-        - master
+        - main
     script:
         - echo "Player App"
         - docker --version
