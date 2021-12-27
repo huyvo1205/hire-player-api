@@ -10,7 +10,7 @@ before_script:
 - docker info
 - apk update
 - apk upgrade
-- apk add python python-dev py-pip build-base
+- apk add python3 python-dev py-pip build-base
 - pip install docker-compose
 
 build:
