@@ -1,19 +1,15 @@
-image: docker:latest
-
-variables:
-  DOCKER_DRIVER: overlay
-
+image: docker
 services:
-- docker:dind
-
-before_script:
-- docker info
-- apk update
-- apk upgrade
-- apk add --update --no-cache curl jq py3-configobj py3-pip py3-setuptools python3 python3-dev
-- pip install docker-compose
-
-build:
-  stage: build
-  script:
-  - docker-compose -f docker-compose.prod.yml up -d --build
+    - docker:dind
+stages:
+    - test
+test:
+    stage: test
+    only: 
+        - master
+    script:
+        - echo "Player App"
+        - docker --version
+        - docker-compose --version
+        - cd app/ && docker-compose -f docker-compose.prod.yml up --build
+        - sudo docker rmi $(sudo docker images -f "dangling=true" -q)
