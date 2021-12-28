@@ -1,5 +1,6 @@
 import SocketServer from "socket.io"
 import { ERROR_CODES } from "../constants/GlobalConstant"
+import { ERROR_CODES as USER_ERROR_CODES } from "../constants/UserConstant"
 import AuthHelper from "../helpers/AuthHelper"
 import UserModel from "../models/UserModel"
 
@@ -14,8 +15,8 @@ const initSocket = server => {
     io.use(async (socket, next) => {
         const bearerToken = socket.handshake.headers.authorization || socket.request.headers.authorization
         const [_, token] = bearerToken.split(" ")
-        const isValidToken = await AuthHelper.verifyAccessToken(token)
-        if (!isValidToken) {
+        const decode = await AuthHelper.verifyAccessToken(token)
+        if (!decode) {
             const err = new Error("Unauthorized")
             err.data = {
                 code: 401,
@@ -23,6 +24,7 @@ const initSocket = server => {
             }
             return next(err)
         }
+        socket.decode = decode
         console.log("OK Authorized")
         return next()
     })
@@ -34,13 +36,26 @@ const initSocket = server => {
         console.log(`Socket ID:${socket.id} is connect: URL: ${socket.request.url}, METHOD: ${socket.request.method}`)
         socket.on("startOnline", async data => {
             const { userId } = data
+            const { id: userIdFromToken } = socket.decode
+
+            if (userId !== userIdFromToken) {
+                return socket.to(socket.id).emit("onErrors", {
+                    code: 400,
+                    errors: [USER_ERROR_CODES.ERROR_USERNAME_INVALID]
+                })
+            }
+
             socket.userId = userId
-            UsersOnline[userId] = socket.id
+            if (UsersOnline[userId]) {
+                UsersOnline[userId].push(socket.id)
+            } else {
+                UsersOnline[userId] = [socket.id]
+            }
             const updateData = { isOnline: true }
             await UserModel.updateOne({ _id: userId }, { $set: updateData })
             console.log("UsersOnline", UsersOnline)
             console.log("socket.id", socket.id)
-            io.sockets.emit("onStartOnline", { UsersOnline })
+            return io.sockets.emit("onStartOnline", { UsersOnline })
         })
 
         socket.on("sendMessage", message => {
@@ -74,11 +89,13 @@ const initSocket = server => {
 
         socket.on("disconnect", async () => {
             console.log(`${socket.id} disconnect !!!`)
-            delete UsersOnline[socket.userId]
             console.log("socket.userId", socket.userId)
             const updateData = { isOnline: false }
             /* update user online */
             await UserModel.updateOne({ _id: socket.userId }, { $set: updateData })
+            const newSocketIds = UsersOnline[socket.userId].filter(socketId => socketId !== socket.id)
+            UsersOnline[socket.userId] = newSocketIds
+            if (newSocketIds.length <= 0) delete UsersOnline[socket.userId]
             console.log("UsersOnline", UsersOnline)
         })
     })

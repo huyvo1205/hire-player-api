@@ -127,12 +127,13 @@ class ConversationController {
         }
 
         newConversation.members.forEach(member => {
-            const socketId = global.UsersOnline[`${member.toString()}`] || null
-            const isUserLogin = !!(userIdLogin.toString() === member.toString())
-            if (socketId && !isUserLogin) {
-                /* emit event when user online */
-                global.io.to(socketId).emit("onMessages", dataRes)
-            }
+            const socketIds = global.UsersOnline[`${member.toString()}`] || []
+            socketIds.forEach(socketId => {
+                if (socketId) {
+                    /* emit event when user online */
+                    global.io.to(socketId).emit("onMessages", dataRes)
+                }
+            })
         })
 
         return res.status(201).send({
@@ -165,11 +166,13 @@ class ConversationController {
         const dataUpdate = { latestMessage: newLatestMessage }
         const newConversation = await ConversationService.updateConversation(conversationId, dataUpdate)
         newConversation.members.forEach(member => {
-            const socketId = global.UsersOnline[`${member.toString()}`] || null
-            if (socketId) {
-                /* emit event when user online */
-                global.io.to(socketId).emit("onConversations", newConversation)
-            }
+            const socketIds = global.UsersOnline[`${member.toString()}`] || []
+            socketIds.forEach(socketId => {
+                if (socketId) {
+                    /* emit event when user online */
+                    global.io.to(socketId).emit("onConversations", newConversation)
+                }
+            })
         })
 
         return res.status(200).send({
@@ -201,10 +204,12 @@ class ConversationController {
         /* get users admin */
         const usersAdmin = await UserModel.find({ roles: { $in: [ROLES.ADMIN] } }).select("_id")
         for (const userAdmin of usersAdmin) {
-            const socketId = global.UsersOnline[`${userAdmin.id}`] || null
-            if (socketId) {
-                global.io.to(socketId).emit("onNotifications", notify)
-            }
+            const socketIds = global.UsersOnline[`${userAdmin.id}`] || []
+            socketIds.forEach(socketId => {
+                if (socketId) {
+                    global.io.to(socketId).emit("onNotifications", notify)
+                }
+            })
         }
         return res.status(200).send({
             data: {},

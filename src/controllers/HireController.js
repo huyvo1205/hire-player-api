@@ -43,11 +43,13 @@ class HireController {
         }
 
         const notify = await NotificationService.createNotification(createNotifyData)
-        const socketId = global.UsersOnline[`${playerId}`] || null
-        if (socketId) {
-            /* emit event when user online */
-            global.io.to(socketId).emit("onNotifications", notify)
-        }
+        const socketIds = global.UsersOnline[`${playerId}`] || []
+        socketIds.forEach(socketId => {
+            if (socketId) {
+                /* emit event when user online */
+                global.io.to(socketId).emit("onNotifications", notify)
+            }
+        })
         return res.status(201).send({
             data: {
                 hire: createHire,
