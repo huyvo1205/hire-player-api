@@ -117,16 +117,26 @@ class ConversationController {
 
         const updateData = { latestMessage: messageObject }
         const newConversation = await ConversationService.updateConversation(conversationId, updateData)
+        const dataRes = {
+            conversation: newConversation,
+            status: createMessage.status,
+            body,
+            type,
+            sender,
+            latestMessage: messageObject
+        }
+
+        newConversation.members.forEach(member => {
+            const socketId = global.UsersOnline[`${member.toString()}`] || null
+            const isUserLogin = !!(userIdLogin.toString() === member.toString())
+            if (socketId && !isUserLogin) {
+                /* emit event when user online */
+                global.io.to(socketId).emit("onMessages", dataRes)
+            }
+        })
 
         return res.status(201).send({
-            data: {
-                conversation: newConversation,
-                status: createMessage.status,
-                body,
-                type,
-                sender,
-                latestMessage: messageObject
-            },
+            data: dataRes,
             message: ConversationConstant.SUCCESS_CODES.CREATE_MESSAGE_SUCCESS
         })
     }
