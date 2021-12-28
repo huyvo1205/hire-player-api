@@ -50,8 +50,8 @@ app.use(
         allowedOrigin: AppConf.cors.allowedOrigin,
         allowedMethods: AppConf.cors.allowedMethods,
         allowedHeaders: AppConf.cors.allowedHeaders,
-        exposedHeaders: AppConf.cors.exposedHeaders,
-        credentials: AppConf.cors.credentials
+        exposedHeaders: AppConf.cors.exposedHeaders
+        // credentials: AppConf.cors.credentials
     })
 )
 Swagger.setupSwagger(app)
