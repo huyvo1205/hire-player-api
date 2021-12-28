@@ -1,14 +1,14 @@
-# image: tmaier/docker-compose:latest
+image: tmaier/docker-compose:latest
 
-# services:
-#   - docker:dind
+services:
+  - docker:dind
 
-# before_script:
-#   - docker info
-#   - docker-compose --version
+before_script:
+  - docker info
+  - docker-compose --version
 
-# build image:
-#   stage: build
-#   script:
-#     - docker-compose -f docker-compose.prod.yml up --build
-#     - sudo docker rmi $(sudo docker images -f "dangling=true" -q)
+build image:
+  stage: build
+  script:
+    - docker-compose -f docker-compose.prod.yml up --build
+    - sudo docker rmi $(sudo docker images -f "dangling=true" -q)
