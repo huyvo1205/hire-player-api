@@ -1,15 +1,14 @@
-image: docker
+image: tmaier/docker-compose:latest
+
 services:
-    - docker:dind
-stages:
-    - test
-test:
-    stage: test
-    only: 
-        - master
-    script:
-        - echo "Player App"
-        - docker --version
-        - docker-compose --version
-        - cd app/ && docker-compose -f docker-compose.prod.yml up --build
-        - sudo docker rmi $(sudo docker images -f "dangling=true" -q)
+  - docker:dind
+
+before_script:
+  - docker info
+  - docker-compose --version
+
+build image:
+  stage: build
+  script:
+    - docker-compose -f docker-compose.prod.yml up --build
+    - sudo docker rmi $(sudo docker images -f "dangling=true" -q)
