@@ -73,8 +73,10 @@ const initSocket = server => {
         socket.on("chatTyping", data => {
             const { members = [], senderId } = data
             members.forEach(memberId => {
-                const socketId = UsersOnline[memberId] || ""
-                if (socketId && memberId !== senderId) socket.to(socketId).emit("onChatTyping", data)
+                const socketIds = UsersOnline[memberId] || []
+                socketIds.forEach(socketId => {
+                    if (socketId && memberId !== senderId) socket.to(socketId).emit("onChatTyping", data)
+                })
             })
         })
 
@@ -82,8 +84,10 @@ const initSocket = server => {
         socket.on("chatStopTyping", data => {
             const { members = [], senderId } = data
             members.forEach(memberId => {
-                const socketId = UsersOnline[memberId] || ""
-                if (socketId && memberId !== senderId) socket.to(socketId).emit("onChatStopTyping", data)
+                const socketIds = UsersOnline[memberId] || []
+                socketIds.forEach(socketId => {
+                    if (socketId && memberId !== senderId) socket.to(socketId).emit("onChatStopTyping", data)
+                })
             })
         })
 
