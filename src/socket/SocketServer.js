@@ -5,7 +5,12 @@ import UserModel from "../models/UserModel"
 
 const UsersOnline = {}
 const initSocket = server => {
-    const io = SocketServer(server)
+    const io = SocketServer(server, {
+        cors: {
+            origin: "*",
+            methods: ["GET", "POST"]
+        }
+    })
     io.use(async (socket, next) => {
         const bearerToken = socket.handshake.headers.authorization || socket.request.headers.authorization
         const [_, token] = bearerToken.split(" ")
