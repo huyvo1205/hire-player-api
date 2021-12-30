@@ -21,7 +21,7 @@ import "express-async-errors"
  *           description: "User Id"
  *         body:
  *           type: object
- *           description: "Object Content"
+ *           description: "Object Content { attachments: [array], content: string }"
  *         deletedAt:
  *           type: string
  *           format: "date-time"

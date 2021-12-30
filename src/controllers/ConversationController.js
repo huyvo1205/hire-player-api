@@ -90,12 +90,10 @@ class ConversationController {
     async createConversationMessage(req, res) {
         const userIdLogin = req.user.id
         const conversationId = req.params.id
-        const { type, body } = req.body
+        const { body } = req.body
         const { sender, conversation: oldConversation } = await ConversationValidator.validateCreateConversationMessage(
             {
                 conversationId,
-                type,
-                body,
                 senderId: userIdLogin
             }
         )
@@ -121,7 +119,6 @@ class ConversationController {
             conversation: newConversation,
             status: createMessage.status,
             body,
-            type,
             sender,
             latestMessage: messageObject
         }

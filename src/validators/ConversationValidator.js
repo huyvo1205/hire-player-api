@@ -20,7 +20,7 @@ class ConversationValidator {
         return null
     }
 
-    async validateCreateConversationMessage({ conversationId, type, body, senderId }) {
+    async validateCreateConversationMessage({ conversationId, senderId }) {
         const conversation = await ConversationModel.findById(conversationId)
         if (!conversation) throw new CreateError.NotFound(ConversationConstant.ERROR_CODES.ERROR_CONVERSATION_NOT_FOUND)
         const sender = await UserModel.findById(senderId)
@@ -28,9 +28,6 @@ class ConversationValidator {
         const isMembers = conversation.members.includes(senderId)
         if (!isMembers)
             throw new CreateError.BadRequest(ConversationConstant.ERROR_CODES.ERROR_SENDER_NOT_IN_CONVERSATION)
-        if (type === MessageConstant.TYPES.TEXT && !body.content) {
-            throw new CreateError.BadRequest(ConversationConstant.ERROR_CODES.ERROR_BODY_INVALID)
-        }
         return { sender, conversation }
     }
 

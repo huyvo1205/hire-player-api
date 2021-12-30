@@ -21,7 +21,28 @@ import "express-async-errors"
  *              description: "Player Id"
  *         latestMessage:
  *           type: object
- *           description: "Message Object"
+ *           description: "Latest Message Object"
+ *           properties:
+ *             id:
+ *               type: string
+ *             conversation:
+ *               type: string
+ *               description: "Conversation Id"
+ *             sender:
+ *               type: string
+ *               description: "User Id"
+ *             body:
+ *               type: object
+ *               description: "Object Content { attachments: [array], content: string }"
+ *             unreadStatus:
+ *               type: object
+ *               description: "Object unreadStatus { userId_1: 1, userId_2: 1 }"
+ *             createdAt:
+ *               type: string
+ *               format: "date-time"
+ *             updatedAt:
+ *               type: string
+ *               format: "date-time"
  *         customer:
  *           type: string
  *           description: "User Id"
@@ -184,7 +205,7 @@ const router = express.Router()
  *             schema:
  *               $ref: '#/components/schemas/Conversation'
  */
-router.get("/", ConversationController.getConversations)
+router.get("/", auth(), ConversationController.getConversations)
 /**
  * @swagger
  * /api/conversations/:id:
@@ -247,7 +268,7 @@ router.get("/:id", ConversationController.getDetailConversation)
  *         description: Not Found
  *           <br> - ERROR_MEMBERS_NOT_FOUND
  */
-router.post("/", validateBody(ConversationSchema.createConversation), ConversationController.createConversation)
+router.post("/", auth(), validateBody(ConversationSchema.createConversation), ConversationController.createConversation)
 /**
  * @swagger
  * /api/conversation/:id:
@@ -295,7 +316,12 @@ router.post("/", validateBody(ConversationSchema.createConversation), Conversati
  *         description: Not Found
  *           <br> - ERROR_CONVERSATION_NOT_FOUND
  */
-router.put("/:id", validateBody(ConversationSchema.updateConversation), ConversationController.updateConversation)
+router.put(
+    "/:id",
+    auth(),
+    validateBody(ConversationSchema.updateConversation),
+    ConversationController.updateConversation
+)
 /**
  * @swagger
  * /api/conversation/:id:
@@ -410,17 +436,10 @@ router.get("/:id/message", auth(), ConversationController.getConversationMessage
  *         schema:
  *              type: string
  *         required: true
- *       - name: type
- *         description: "Type message"
- *         in: body
- *         schema:
- *              type: number
- *              description: "TEXT: 1, MEDIA: 2"
- *         required: true
  *     responses:
  *       201:
  *         description: The response has fields
- *           <br> - data{ conversation:{Conversation}, status, body, type, sender:{User}, latestMessage:{Message} }
+ *           <br> - data{ conversation:{Conversation}, status, body, sender:{User}, latestMessage:{Message} }
  *           <br> - message=CREATE_MESSAGE_SUCCESS
  *         content:
  *           application/json:

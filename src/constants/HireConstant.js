@@ -10,7 +10,8 @@ const HIRE_STEPS = {
     WAITING: 1,
     ACCEPT: 2,
     PLAYER_CANCEL: 3,
-    CUSTOMER_CANCEL: 4
+    CUSTOMER_CANCEL: 4,
+    COMPLETE: 5
 }
 const POPULATE_OPTIONS = { path: "sender" }
 const POPULATE_CUSTOMER = { path: "customer" }
