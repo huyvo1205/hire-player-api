@@ -211,6 +211,8 @@ router.get("/", auth(), ConversationController.getConversations)
  * /api/conversations/:id:
  *   get:
  *     summary: Get Detail Conversation
+ *     security:
+ *       - bearerAuth: []
  *     tags: [Get Detail Conversation]
  *     produces:
  *       - application/json
@@ -233,7 +235,7 @@ router.get("/", auth(), ConversationController.getConversations)
  *         description: Not Found
  *           <br> - ERROR_CONVERSATION_NOT_FOUND
  */
-router.get("/:id", ConversationController.getDetailConversation)
+router.get("/:id", auth(), ConversationController.getDetailConversation)
 /**
  * @swagger
  * /api/conversations:
@@ -400,6 +402,12 @@ router.delete("/:id", auth(), ConversationController.deleteConversation)
  *         description: The response has fields
  *           <br> - data {results[], page, limit, totalPages, totalResults}
  *           <br> - message=GET_CONVERSATIONS_SUCCESS
+ *       400:
+ *         description: Bad request
+ *           <br> - ERROR_USER_NOT_IN_CONVERSATION
+ *       404:
+ *         description: Not Found
+ *           <br> - ERROR_CONVERSATION_NOT_FOUND
  *         content:
  *           application/json:
  *             schema:
@@ -506,9 +514,16 @@ router.post(
  *       - application/json
  *     parameters:
  *     responses:
- *       201:
+ *       200:
  *         description: The response has fields
  *           <br> - message=READER_MESSAGES_SUCCESS
+ *       400:
+ *         description: Bad Request
+ *           <br> - ERROR_SENDER_NOT_IN_CONVERSATION
+ *       404:
+ *         description: Not Found
+ *           <br> - ERROR_CONVERSATION_NOT_FOUND
+ *           <br> - ERROR_SENDER_NOT_FOUND
  */
 router.post("/:id/message/readers", auth(), ConversationController.readerMessages)
 export default router

@@ -45,6 +45,15 @@ class ConversationValidator {
         return conversation
     }
 
+    async validateUserInConversation({ conversationId, userIdLogin }) {
+        const conversation = await ConversationModel.findOne({ _id: conversationId })
+        if (!conversation) throw new CreateError.NotFound(ConversationConstant.ERROR_CODES.ERROR_CONVERSATION_NOT_FOUND)
+        const isMembers = conversation.members.includes(userIdLogin)
+        if (!isMembers)
+            throw new CreateError.BadRequest(ConversationConstant.ERROR_CODES.ERROR_USER_NOT_IN_CONVERSATION)
+        return conversation
+    }
+
     async validateJoinConversation({ conversationId, playerId }) {
         const defaultError = {
             error: null,

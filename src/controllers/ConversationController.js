@@ -140,7 +140,9 @@ class ConversationController {
     }
 
     async getConversationMessages(req, res) {
+        const userIdLogin = req.user.id
         const conversationId = req.params.id
+        await ConversationValidator.validateUserInConversation({ conversationId, userIdLogin })
         const { senderId } = req.query
         const filter = { conversation: conversationId }
         if (senderId) filter.sender = senderId
@@ -155,7 +157,7 @@ class ConversationController {
     async readerMessages(req, res) {
         const conversationId = req.params.id
         const userIdLogin = req.user.id
-        const conversation = await ConversationValidator.validateGetConversation({ conversationId })
+        const conversation = await ConversationValidator.validateUserInConversation({ conversationId, userIdLogin })
         const newLatestMessage = { ...conversation.latestMessage }
         const newUnreadStatus = { ...newLatestMessage.unreadStatus }
         delete newUnreadStatus[`${userIdLogin}`]
