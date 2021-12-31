@@ -2,12 +2,15 @@
 import UserModel from "../models/UserModel"
 
 class ConversationHelper {
-    async getConversationFilter({ playerId, customerId, status, searchText, ignoreIds = [] }) {
+    async getConversationFilter({ playerId, customerId, status, searchText, ignoreIds = [], userIdLogin }) {
         const filter = {}
         let memberIds = []
 
         if (playerId) memberIds.push(playerId)
         if (customerId) memberIds.push(customerId)
+        if (userIdLogin) {
+            filter.$or = [{ customer: userIdLogin }, { player: userIdLogin }]
+        }
         if (status) filter.status = status
         if (ignoreIds.length) {
             const ignoreIdsSplit = ignoreIds.split(",")

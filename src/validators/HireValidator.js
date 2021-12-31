@@ -1,17 +1,25 @@
 import * as CreateError from "http-errors"
-import * as _ from "lodash"
+import MomentTimezone from "moment-timezone"
 import HireConstant from "../constants/HireConstant"
+import PlayerConstant from "../constants/PlayerConstant"
 import UserModel from "../models/UserModel"
-import ConversationModel from "../models/ConversationModel"
-import MessageModel from "../models/MessageModel"
 import HireModel from "../models/HireModel"
+import { TIME_ZONE } from "../constants/GlobalConstant"
 
 class HireValidator {
-    async validateCreateHire({ playerId, customerId }) {
-        const countPlayer = await UserModel.countDocuments({ _id: playerId })
-        if (!countPlayer) throw new CreateError.NotFound(HireConstant.ERROR_CODES.ERROR_PLAYER_ID_INVALID)
-        const countCustomer = await UserModel.countDocuments({ _id: customerId })
-        if (!countCustomer) throw new CreateError.NotFound(HireConstant.ERROR_CODES.ERROR_CUSTOMER_ID_INVALID)
+    async validateCreateHire({ playerId, timeRent }) {
+        const hourNow = MomentTimezone().tz(TIME_ZONE).hours()
+        console.log("hourNow", hourNow)
+        const player = await UserModel.findOne({ _id: playerId })
+        if (!player) throw new CreateError.BadRequest(HireConstant.ERROR_CODES.ERROR_PLAYER_ID_INVALID)
+        /* validate */
+        const { isPlayer } = player
+        const { isReceiveHire, timeMaxHire, statusHire } = player.playerInfo
+        if (!isPlayer) throw new CreateError.BadRequest(HireConstant.ERROR_CODES.ERROR_USER_NOT_PLAYER)
+        if (!isReceiveHire) throw new CreateError.BadRequest(HireConstant.ERROR_CODES.ERROR_PLAYER_NOT_RECEIVE_HIRE)
+        if (statusHire === PlayerConstant.STATUS_HIRE.BUSY)
+            throw new CreateError.BadRequest(HireConstant.ERROR_CODES.ERROR_PLAYER_BUSY)
+        if (timeRent > timeMaxHire) throw new CreateError.BadRequest(HireConstant.ERROR_CODES.ERROR_TIME_RENT_TOO_LONG)
     }
 
     // async validateUpdateMessage({ messageId }) {

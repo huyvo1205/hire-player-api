@@ -2,10 +2,9 @@ import { mongoObjectId } from "./SharedSchema"
 
 const createHire = {
     type: "object",
-    required: ["playerId", "customerId", "timeRent", "cost"],
+    required: ["playerId", "timeRent", "cost"],
     properties: {
         playerId: mongoObjectId,
-        customerId: mongoObjectId,
         timeRent: { type: "number", minimum: 0 },
         cost: { type: "number", minimum: 0 },
         customerNote: { type: "string" }
@@ -22,4 +21,12 @@ const updateHire = {
     }
 }
 
-export default { createHire, updateHire }
+const cancelHire = {
+    type: "object",
+    required: ["cancelReason"],
+    properties: {
+        cancelReason: { type: "string", minLength: 1 }
+    }
+}
+
+export default { createHire, updateHire, cancelHire }

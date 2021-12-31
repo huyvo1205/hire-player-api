@@ -17,13 +17,15 @@ import { UserModel } from "../models"
 
 class ConversationController {
     async getConversations(req, res) {
+        const userIdLogin = req.user.id
         const { playerId, customerId, status, searchText, ignoreIds } = req.query
         const filter = await ConversationHelper.getConversationFilter({
             playerId,
             customerId,
             status,
             searchText,
-            ignoreIds
+            ignoreIds,
+            userIdLogin
         })
         const options = pick(req.query, ["sortBy", "limit", "page", "populate"])
         const conversations = await ConversationService.getListConversations(filter, options)
@@ -189,9 +191,8 @@ class ConversationController {
         const createNotifyData = {
             customer: conversation.customer,
             player: conversation.player,
-            content: `${user.userName} request complain.`,
             action: NotificationConstant.ACTIONS.REQUEST_COMPLAIN,
-            href: `conversations/${conversationId}`,
+            href: `hires/${conversationId}`,
             payload: {
                 conversationId: conversation.id,
                 hireId

@@ -76,9 +76,6 @@ import "express-async-errors"
  *       properties:
  *         id:
  *           type: string
- *         content:
- *           type: string
- *           description: "Content notify"
  *         customer:
  *           type: string
  *           description: "User Id"
@@ -94,10 +91,12 @@ import "express-async-errors"
  *         action:
  *           type: integer
  *           description: "REQUEST_HIRE: 1 -> When customer request hire
- *                       <br> ACCEPT_HIRE: 2 -> When player accept hire
+ *                       <br> PLAYER_ACCEPT_HIRE: 2 -> When player accept hire
  *                       <br> PLAYER_CANCEL_HIRE: 3 -> When player cancel hire
  *                       <br> CUSTOMER_CANCEL_HIRE: 4 -> When customer cancel hire
- *                       <br> REQUEST_COMPLAIN: 5 -> When customer|player request complain
+ *                       <br> CUSTOMER_FINISH_SOON: 5 -> When customer finish soon
+ *                       <br> CUSTOMER_REQUEST_COMPLAIN: 6 -> When customer request complain
+ *                       <br> PLAYER_REQUEST_COMPLAIN: 7 -> When player request complain
  *                       <br> Data will be added later...
  *                      "
  *           enum:
@@ -109,10 +108,10 @@ import "express-async-errors"
  *         href:
  *           type: string
  *           description: "action === REQUEST_HIRE: 1 -> hires/:id
- *                       <br> action ===  ACCEPT_HIRE: 2 -> hires/:id
+ *                       <br> action ===  PLAYER_ACCEPT_HIRE: 2 -> hires/:id
  *                       <br> action ===  PLAYER_CANCEL_HIRE: 3 -> hires/:id
  *                       <br> action ===  CUSTOMER_CANCEL_HIRE: 4 -> hires/:id
- *                       <br> action ===  REQUEST_COMPLAIN: 5 -> conversations/:id
+ *                       <br> action ===  REQUEST_COMPLAIN: 5 -> hires/:id
  *                       <br> Data will be added later...
  *                      "
  *         payload:

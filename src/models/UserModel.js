@@ -38,7 +38,6 @@ const UserSchema = mongoose.Schema(
                 default: PlayerInfoConstant.STATUS_HIRE.READY
             },
             playerVerified: { type: Boolean, default: false },
-            deletedAt: { type: Date, default: null },
             status: {
                 type: Number,
                 enum: Object.values(PlayerInfoConstant.STATUS),

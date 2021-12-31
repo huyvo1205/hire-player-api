@@ -85,7 +85,7 @@ const router = express.Router()
  *         description: Not Found
  *           <br> - ERROR_HIRE_NOT_FOUND
  */
-router.get("/:id", HireController.getDetailHire)
+router.get("/:id", auth(), HireController.getDetailHire)
 /**
  * @swagger
  * /api/hires:
@@ -98,12 +98,6 @@ router.get("/:id", HireController.getDetailHire)
  *       - application/json
  *     parameters:
  *       - name: playerId
- *         description: "User Id"
- *         in: body
- *         schema:
- *              type: string
- *         required: true
- *       - name: customerId
  *         description: "User Id"
  *         in: body
  *         schema:
@@ -136,59 +130,94 @@ router.get("/:id", HireController.getDetailHire)
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Conversation'
- *       404:
+ *       400:
  *         description: Not Found
- *           <br> - ERROR_MEMBERS_NOT_FOUND
+ *           <br> - ERROR_PLAYER_ID_INVALID
+ *           <br> - ERROR_CUSTOMER_ID_INVALID
+ *           <br> - ERROR_USER_NOT_PLAYER
+ *           <br> - ERROR_PLAYER_NOT_RECEIVE_HIRE
+ *           <br> - ERROR_PLAYER_BUSY
  */
-router.post("/", validateBody(HireSchema.createHire), HireController.createHire)
+router.post("/", auth(), validateBody(HireSchema.createHire), HireController.createHire)
 /**
  * @swagger
- * /api/conversation/:id:
+ * /api/hires/:id/accept:
  *   put:
- *     summary: Update Conversation
+ *     summary: Accept Hire
  *     security:
  *       - bearerAuth: []
- *     tags: [Update Conversation]
+ *     tags: [Accept Hire]
+ *     produces:
+ *       - application/json
+ *     responses:
+ *       200:
+ *         description: The response has fields
+ *           <br> - data{Hire}
+ *           <br> - message=ACCEPT_HIRE_SUCCESS
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Hire'
+ *       404:
+ *         description: Not Found
+ *           <br> - ERROR_HIRE_NOT_FOUND
+ */
+router.put("/:id/accept", auth(), HireController.acceptHire)
+/**
+ * @swagger
+ * /api/hires/:id/cancel:
+ *   put:
+ *     summary: Cancel Hire
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [Cancel Hire]
  *     produces:
  *       - application/json
  *     parameters:
- *       - name: members
- *         description: "Array Player Ids"
+ *       - name: cancelReason
+ *         description: "Cancel Reason"
  *         in: body
- *         schema:
- *           type: array
- *           description: "Player Ids, uniqueItems: true, minItems: 2"
- *           items:
- *              type: string
- *              description: "Player Id"
  *         required: true
- *       - name: id
- *         description: "Conversation Id"
- *         in: path
- *         schema:
- *              type: string
- *       - name: latestMessage
- *         description: "Latest Message"
- *         in: body
  *         schema:
  *              type: string
  *     responses:
  *       200:
  *         description: The response has fields
- *           <br> - data{Conversation}
- *           <br> - message=UPDATE_CONVERSATION_SUCCESS
+ *           <br> - data{Hire}
+ *           <br> - message=CANCEL_HIRE_SUCCESS
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Conversation'
- *       400:
- *         description: Bad Request
- *           <br> - ERROR_MEMBERS_NOT_FOUND
+ *               $ref: '#/components/schemas/Hire'
  *       404:
  *         description: Not Found
- *           <br> - ERROR_CONVERSATION_NOT_FOUND
+ *           <br> - ERROR_HIRE_NOT_FOUND
  */
-// router.put("/:id", validateBody(ConversationSchema.updateConversation), HireController.updateConversation)
+router.put("/:id/cancel", auth(), validateBody(HireSchema.cancelHire), HireController.cancelHire)
+/**
+ * @swagger
+ * /api/hires/:id/finish-soon:
+ *   put:
+ *     summary: Finish Soon Hire
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [Finish Soon Hire]
+ *     produces:
+ *       - application/json
+ *     responses:
+ *       200:
+ *         description: The response has fields
+ *           <br> - data{Hire}
+ *           <br> - message=FINISH_SOON_HIRE_SUCCESS
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Hire'
+ *       404:
+ *         description: Not Found
+ *           <br> - ERROR_HIRE_NOT_FOUND
+ */
+router.put("/:id/finish-soon", auth(), HireController.cancelHire)
 /**
  * @swagger
  * /api/conversation/:id:
