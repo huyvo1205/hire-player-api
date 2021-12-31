@@ -8,9 +8,7 @@ class ConversationHelper {
 
         if (playerId) memberIds.push(playerId)
         if (customerId) memberIds.push(customerId)
-        if (userIdLogin) {
-            filter.$or = [{ customer: userIdLogin }, { player: userIdLogin }]
-        }
+        if (userIdLogin) memberIds.push(userIdLogin)
         if (status) filter.status = status
         if (ignoreIds.length) {
             const ignoreIdsSplit = ignoreIds.split(",")
