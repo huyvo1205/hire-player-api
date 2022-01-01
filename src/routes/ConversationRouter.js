@@ -440,7 +440,7 @@ router.get("/:id/message", auth(), ConversationController.getConversationMessage
  *     responses:
  *       201:
  *         description: The response has fields
- *           <br> - data{ conversation:{Conversation}, status, body, sender:{User}, latestMessage:{Message} }
+ *           <br> - data{ conversation:{Conversation}, body, sender:{User}, latestMessage:{Message} }
  *           <br> - message=CREATE_MESSAGE_SUCCESS
  *         content:
  *           application/json:
