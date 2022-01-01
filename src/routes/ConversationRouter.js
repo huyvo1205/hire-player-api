@@ -96,7 +96,7 @@ import "express-async-errors"
  *                       <br> CUSTOMER_CANCEL_HIRE: 4 -> When customer cancel hire
  *                       <br> CUSTOMER_FINISH_SOON: 5 -> When customer finish soon
  *                       <br> CUSTOMER_REQUEST_COMPLAIN: 6 -> When customer request complain
- *                       <br> PLAYER_REQUEST_COMPLAIN: 7 -> When player request complain
+ *                       <br> COMPLETE: 7 -> When player complete
  *                       <br> Data will be added later...
  *                      "
  *           enum:
@@ -436,12 +436,6 @@ router.get("/:id/message", auth(), ConversationController.getConversationMessage
  *              attachments:
  *                  type: array
  *                  description: "Array media"
- *         required: true
- *       - name: senderId
- *         description: "User Id"
- *         in: body
- *         schema:
- *              type: string
  *         required: true
  *     responses:
  *       201:

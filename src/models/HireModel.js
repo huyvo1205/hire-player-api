@@ -10,9 +10,10 @@ const HireSchema = mongoose.Schema(
     {
         customer: { type: ObjectId, ref: "User", index: true },
         player: { type: ObjectId, ref: "User", index: true },
-        acceptedAt: Date,
-        deletedAt: Date,
-        seenAt: Date,
+        acceptedAt: { type: Date, default: null },
+        deletedAt: { type: Date, default: null },
+        canceledAt: { type: Date, default: null },
+        seenAt: { type: Date, default: null },
         cancelReason: String,
         customerNote: String,
         hireStep: {

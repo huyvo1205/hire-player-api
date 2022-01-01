@@ -26,8 +26,11 @@ import "express-async-errors"
  *           type: string
  *         hireStep:
  *           type: number
- *           description: "WAITING: 1, ACCEPT: 2, PLAYER_CANCEL: 3, CUSTOMER_CANCEL: 4, default: 1"
+ *           description: "WAITING: 1, ACCEPT: 2, PLAYER_CANCEL: 3, CUSTOMER_CANCEL: 4, COMPLETE: 5, COMPLAIN: 6, default: 1"
  *         acceptedAt:
+ *           type: string
+ *           format: "date-time"
+ *         canceledAt:
  *           type: string
  *           format: "date-time"
  *         isCompleteSoon:
@@ -165,12 +168,12 @@ router.post("/", auth(), validateBody(HireSchema.createHire), HireController.cre
 router.put("/:id/accept", auth(), HireController.acceptHire)
 /**
  * @swagger
- * /api/hires/:id/cancel:
+ * /api/hires/:id/player-cancel:
  *   put:
- *     summary: Cancel Hire
+ *     summary: Player Cancel Hire
  *     security:
  *       - bearerAuth: []
- *     tags: [Cancel Hire]
+ *     tags: [Player Cancel Hire]
  *     produces:
  *       - application/json
  *     parameters:
@@ -189,11 +192,42 @@ router.put("/:id/accept", auth(), HireController.acceptHire)
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Hire'
+ *       400:
+ *         description: Bad Request
+ *           <br> - ERROR_STATUS_HIRE_INVALID
  *       404:
  *         description: Not Found
  *           <br> - ERROR_HIRE_NOT_FOUND
  */
-router.put("/:id/cancel", auth(), validateBody(HireSchema.cancelHire), HireController.cancelHire)
+router.put("/:id/player-cancel", auth(), validateBody(HireSchema.cancelHire), HireController.playerCancelHire)
+/**
+ * @swagger
+ * /api/hires/:id/customer-cancel:
+ *   put:
+ *     summary: Customer Cancel Hire
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [Customer Cancel Hire]
+ *     produces:
+ *       - application/json
+ *     responses:
+ *       200:
+ *         description: The response has fields
+ *           <br> - data{Hire}
+ *           <br> - message=CANCEL_HIRE_SUCCESS
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Hire'
+ *       400:
+ *         description: Bad Request
+ *           <br> - ERROR_STATUS_HIRE_INVALID
+ *       404:
+ *         description: Not Found
+ *           <br> - ERROR_HIRE_NOT_FOUND
+ */
+router.put("/:id/customer-cancel", auth(), HireController.customerCancelHire)
+
 /**
  * @swagger
  * /api/hires/:id/finish-soon:
@@ -213,34 +247,72 @@ router.put("/:id/cancel", auth(), validateBody(HireSchema.cancelHire), HireContr
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Hire'
+ *       400:
+ *         description: Bad Request
+ *           <br> - ERROR_STATUS_HIRE_INVALID
+ *           <br> - ERROR_ONLY_CUSTOMER_FINISH_SOON
  *       404:
  *         description: Not Found
  *           <br> - ERROR_HIRE_NOT_FOUND
  */
-router.put("/:id/finish-soon", auth(), HireController.cancelHire)
+router.put("/:id/finish-soon", auth(), HireController.finishSoonHire)
 /**
  * @swagger
- * /api/conversation/:id:
- *   delete:
- *     summary: Delete Conversation
+ * /api/hires/:id/complain:
+ *   put:
+ *     summary: Customer Request complain
  *     security:
  *       - bearerAuth: []
- *     tags: [Delete Conversation]
+ *     tags: [Customer Request complain]
  *     produces:
  *       - application/json
- *     parameters:
- *       - name: id
- *         description: "Conversation Id"
- *         in: path
- *         schema:
- *              type: string
  *     responses:
  *       200:
  *         description: The response has fields
- *           <br> - message=DELETE_CONVERSATION_SUCCESS
+ *           <br> - data{Hire}
+ *           <br> - message=REQUEST_COMPLAIN_SUCCESS
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Hire'
+ *       400:
+ *         description: Bad Request
+ *           <br> - ERROR_ONLY_CUSTOMER_REQUEST_COMPLAIN
+ *           <br> - ERROR_STATUS_HIRE_INVALID
  *       404:
  *         description: Not Found
- *           <br> - ERROR_CONVERSATION_NOT_FOUND
+ *           <br> - ERROR_HIRE_NOT_FOUND
  */
+router.put("/:id/complain", auth(), HireController.requestComplain)
+
+/**
+ * @swagger
+ * /api/hires/:id/complete:
+ *   put:
+ *     summary: Player Complete Hire
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [Player Complete Hire]
+ *     produces:
+ *       - application/json
+ *     responses:
+ *       200:
+ *         description: The response has fields
+ *           <br> - data{Hire}
+ *           <br> - message=COMPLETE_HIRE_SUCCESS
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Hire'
+ *       400:
+ *         description: Bad Request
+ *           <br> - ERROR_ONLY_PLAYER_COMPLETE_HIRE
+ *           <br> - ERROR_PLAYER_NOT_COMPLETE_HIRE
+ *           <br> - ERROR_STATUS_HIRE_INVALID
+ *       404:
+ *         description: Not Found
+ *           <br> - ERROR_HIRE_NOT_FOUND
+ */
+router.put("/:id/complete", auth(), HireController.completeHire)
 
 export default router

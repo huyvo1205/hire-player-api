@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-syntax */
 import HireConstant from "../constants/HireConstant"
 import NotificationConstant from "../constants/NotificationConstant"
 import HireValidator from "../validators/HireValidator"
@@ -6,6 +7,9 @@ import HireService from "../services/HireService"
 import ConversationService from "../services/ConversationService"
 import NotificationService from "../services/NotificationService"
 import SocketHelper from "../helpers/SocketHelper"
+import PlayerInfoConstant from "../constants/PlayerConstant"
+import UserModel from "../models/UserModel"
+import { ROLES } from "../constants/UserConstant"
 
 class HireController {
     async createHire(req, res) {
@@ -58,12 +62,23 @@ class HireController {
 
     async acceptHire(req, res) {
         const hireId = req.params.id
-        await HireValidator.validateGetHire({ hireId })
-        const updateData = { hireStep: HireConstant.HIRE_STEPS.ACCEPT }
+        const hire = await HireValidator.validateGetHire({ hireId })
+        const currentHireStep = hire.hireStep
+        const action = HireConstant.HIRE_STEPS.ACCEPT
+        await HireValidator.validateUpdateStatus({ currentHireStep, action })
+
+        const updateData = {
+            hireStep: HireConstant.HIRE_STEPS.ACCEPT,
+            acceptedAt: new Date()
+        }
         const newHire = await HireService.updateHire(hireId, updateData)
-        /* create notify */
         const customerId = newHire.customer.id
         const playerId = newHire.player.id
+        const newPlayerInfo = newHire.player.playerInfo
+        newPlayerInfo.statusHire = PlayerInfoConstant.STATUS_HIRE.BUSY
+        const dataUpdatePlayer = { playerInfo: newPlayerInfo }
+        await UserModel.updateOne({ _id: playerId }, { $set: dataUpdatePlayer })
+        /* create notify */
 
         const createNotifyData = {
             customer: customerId,
@@ -78,6 +93,7 @@ class HireController {
         }
 
         const notify = await NotificationService.createNotification(createNotifyData)
+        /* update status for Player */
         SocketHelper.sendNotify({ userId: customerId, notify })
         SocketHelper.sendHire({ userId: playerId, hire: newHire })
         SocketHelper.sendHire({ userId: customerId, hire: newHire })
@@ -87,11 +103,15 @@ class HireController {
         })
     }
 
-    async cancelHire(req, res) {
+    async playerCancelHire(req, res) {
         const hireId = req.params.id
         const { cancelReason } = req.body
-        await HireValidator.validateGetHire({ hireId })
-        const updateData = { hireStep: HireConstant.HIRE_STEPS.PLAYER_CANCEL, cancelReason }
+        const hire = await HireValidator.validateGetHire({ hireId })
+        const currentHireStep = hire.hireStep
+        const action = HireConstant.HIRE_STEPS.PLAYER_CANCEL
+        await HireValidator.validateUpdateStatus({ currentHireStep, action })
+
+        const updateData = { hireStep: HireConstant.HIRE_STEPS.PLAYER_CANCEL, cancelReason, canceledAt: new Date() }
         const newHire = await HireService.updateHire(hireId, updateData)
         /* create notify */
         const customerId = newHire.customer.id
@@ -119,9 +139,50 @@ class HireController {
         })
     }
 
-    async finishSoonHire(req, res) {
+    async customerCancelHire(req, res) {
         const hireId = req.params.id
-        await HireValidator.validateGetHire({ hireId })
+        const hire = await HireValidator.validateGetHire({ hireId })
+        const currentHireStep = hire.hireStep
+        const action = HireConstant.HIRE_STEPS.CUSTOMER_CANCEL
+        await HireValidator.validateUpdateStatus({ currentHireStep, action })
+
+        const updateData = { hireStep: HireConstant.HIRE_STEPS.CUSTOMER_CANCEL, canceledAt: new Date() }
+        const newHire = await HireService.updateHire(hireId, updateData)
+        /* create notify */
+        const customerId = newHire.customer.id
+        const playerId = newHire.player.id
+
+        const createNotifyData = {
+            customer: customerId,
+            player: playerId,
+            action: NotificationConstant.ACTIONS.CUSTOMER_CANCEL_HIRE,
+            href: `hires/${newHire.id}`,
+            payload: {
+                conversationId: newHire.conversation,
+                hireId
+            },
+            image: newHire.customer.avatar
+        }
+
+        const notify = await NotificationService.createNotification(createNotifyData)
+        SocketHelper.sendNotify({ userId: playerId, notify })
+        SocketHelper.sendHire({ userId: playerId, hire: newHire })
+        SocketHelper.sendHire({ userId: customerId, hire: newHire })
+        res.status(200).send({
+            data: newHire,
+            message: HireConstant.SUCCESS_CODES.CANCEL_HIRE_SUCCESS
+        })
+    }
+
+    async finishSoonHire(req, res) {
+        const userIdLogin = req.user.id
+        const hireId = req.params.id
+        const hire = await HireValidator.validateGetHire({ hireId })
+        await HireValidator.validateRequestFinishSoon({ userIdLogin, customerId: hire.customer })
+        const currentHireStep = hire.hireStep
+        const action = HireConstant.HIRE_STEPS.COMPLETE
+        await HireValidator.validateUpdateStatus({ currentHireStep, action })
+
         const updateData = { hireStep: HireConstant.HIRE_STEPS.COMPLETE, isCompleteSoon: true }
         const newHire = await HireService.updateHire(hireId, updateData)
         /* create notify */
@@ -151,9 +212,16 @@ class HireController {
     }
 
     async requestComplain(req, res) {
+        const userIdLogin = req.user.id
         const hireId = req.params.id
-        await HireValidator.validateGetHire({ hireId })
-        const updateData = { hireStep: HireConstant.HIRE_STEPS.COMPLETE, isCompleteSoon: true }
+        const oldHire = await HireValidator.validateGetHire({ hireId })
+        await HireValidator.validateRequestComplain({ userIdLogin, customerId: oldHire.customer })
+
+        const currentHireStep = oldHire.hireStep
+        const action = HireConstant.HIRE_STEPS.COMPLAIN
+        await HireValidator.validateUpdateStatus({ currentHireStep, action })
+
+        const updateData = { hireStep: HireConstant.HIRE_STEPS.COMPLAIN }
         const newHire = await HireService.updateHire(hireId, updateData)
         /* create notify */
         const customerId = newHire.customer.id
@@ -162,7 +230,7 @@ class HireController {
         const createNotifyData = {
             customer: customerId,
             player: playerId,
-            action: NotificationConstant.ACTIONS.CUSTOMER_FINISH_SOON,
+            action: NotificationConstant.ACTIONS.CUSTOMER_REQUEST_COMPLAIN,
             href: `hires/${newHire.id}`,
             payload: {
                 conversationId: newHire.conversation,
@@ -170,14 +238,67 @@ class HireController {
             },
             image: newHire.customer.avatar
         }
-
         const notify = await NotificationService.createNotification(createNotifyData)
         SocketHelper.sendNotify({ userId: playerId, notify })
+
+        const usersAdmin = await UserModel.find({ roles: { $in: [ROLES.ADMIN] } }).select("_id")
+        for (const userAdmin of usersAdmin) {
+            const socketIds = global.UsersOnline[`${userAdmin.id}`] || []
+            socketIds.forEach(socketId => {
+                if (socketId) {
+                    global.io.to(socketId).emit("onNotifications", notify)
+                }
+            })
+        }
+
+        SocketHelper.sendHire({ userId: playerId, hire: newHire })
+        SocketHelper.sendHire({ userId: customerId, hire: newHire })
+
+        res.status(200).send({
+            data: newHire,
+            message: HireConstant.SUCCESS_CODES.REQUEST_COMPLAIN_SUCCESS
+        })
+    }
+
+    async completeHire(req, res) {
+        const userIdLogin = req.user.id
+        const hireId = req.params.id
+        const hire = await HireValidator.validateGetHire({ hireId })
+        const currentHireStep = hire.hireStep
+        const action = HireConstant.HIRE_STEPS.COMPLETE
+        await HireValidator.validateUpdateStatus({ currentHireStep, action })
+        await HireValidator.validateComplete({ userIdLogin, playerId: hire.player, hire })
+
+        const updateData = {
+            hireStep: HireConstant.HIRE_STEPS.COMPLETE
+        }
+        const newHire = await HireService.updateHire(hireId, updateData)
+        const customerId = newHire.customer.id
+        const playerId = newHire.player.id
+        const newPlayerInfo = newHire.player.playerInfo
+        newPlayerInfo.statusHire = PlayerInfoConstant.STATUS_HIRE.READY
+        const dataUpdatePlayer = { playerInfo: newPlayerInfo }
+        await UserModel.updateOne({ _id: playerId }, { $set: dataUpdatePlayer })
+        /* create notify */
+        const createNotifyData = {
+            customer: customerId,
+            player: playerId,
+            action: NotificationConstant.ACTIONS.COMPLETE,
+            href: `hires/${newHire.id}`,
+            payload: {
+                conversationId: newHire.conversation,
+                hireId
+            },
+            image: newHire.player.playerInfo.playerAvatar
+        }
+
+        const notify = await NotificationService.createNotification(createNotifyData)
+        SocketHelper.sendNotify({ userId: customerId, notify })
         SocketHelper.sendHire({ userId: playerId, hire: newHire })
         SocketHelper.sendHire({ userId: customerId, hire: newHire })
         res.status(200).send({
             data: newHire,
-            message: HireConstant.SUCCESS_CODES.FINISH_SOON_HIRE_SUCCESS
+            message: HireConstant.SUCCESS_CODES.COMPLETE_HIRE_SUCCESS
         })
     }
 
