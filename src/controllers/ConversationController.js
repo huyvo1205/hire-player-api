@@ -119,7 +119,6 @@ class ConversationController {
         const newConversation = await ConversationService.updateConversation(conversationId, updateData)
         const dataRes = {
             conversation: newConversation,
-            status: createMessage.status,
             body,
             sender,
             latestMessage: messageObject
