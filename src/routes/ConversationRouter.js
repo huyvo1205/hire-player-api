@@ -367,6 +367,11 @@ router.delete("/:id", auth(), ConversationController.deleteConversation)
  *         in: query
  *         schema:
  *              type: string
+ *       - name: latestMessageId
+ *         description: "Latest Message Id"
+ *         in: query
+ *         schema:
+ *              type: string
  *       - name: sortBy
  *         description: "Sorting criteria using the format: sortField:(desc|asc). Multiple sorting criteria should be separated by commas (,)"
  *         in: query

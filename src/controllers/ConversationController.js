@@ -144,10 +144,13 @@ class ConversationController {
         const userIdLogin = req.user.id
         const conversationId = req.params.id
         await ConversationValidator.validateUserInConversation({ conversationId, userIdLogin })
-        const { senderId } = req.query
+        const { senderId, latestMessageId } = req.query
         const filter = { conversation: conversationId }
         if (senderId) filter.sender = senderId
-        const options = pick(req.query, ["sortBy", "limit", "page", "populate"])
+        if (latestMessageId) {
+            filter._id = { $lt: latestMessageId }
+        }
+        const options = pick(req.query, ["sortBy", "limit", "populate"])
         const messages = await MessageService.getListMessages(filter, options)
         return res.status(200).send({
             data: messages,
