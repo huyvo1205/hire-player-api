@@ -94,12 +94,14 @@ const initSocket = server => {
         socket.on("disconnect", async () => {
             console.log(`${socket.id} disconnect !!!`)
             console.log("socket.userId", socket.userId)
-            const updateData = { isOnline: false }
-            /* update user online */
-            await UserModel.updateOne({ _id: socket.userId }, { $set: updateData })
             const newSocketIds = UsersOnline[socket.userId].filter(socketId => socketId !== socket.id)
             UsersOnline[socket.userId] = newSocketIds
-            if (newSocketIds.length <= 0) delete UsersOnline[socket.userId]
+            if (newSocketIds.length <= 0) {
+                delete UsersOnline[socket.userId]
+                const updateData = { isOnline: false }
+                /* update user online */
+                await UserModel.updateOne({ _id: socket.userId }, { $set: updateData })
+            }
             console.log("UsersOnline", UsersOnline)
         })
     })

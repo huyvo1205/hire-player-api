@@ -27,7 +27,6 @@ const createConversationMessage = {
     type: "object",
     required: ["body"],
     properties: {
-        senderId: mongoObjectId,
         body: {
             type: "object",
             properties: {
