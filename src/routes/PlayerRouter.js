@@ -78,32 +78,6 @@ router.get("/", PlayerController.getPlayersInfo)
  *     tags: [Update Player Info]
  *     produces:
  *       - application/json
- *     parameters:
- *       - name: id
- *         description: Player Id
- *         in: path
- *         schema:
- *              type: string
- *       - name: gameName
- *         description: Player's gameName
- *         in: body
- *         schema:
- *              type: string
- *       - name: costPerHour
- *         description: Cost Per Hour
- *         in: body
- *         schema:
- *              type: number
- *       - name: description
- *         description: Player's description
- *         in: body
- *         schema:
- *              type: string
- *       - name: rank
- *         description: Player's rank
- *         in: body
- *         schema:
- *              type: string
  *     responses:
  *       200:
  *         description: The response has fields
@@ -117,7 +91,7 @@ router.get("/", PlayerController.getPlayersInfo)
  *         description: Not Found
  *           <br> - ERROR_PLAYER_NOT_FOUND
  */
-router.put("/:id", auth(), validateBody(PlayerInfoSchema.updatePlayerInfo), PlayerController.updatePlayerInfo)
+router.put("/:id", auth(), PlayerController.updatePlayerInfo)
 /**
  * @swagger
  * /api/players/:id:

@@ -23,10 +23,10 @@ class PlayerController {
     }
 
     async updatePlayerInfo(req, res) {
-        const playerId = req.params.id
-        await PlayerValidator.validateUpdatePlayerInfo({ playerId })
+        const userId = req.params.id
+        await PlayerValidator.validateUpdatePlayerInfo({ userId })
         const updateData = { ...req.body }
-        const updatePlayerInfo = await PlayerService.updatePlayerInfo(playerId, updateData)
+        const updatePlayerInfo = await PlayerService.updatePlayerInfo(userId, updateData)
         res.status(200).send({
             data: updatePlayerInfo,
             message: PlayerConstant.SUCCESS_CODES.UPDATE_PLAYER_INFO_SUCCESS
