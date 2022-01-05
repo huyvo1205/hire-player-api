@@ -35,6 +35,18 @@ export default {
             BUCKET: "images",
             ALLOWED_CONTENT_TYPES: ["image/png", "image/jpeg"],
             MAX_FILE_SIZE: 8388608
+        },
+        /* Upload images for chat */
+        CHAT: {
+            FIELDS: [
+                {
+                    name: "images",
+                    maxCount: 10
+                }
+            ],
+            BUCKET: "chat",
+            ALLOWED_CONTENT_TYPES: ["image/png", "image/jpeg"],
+            MAX_FILE_SIZE: 5388608
         }
     }
 }

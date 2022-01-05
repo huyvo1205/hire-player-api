@@ -1,27 +1,46 @@
+/* eslint-disable no-await-in-loop */
+/* eslint-disable no-undef */
+/* eslint-disable no-restricted-syntax */
 import fs from "fs"
 import multer from "multer"
 import path from "path"
 import util from "util"
 import CreateError from "http-errors"
 import url from "url"
+import sharp from "sharp"
 import { ERROR_CODES } from "../constants/GlobalConstant"
 import Config from "../config/config"
 
-const formatFiles = ({ req, config, files }) => {
+const formatFiles = async ({ req, config, files }) => {
     const host = url.format({ protocol: req.protocol, host: req.get("host") })
     if (!files) {
         return []
     }
 
     const newFiles = []
-    config.FIELDS.forEach(item => {
-        files[item.name].forEach(file => {
-            file.link = `${host}/storage/${config.BUCKET}/${file.filename}`
+    // config.FIELDS.forEach(item => {
+    //     files[item.name].forEach(file => {
+    //         file.link = `${host}/storage/${config.BUCKET}/${file.filename}`
+    //         delete file.path
+    //         delete file.destination
+    //         newFiles.push(file)
+    //     })
+    // })
+    const quality = 30
+    for (const item of config.FIELDS) {
+        for (const file of files[item.name]) {
+            await sharp(file.path)
+                .jpeg({ quality })
+                .toFile(path.resolve(`src/public/storage/${config.BUCKET}/${quality}_${file.filename}`))
+            file.link = `${host}/storage/${config.BUCKET}/${quality}_${file.filename}`
+            fs.unlinkSync(file.path)
             delete file.path
             delete file.destination
+            delete file.encoding
+            delete file.originalname
             newFiles.push(file)
-        })
-    })
+        }
+    }
 
     return newFiles
 }
@@ -45,7 +64,9 @@ const uploadFiles = async (key = "IMAGES", req, res) => {
                 const err = new CreateError.BadRequest(ERROR_CODES.ERROR_MIMETYPE_INVALID)
                 return callback(err)
             }
-            const filename = `${Date.now()}-hire-player-${file.originalname}`
+            const userIdLogin = req.user.id
+            const [_, mimeType] = file.mimetype.split("/")
+            const filename = `${Date.now()}_${userIdLogin}.${mimeType}`
             return callback(null, filename)
         }
     })
@@ -56,7 +77,7 @@ const uploadFiles = async (key = "IMAGES", req, res) => {
     const uploadFilesMiddleware = util.promisify(uploadMulter.fields(CONFIG_BY_KEY.FIELDS))
     await uploadFilesMiddleware(req, res)
     /* ~ handle files ~ */
-    const files = formatFiles({ req, config: CONFIG_BY_KEY, files: req.files })
+    const files = await formatFiles({ req, config: CONFIG_BY_KEY, files: req.files })
     return files
 }
 

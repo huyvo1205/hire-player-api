@@ -7,6 +7,7 @@ import ReviewRouter from "./ReviewRouter"
 import ConversationRouter from "./ConversationRouter"
 import MessageRouter from "./MessageRouter"
 import HireRouter from "./HireRouter"
+import ServiceUploadRouter from "./ServiceUploadRouter"
 
 const router = express.Router()
 
@@ -18,4 +19,5 @@ router.use("/reviews", ReviewRouter)
 router.use("/conversations", ConversationRouter)
 router.use("/messages", MessageRouter)
 router.use("/hires", HireRouter)
+router.use("/service-upload", ServiceUploadRouter)
 export default router
