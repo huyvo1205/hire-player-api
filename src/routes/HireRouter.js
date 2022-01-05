@@ -112,12 +112,6 @@ router.get("/:id", auth(), HireController.getDetailHire)
  *         schema:
  *              type: number
  *         required: true
- *       - name: cost
- *         description: "Cost"
- *         in: body
- *         schema:
- *              type: number
- *         required: true
  *       - name: customerNote
  *         description: "Customer's Note"
  *         in: body
@@ -127,19 +121,21 @@ router.get("/:id", auth(), HireController.getDetailHire)
  *     responses:
  *       201:
  *         description: The response has fields
- *           <br> - data{Conversation}
+ *           <br> - data{hire, conversation}
  *           <br> - message=CREATE_CONVERSATION_SUCCESS
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Conversation'
+ *               $ref: '#/components/schemas/Hire'
  *       400:
- *         description: Not Found
+ *         description: Bad Request
  *           <br> - ERROR_PLAYER_ID_INVALID
  *           <br> - ERROR_CUSTOMER_ID_INVALID
  *           <br> - ERROR_USER_NOT_PLAYER
  *           <br> - ERROR_PLAYER_NOT_RECEIVE_HIRE
  *           <br> - ERROR_PLAYER_BUSY
+ *           <br> - ERROR_TIME_RENT_TOO_LONG
+ *           <br> - ERROR_YOU_HAVE_HIRED_THIS_PLAYER_WAIT_FOR_THE_PLAYER_TO_ACCEPT_IT
  */
 router.post("/", auth(), validateBody(HireSchema.createHire), HireController.createHire)
 /**

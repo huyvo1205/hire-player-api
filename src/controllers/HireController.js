@@ -15,9 +15,10 @@ class HireController {
     async createHire(req, res) {
         const customerId = req.user.id
         const { playerId, timeRent } = req.body
-        await HireValidator.validateCreateHire({ playerId, timeRent })
-
-        const createData = { ...req.body, customer: customerId, player: playerId }
+        const oldPlayer = await HireValidator.validateCreateHire({ customerId, playerId, timeRent })
+        const { costPerHour } = oldPlayer.playerInfo
+        const cost = timeRent * costPerHour
+        const createData = { ...req.body, customer: customerId, player: playerId, cost }
         /* create conversation */
         const dataCreateConversation = {
             members: [playerId, customerId],
