@@ -5,17 +5,20 @@ import HireValidator from "../validators/HireValidator"
 import ConversationValidator from "../validators/ConversationValidator"
 import HireService from "../services/HireService"
 import ConversationService from "../services/ConversationService"
+import BalanceFluctuationService from "../services/BalanceFluctuationService"
 import NotificationService from "../services/NotificationService"
 import SocketHelper from "../helpers/SocketHelper"
 import PlayerInfoConstant from "../constants/PlayerConstant"
 import UserModel from "../models/UserModel"
 import { ROLES } from "../constants/UserConstant"
+import BalanceFluctuationConstant from "../constants/BalanceFluctuationConstant"
 
 class HireController {
     async createHire(req, res) {
         const customerId = req.user.id
+        const customer = req.user
         const { playerId, timeRent } = req.body
-        const oldPlayer = await HireValidator.validateCreateHire({ customerId, playerId, timeRent })
+        const oldPlayer = await HireValidator.validateCreateHire({ customerId, playerId, timeRent, customer })
         const { costPerHour } = oldPlayer.playerInfo
         const cost = timeRent * costPerHour
         const createData = { ...req.body, customer: customerId, player: playerId, cost }
@@ -52,6 +55,14 @@ class HireController {
         SocketHelper.sendNotify({ userId: playerId, notify })
         SocketHelper.sendHire({ userId: playerId, hire: createHire })
         SocketHelper.sendHire({ userId: customerId, hire: createHire })
+        /* create balance fluctuation */
+        const dataCreate = {
+            user: customerId,
+            amount: cost,
+            operation: BalanceFluctuationConstant.OPERATIONS.SUBTRACT,
+            action: BalanceFluctuationConstant.ACTIONS.RENT_PLAYER
+        }
+        await BalanceFluctuationService.createBalanceFluctuation(dataCreate)
         return res.status(201).send({
             data: {
                 hire: createHire,

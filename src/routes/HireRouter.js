@@ -136,6 +136,7 @@ router.get("/:id", auth(), HireController.getDetailHire)
  *           <br> - ERROR_PLAYER_BUSY
  *           <br> - ERROR_TIME_RENT_TOO_LONG
  *           <br> - ERROR_YOU_HAVE_HIRED_THIS_PLAYER_WAIT_FOR_THE_PLAYER_TO_ACCEPT_IT
+ *           <br> - ERROR_CUSTOMER_NOT_ENOUGH_MONEY
  */
 router.post("/", auth(), validateBody(HireSchema.createHire), HireController.createHire)
 /**

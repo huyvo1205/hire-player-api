@@ -7,12 +7,15 @@ import HireModel from "../models/HireModel"
 import { TIME_ZONE } from "../constants/GlobalConstant"
 
 class HireValidator {
-    async validateCreateHire({ customerId, playerId, timeRent }) {
+    async validateCreateHire({ customerId, playerId, timeRent, customer }) {
+        const { money } = customer
         const hourNow = MomentTimezone().tz(TIME_ZONE).hours()
         console.log("hourNow", hourNow)
         const player = await UserModel.findOne({ _id: playerId })
         if (!player) throw new CreateError.BadRequest(HireConstant.ERROR_CODES.ERROR_PLAYER_ID_INVALID)
         /* validate */
+        const { costPerHour } = player.playerInfo
+        const cost = timeRent * costPerHour
         const { isPlayer } = player
         const { isReceiveHire, timeMaxHire, statusHire } = player.playerInfo
         if (!isPlayer) throw new CreateError.BadRequest(HireConstant.ERROR_CODES.ERROR_USER_NOT_PLAYER)
@@ -20,6 +23,7 @@ class HireValidator {
         if (statusHire === PlayerConstant.STATUS_HIRE.BUSY)
             throw new CreateError.BadRequest(HireConstant.ERROR_CODES.ERROR_PLAYER_BUSY)
         if (timeRent > timeMaxHire) throw new CreateError.BadRequest(HireConstant.ERROR_CODES.ERROR_TIME_RENT_TOO_LONG)
+        if (cost > money) throw new CreateError.BadRequest(HireConstant.ERROR_CODES.ERROR_CUSTOMER_NOT_ENOUGH_MONEY)
         const hire = await HireModel.findOne({
             customer: customerId,
             player: playerId,
