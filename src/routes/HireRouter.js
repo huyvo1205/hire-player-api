@@ -158,6 +158,10 @@ router.post("/", auth(), validateBody(HireSchema.createHire), HireController.cre
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Hire'
+ *       400:
+ *         description: Bad Request
+ *           <br> - ERROR_STATUS_HIRE_INVALID
+ *           <br> - ERROR_ONLY_PLAYER_ACCEPT_HIRE
  *       404:
  *         description: Not Found
  *           <br> - ERROR_HIRE_NOT_FOUND
@@ -192,6 +196,7 @@ router.put("/:id/accept", auth(), HireController.acceptHire)
  *       400:
  *         description: Bad Request
  *           <br> - ERROR_STATUS_HIRE_INVALID
+ *           <br> - ERROR_ONLY_PLAYER_CANCEL_HIRE
  *       404:
  *         description: Not Found
  *           <br> - ERROR_HIRE_NOT_FOUND
@@ -219,6 +224,7 @@ router.put("/:id/player-cancel", auth(), validateBody(HireSchema.cancelHire), Hi
  *       400:
  *         description: Bad Request
  *           <br> - ERROR_STATUS_HIRE_INVALID
+ *           <br> - ERROR_ONLY_CUSTOMER_CANCEL_HIRE
  *       404:
  *         description: Not Found
  *           <br> - ERROR_HIRE_NOT_FOUND

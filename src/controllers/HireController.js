@@ -45,8 +45,8 @@ class HireController {
             action: NotificationConstant.ACTIONS.REQUEST_HIRE,
             href: `hires/${createHire.id}`,
             payload: {
-                conversationId: createConversation.id,
-                hireId: createHire.id
+                conversation: createConversation.id,
+                hire: createHire.id
             },
             image: customerInfo.avatar
         }
@@ -74,11 +74,13 @@ class HireController {
 
     async acceptHire(req, res) {
         const hireId = req.params.id
+        const userIdLogin = req.user.id
+
         const hire = await HireValidator.validateGetHire({ hireId })
+        await HireValidator.validateAcceptHire({ userIdLogin, playerId: hire.player })
         const currentHireStep = hire.hireStep
         const action = HireConstant.HIRE_STEPS.ACCEPT
         await HireValidator.validateUpdateStatus({ currentHireStep, action })
-
         const updateData = {
             hireStep: HireConstant.HIRE_STEPS.ACCEPT,
             acceptedAt: new Date()
@@ -86,6 +88,7 @@ class HireController {
         const newHire = await HireService.updateHire(hireId, updateData)
         const customerId = newHire.customer.id
         const playerId = newHire.player.id
+        /* update status for Player */
         const newPlayerInfo = newHire.player.playerInfo
         newPlayerInfo.statusHire = PlayerInfoConstant.STATUS_HIRE.BUSY
         const dataUpdatePlayer = { playerInfo: newPlayerInfo }
@@ -98,14 +101,22 @@ class HireController {
             action: NotificationConstant.ACTIONS.PLAYER_ACCEPT_HIRE,
             href: `hires/${newHire.id}`,
             payload: {
-                conversationId: newHire.conversation,
-                hireId
+                conversation: newHire.conversation,
+                hire: hireId
             },
             image: newHire.player.playerInfo.playerAvatar
         }
 
         const notify = await NotificationService.createNotification(createNotifyData)
-        /* update status for Player */
+        /* create balance fluctuation */
+        const { cost } = newHire
+        const dataCreate = {
+            user: customerId,
+            amount: cost,
+            operation: BalanceFluctuationConstant.OPERATIONS.SUBTRACT,
+            action: BalanceFluctuationConstant.ACTIONS.RENT_PLAYER
+        }
+        await BalanceFluctuationService.createBalanceFluctuation(dataCreate)
         SocketHelper.sendNotify({ userId: customerId, notify })
         SocketHelper.sendHire({ userId: playerId, hire: newHire })
         SocketHelper.sendHire({ userId: customerId, hire: newHire })
@@ -117,8 +128,11 @@ class HireController {
 
     async playerCancelHire(req, res) {
         const hireId = req.params.id
+        const userIdLogin = req.user.id
         const { cancelReason } = req.body
+
         const hire = await HireValidator.validateGetHire({ hireId })
+        await HireValidator.validatePlayerCancelHire({ userIdLogin, playerId: hire.player })
         const currentHireStep = hire.hireStep
         const action = HireConstant.HIRE_STEPS.PLAYER_CANCEL
         await HireValidator.validateUpdateStatus({ currentHireStep, action })
@@ -135,8 +149,8 @@ class HireController {
             action: NotificationConstant.ACTIONS.PLAYER_CANCEL_HIRE,
             href: `hires/${newHire.id}`,
             payload: {
-                conversationId: newHire.conversation,
-                hireId
+                conversation: newHire.conversation,
+                hire: hireId
             },
             image: newHire.player.playerInfo.playerAvatar
         }
@@ -153,7 +167,9 @@ class HireController {
 
     async customerCancelHire(req, res) {
         const hireId = req.params.id
+        const userIdLogin = req.user.id
         const hire = await HireValidator.validateGetHire({ hireId })
+        await HireValidator.validateCustomerCancelHire({ userIdLogin, customerId: hire.customer })
         const currentHireStep = hire.hireStep
         const action = HireConstant.HIRE_STEPS.CUSTOMER_CANCEL
         await HireValidator.validateUpdateStatus({ currentHireStep, action })
@@ -170,8 +186,8 @@ class HireController {
             action: NotificationConstant.ACTIONS.CUSTOMER_CANCEL_HIRE,
             href: `hires/${newHire.id}`,
             payload: {
-                conversationId: newHire.conversation,
-                hireId
+                conversation: newHire.conversation,
+                hire: hireId
             },
             image: newHire.customer.avatar
         }
@@ -207,8 +223,8 @@ class HireController {
             action: NotificationConstant.ACTIONS.CUSTOMER_FINISH_SOON,
             href: `hires/${newHire.id}`,
             payload: {
-                conversationId: newHire.conversation,
-                hireId
+                conversation: newHire.conversation,
+                hire: hireId
             },
             image: newHire.customer.avatar
         }
@@ -245,8 +261,8 @@ class HireController {
             action: NotificationConstant.ACTIONS.CUSTOMER_REQUEST_COMPLAIN,
             href: `hires/${newHire.id}`,
             payload: {
-                conversationId: newHire.conversation,
-                hireId
+                conversation: newHire.conversation,
+                hire: hireId
             },
             image: newHire.customer.avatar
         }
@@ -298,8 +314,8 @@ class HireController {
             action: NotificationConstant.ACTIONS.COMPLETE,
             href: `hires/${newHire.id}`,
             payload: {
-                conversationId: newHire.conversation,
-                hireId
+                conversation: newHire.conversation,
+                hire: hireId
             },
             image: newHire.player.playerInfo.playerAvatar
         }

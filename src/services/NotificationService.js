@@ -8,6 +8,7 @@ class NotificationService {
             return NotificationModel.findById(newNotification.id)
                 .populate(NotificationConstant.POPULATE_CUSTOMER)
                 .populate(NotificationConstant.POPULATE_PLAYER)
+                .populate(NotificationConstant.POPULATE_HIRE)
         }
         return newNotification
     }
@@ -18,6 +19,7 @@ class NotificationService {
             const Notification = await NotificationModel.findById(id)
                 .populate(NotificationConstant.POPULATE_CUSTOMER)
                 .populate(NotificationConstant.POPULATE_PLAYER)
+                .populate(NotificationConstant.POPULATE_HIRE)
             return Notification
         }
         return newNotification
@@ -27,6 +29,7 @@ class NotificationService {
         return NotificationModel.findOne({ _id: id })
             .populate(NotificationConstant.POPULATE_CUSTOMER)
             .populate(NotificationConstant.POPULATE_PLAYER)
+            .populate(NotificationConstant.POPULATE_HIRE)
     }
 
     async deleteNotification(id) {
@@ -34,8 +37,8 @@ class NotificationService {
     }
 
     async getListNotifications(filter, options) {
-        const Notifications = await NotificationModel.paginate(filter, options)
-        return Notifications
+        const notifications = await NotificationModel.paginate(filter, options)
+        return notifications
     }
 }
 

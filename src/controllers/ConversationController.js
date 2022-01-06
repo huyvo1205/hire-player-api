@@ -196,8 +196,8 @@ class ConversationController {
             action: NotificationConstant.ACTIONS.REQUEST_COMPLAIN,
             href: `hires/${conversationId}`,
             payload: {
-                conversationId: conversation.id,
-                hireId
+                conversation: conversation.id,
+                hire: hireId
             },
             image: user.avatar
         }

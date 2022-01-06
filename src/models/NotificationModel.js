@@ -13,8 +13,8 @@ const NotificationSchema = new Schema(
         action: { type: Number, enum: Object.values(NotificationConstant.ACTIONS), index: true },
         href: String, // hires/61976bbda6125e5448f0e01e
         payload: {
-            conversationId: { type: ObjectId, ref: "Conversation", index: true },
-            hireId: { type: ObjectId, ref: "Hire", index: true }
+            conversation: { type: ObjectId, ref: "Conversation", index: true },
+            hire: { type: ObjectId, ref: "Hire", index: true }
         },
         image: {},
         deletedAt: Date,

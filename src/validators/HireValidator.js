@@ -54,6 +54,24 @@ class HireValidator {
         }
     }
 
+    async validateAcceptHire({ userIdLogin, playerId }) {
+        if (userIdLogin !== playerId.toString()) {
+            throw new CreateError.BadRequest(HireConstant.ERROR_CODES.ERROR_ONLY_PLAYER_ACCEPT_HIRE)
+        }
+    }
+
+    async validatePlayerCancelHire({ userIdLogin, playerId }) {
+        if (userIdLogin !== playerId.toString()) {
+            throw new CreateError.BadRequest(HireConstant.ERROR_CODES.ERROR_ONLY_PLAYER_CANCEL_HIRE)
+        }
+    }
+
+    async validateCustomerCancelHire({ userIdLogin, customerId }) {
+        if (userIdLogin !== customerId.toString()) {
+            throw new CreateError.BadRequest(HireConstant.ERROR_CODES.ERROR_ONLY_CUSTOMER_CANCEL_HIRE)
+        }
+    }
+
     async validateComplete({ userIdLogin, playerId, hire }) {
         const { timeRent, acceptedAt } = hire
         const now = MomentTimezone().tz(TIME_ZONE).toISOString()
