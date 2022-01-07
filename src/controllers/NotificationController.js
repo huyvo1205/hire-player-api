@@ -5,9 +5,7 @@ import NotificationService from "../services/NotificationService"
 class NotificationController {
     async getNotifications(req, res) {
         const userIdLogin = req.user.id
-        const filter = {
-            $or: [{ customer: userIdLogin }, { player: userIdLogin }]
-        }
+        const filter = { receiver: userIdLogin }
         const options = pick(req.query, ["sortBy", "limit", "page", "populate"])
         const notifications = await NotificationService.getListNotifications(filter, options)
         return res.status(200).send({

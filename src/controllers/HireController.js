@@ -1,3 +1,4 @@
+/* eslint-disable no-await-in-loop */
 /* eslint-disable no-restricted-syntax */
 import HireConstant from "../constants/HireConstant"
 import NotificationConstant from "../constants/NotificationConstant"
@@ -42,6 +43,7 @@ class HireController {
         const createNotifyData = {
             customer: customerId,
             player: playerId,
+            receiver: playerId,
             action: NotificationConstant.ACTIONS.REQUEST_HIRE,
             href: `hires/${createHire.id}`,
             payload: {
@@ -98,6 +100,7 @@ class HireController {
         const createNotifyData = {
             customer: customerId,
             player: playerId,
+            receiver: customerId,
             action: NotificationConstant.ACTIONS.PLAYER_ACCEPT_HIRE,
             href: `hires/${newHire.id}`,
             payload: {
@@ -146,6 +149,7 @@ class HireController {
         const createNotifyData = {
             customer: customerId,
             player: playerId,
+            receiver: customerId,
             action: NotificationConstant.ACTIONS.PLAYER_CANCEL_HIRE,
             href: `hires/${newHire.id}`,
             payload: {
@@ -183,6 +187,7 @@ class HireController {
         const createNotifyData = {
             customer: customerId,
             player: playerId,
+            receiver: playerId,
             action: NotificationConstant.ACTIONS.CUSTOMER_CANCEL_HIRE,
             href: `hires/${newHire.id}`,
             payload: {
@@ -220,6 +225,7 @@ class HireController {
         const createNotifyData = {
             customer: customerId,
             player: playerId,
+            receiver: playerId,
             action: NotificationConstant.ACTIONS.CUSTOMER_FINISH_SOON,
             href: `hires/${newHire.id}`,
             payload: {
@@ -258,6 +264,7 @@ class HireController {
         const createNotifyData = {
             customer: customerId,
             player: playerId,
+            receiver: playerId,
             action: NotificationConstant.ACTIONS.CUSTOMER_REQUEST_COMPLAIN,
             href: `hires/${newHire.id}`,
             payload: {
@@ -271,12 +278,9 @@ class HireController {
 
         const usersAdmin = await UserModel.find({ roles: { $in: [ROLES.ADMIN] } }).select("_id")
         for (const userAdmin of usersAdmin) {
-            const socketIds = global.UsersOnline[`${userAdmin.id}`] || []
-            socketIds.forEach(socketId => {
-                if (socketId) {
-                    global.io.to(socketId).emit("onNotifications", notify)
-                }
-            })
+            createNotifyData.receiver = userAdmin.id
+            const notifyAdmin = await NotificationService.createNotification(createNotifyData)
+            SocketHelper.sendNotify({ userId: userAdmin.id, notify: notifyAdmin })
         }
 
         SocketHelper.sendHire({ userId: playerId, hire: newHire })
@@ -311,6 +315,7 @@ class HireController {
         const createNotifyData = {
             customer: customerId,
             player: playerId,
+            receiver: customerId,
             action: NotificationConstant.ACTIONS.COMPLETE,
             href: `hires/${newHire.id}`,
             payload: {

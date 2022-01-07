@@ -10,6 +10,7 @@ const NotificationSchema = new Schema(
     {
         customer: { type: ObjectId, ref: "User" },
         player: { type: ObjectId, ref: "User" },
+        receiver: { type: ObjectId, ref: "User", index: true },
         action: { type: Number, enum: Object.values(NotificationConstant.ACTIONS), index: true },
         href: String, // hires/61976bbda6125e5448f0e01e
         payload: {
