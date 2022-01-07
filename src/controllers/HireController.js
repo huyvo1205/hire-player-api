@@ -96,7 +96,6 @@ class HireController {
         const dataUpdatePlayer = { playerInfo: newPlayerInfo }
         await UserModel.updateOne({ _id: playerId }, { $set: dataUpdatePlayer })
         /* create notify */
-
         const createNotifyData = {
             customer: customerId,
             player: playerId,
@@ -111,15 +110,6 @@ class HireController {
         }
 
         const notify = await NotificationService.createNotification(createNotifyData)
-        /* create balance fluctuation */
-        const { cost } = newHire
-        const dataCreate = {
-            user: customerId,
-            amount: cost,
-            operation: BalanceFluctuationConstant.OPERATIONS.SUBTRACT,
-            action: BalanceFluctuationConstant.ACTIONS.RENT_PLAYER
-        }
-        await BalanceFluctuationService.createBalanceFluctuation(dataCreate)
         SocketHelper.sendNotify({ userId: customerId, notify })
         SocketHelper.sendHire({ userId: playerId, hire: newHire })
         SocketHelper.sendHire({ userId: customerId, hire: newHire })
@@ -163,6 +153,14 @@ class HireController {
         SocketHelper.sendNotify({ userId: customerId, notify })
         SocketHelper.sendHire({ userId: playerId, hire: newHire })
         SocketHelper.sendHire({ userId: customerId, hire: newHire })
+        /* create balance fluctuation */
+        const dataCreate = {
+            user: customerId,
+            amount: newHire.cost,
+            operation: BalanceFluctuationConstant.OPERATIONS.PLUS,
+            action: BalanceFluctuationConstant.ACTIONS.CANCEL_HIRE
+        }
+        await BalanceFluctuationService.createBalanceFluctuation(dataCreate)
         res.status(200).send({
             data: newHire,
             message: HireConstant.SUCCESS_CODES.CANCEL_HIRE_SUCCESS
@@ -201,6 +199,14 @@ class HireController {
         SocketHelper.sendNotify({ userId: playerId, notify })
         SocketHelper.sendHire({ userId: playerId, hire: newHire })
         SocketHelper.sendHire({ userId: customerId, hire: newHire })
+        /* create balance fluctuation */
+        const dataCreate = {
+            user: customerId,
+            amount: newHire.cost,
+            operation: BalanceFluctuationConstant.OPERATIONS.PLUS,
+            action: BalanceFluctuationConstant.ACTIONS.CANCEL_HIRE
+        }
+        await BalanceFluctuationService.createBalanceFluctuation(dataCreate)
         res.status(200).send({
             data: newHire,
             message: HireConstant.SUCCESS_CODES.CANCEL_HIRE_SUCCESS
@@ -218,9 +224,15 @@ class HireController {
 
         const updateData = { hireStep: HireConstant.HIRE_STEPS.COMPLETE, isCompleteSoon: true }
         const newHire = await HireService.updateHire(hireId, updateData)
+
         /* create notify */
         const customerId = newHire.customer.id
         const playerId = newHire.player.id
+        /* update status hire player */
+        const newPlayerInfo = newHire.player.playerInfo
+        newPlayerInfo.statusHire = PlayerInfoConstant.STATUS_HIRE.READY
+        const dataUpdatePlayer = { playerInfo: newPlayerInfo }
+        await UserModel.updateOne({ _id: playerId }, { $set: dataUpdatePlayer })
 
         const createNotifyData = {
             customer: customerId,
@@ -239,6 +251,14 @@ class HireController {
         SocketHelper.sendNotify({ userId: playerId, notify })
         SocketHelper.sendHire({ userId: playerId, hire: newHire })
         SocketHelper.sendHire({ userId: customerId, hire: newHire })
+        /* create balance fluctuation */
+        const dataCreate = {
+            user: playerId,
+            amount: newHire.cost,
+            operation: BalanceFluctuationConstant.OPERATIONS.PLUS,
+            action: BalanceFluctuationConstant.ACTIONS.RECEIVE_MONEY_HIRE
+        }
+        await BalanceFluctuationService.createBalanceFluctuation(dataCreate)
         res.status(200).send({
             data: newHire,
             message: HireConstant.SUCCESS_CODES.FINISH_SOON_HIRE_SUCCESS
@@ -307,6 +327,7 @@ class HireController {
         const newHire = await HireService.updateHire(hireId, updateData)
         const customerId = newHire.customer.id
         const playerId = newHire.player.id
+        /* update status hire player */
         const newPlayerInfo = newHire.player.playerInfo
         newPlayerInfo.statusHire = PlayerInfoConstant.STATUS_HIRE.READY
         const dataUpdatePlayer = { playerInfo: newPlayerInfo }
@@ -329,6 +350,14 @@ class HireController {
         SocketHelper.sendNotify({ userId: customerId, notify })
         SocketHelper.sendHire({ userId: playerId, hire: newHire })
         SocketHelper.sendHire({ userId: customerId, hire: newHire })
+        /* create balance fluctuation */
+        const dataCreate = {
+            user: playerId,
+            amount: newHire.cost,
+            operation: BalanceFluctuationConstant.OPERATIONS.PLUS,
+            action: BalanceFluctuationConstant.ACTIONS.RECEIVE_MONEY_HIRE
+        }
+        await BalanceFluctuationService.createBalanceFluctuation(dataCreate)
         res.status(200).send({
             data: newHire,
             message: HireConstant.SUCCESS_CODES.COMPLETE_HIRE_SUCCESS
