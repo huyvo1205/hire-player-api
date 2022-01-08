@@ -10,8 +10,7 @@ const ajv = new Ajv({
     useDefaults: true,
     removeAdditional: true,
     async: true,
-    passContext: true,
-    coerceTypes: true
+    passContext: true
 })
 
 AjvBson(ajv)
@@ -59,10 +58,10 @@ function validateSchema(schema, path = "body") {
     if (!schema) throw CreateError.InternalServerError("Schema is required.")
     const newSchema = _.cloneDeep(schema)
     newSchema.$async = true
-
     return async (req, res, next) => {
         try {
-            await ajv.validate(newSchema, req[path])
+            const data = req[path]
+            await ajv.validate(newSchema, data)
             next()
         } catch (err) {
             if (!(err instanceof Ajv.ValidationError)) {

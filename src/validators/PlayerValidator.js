@@ -28,6 +28,12 @@ class PlayerValidator {
         if (!review) throw new CreateError.NotFound(PlayerConstant.ERROR_CODES.ERROR_REVIEW_NOT_FOUND)
         return review
     }
+
+    async validateGetPlayer(id) {
+        const player = await UserModel.findOne({ _id: id })
+        if (!player) throw new CreateError.NotFound(PlayerConstant.ERROR_CODES.ERROR_PLAYER_NOT_FOUND)
+        return player
+    }
 }
 
 export default new PlayerValidator()

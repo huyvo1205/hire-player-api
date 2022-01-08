@@ -22,7 +22,7 @@ class PlayerController {
         })
     }
 
-    async updatePlayerInfo(req, res) {
+    async updatePlayer(req, res) {
         const userId = req.params.id
         await PlayerValidator.validateUpdatePlayerInfo({ userId })
         const updateData = { ...req.body }
@@ -30,6 +30,34 @@ class PlayerController {
         res.status(200).send({
             data: updatePlayerInfo,
             message: PlayerConstant.SUCCESS_CODES.UPDATE_PLAYER_INFO_SUCCESS
+        })
+    }
+
+    async updatePlayerInfo(req, res) {
+        const userId = req.params.id
+        const oldPlayer = await PlayerValidator.validateGetPlayer(userId)
+        const oldPlayerInfo = oldPlayer.playerInfo
+        const dataUpdate = {
+            playerInfo: { ...oldPlayerInfo, ...req.body }
+        }
+        const updatePlayerInfo = await PlayerService.updatePlayerInfo(userId, dataUpdate)
+        res.status(200).send({
+            data: updatePlayerInfo,
+            message: PlayerConstant.SUCCESS_CODES.UPDATE_PLAYER_INFO_SUCCESS
+        })
+    }
+
+    async updateHireSettings(req, res) {
+        const userId = req.params.id
+        const oldPlayer = await PlayerValidator.validateGetPlayer(userId)
+        const oldPlayerInfo = oldPlayer.playerInfo
+        const dataUpdate = {
+            playerInfo: { ...oldPlayerInfo, ...req.body }
+        }
+        const updatePlayerInfo = await PlayerService.updatePlayerInfo(userId, dataUpdate)
+        res.status(200).send({
+            data: updatePlayerInfo,
+            message: PlayerConstant.SUCCESS_CODES.UPDATE_HIRE_SETTINGS_SUCCESS
         })
     }
 

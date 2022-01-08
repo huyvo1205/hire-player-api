@@ -91,7 +91,7 @@ router.get("/", PlayerController.getPlayersInfo)
  *         description: Not Found
  *           <br> - ERROR_PLAYER_NOT_FOUND
  */
-router.put("/:id", auth(), PlayerController.updatePlayerInfo)
+router.put("/:id", auth(), PlayerController.updatePlayer)
 /**
  * @swagger
  * /api/players/:id:
@@ -160,5 +160,120 @@ router.get("/:id", PlayerController.getDetailPlayerInfo)
  *       500:
  *         description: Internal Server
  */
-router.post("/:id/upload-images", PlayerController.uploadImagesPlayerInfo)
+router.post("/:id/upload-images", auth(), PlayerController.uploadImagesPlayerInfo)
+/**
+ * @swagger
+ * /api/players/:id/update-info:
+ *   put:
+ *     summary: Player Update Info
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [Player Update Info]
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: id
+ *         description: "Player Id"
+ *         in: path
+ *         schema:
+ *              type: string
+ *       - name: playerName
+ *         description: "playerName"
+ *         in: body
+ *         schema:
+ *              type: string
+ *       - name: gameName
+ *         description: "gameName"
+ *         in: body
+ *         schema:
+ *              type: string
+ *       - name: rank
+ *         description: "rank"
+ *         in: body
+ *         schema:
+ *              type: string
+ *       - name: costPerHour
+ *         description: "costPerHour"
+ *         in: body
+ *         schema:
+ *              type: number
+ *       - name: description
+ *         description: "description"
+ *         in: body
+ *         schema:
+ *              type: string
+ *     responses:
+ *       200:
+ *         description: The response has fields
+ *           <br> - data{User}
+ *           <br> - message=UPDATE_PLAYER_INFO_SUCCESS
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *       404:
+ *         description: Not Found
+ *           <br> - ERROR_PLAYER_NOT_FOUND
+ */
+router.put(
+    "/:id/update-info",
+    auth(),
+    validateBody(PlayerInfoSchema.updatePlayerInfo),
+    PlayerController.updatePlayerInfo
+)
+/**
+ * @swagger
+ * /api/players/:id/hire-settings:
+ *   put:
+ *     summary: Player Update Hire Settings
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [Player Update Hire Settings]
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: id
+ *         description: "Player Id"
+ *         in: path
+ *         schema:
+ *              type: string
+ *       - name: isReceiveHire
+ *         description: "isReceiveHire true/false"
+ *         in: body
+ *         schema:
+ *              type: boolean
+ *       - name: timeMaxHire
+ *         description: "timeMaxHire"
+ *         in: body
+ *         schema:
+ *              type: number
+ *       - name: timeReceiveHire
+ *         description: "- Array integer number timeReceiveHire
+ *                     <br> - minimum: 1
+ *                     <br> - maximum: 24
+ *                     <br> - uniqueItems
+ *                     <br> - EXAMPLE: [1,2,3,4]
+ *                      "
+ *         in: body
+ *         schema:
+ *              type: array
+ *     responses:
+ *       200:
+ *         description: The response has fields
+ *           <br> - data{User}
+ *           <br> - message=UPDATE_HIRE_SETTINGS_SUCCESS
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *       404:
+ *         description: Not Found
+ *           <br> - ERROR_PLAYER_NOT_FOUND
+ */
+router.put(
+    "/:id/hire-settings",
+    auth(),
+    validateBody(PlayerInfoSchema.updateHireSettings),
+    PlayerController.updateHireSettings
+)
 export default router
