@@ -80,6 +80,11 @@ const router = express.Router()
  *     produces:
  *       - application/json
  *     parameters:
+ *       - name: latestId
+ *         description: "Latest notification Id"
+ *         in: query
+ *         schema:
+ *              type: string
  *       - name: sortBy
  *         description: "Sorting criteria using the format: sortField:(desc|asc). Multiple sorting criteria should be separated by commas (,)"
  *         in: query
