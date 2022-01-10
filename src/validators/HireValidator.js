@@ -11,7 +11,7 @@ class HireValidator {
         const { money } = customer
         const hourNow = MomentTimezone().tz(TIME_ZONE).hours()
         console.log("hourNow", hourNow)
-        const player = await UserModel.findOne({ _id: playerId })
+        const player = await UserModel.findOne({ _id: playerId }).lean()
         if (!player) throw new CreateError.BadRequest(HireConstant.ERROR_CODES.ERROR_PLAYER_ID_INVALID)
         /* validate */
         const { costPerHour } = player.playerInfo

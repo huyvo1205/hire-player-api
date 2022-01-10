@@ -15,6 +15,10 @@ import "express-async-errors"
  *           type: string
  *         starPoint:
  *           type: integer
+ *         timeRent:
+ *           type: integer
+ *         hire:
+ *           type: string
  *         content:
  *           type: number
  *         reviewer:
@@ -133,7 +137,7 @@ router.get("/:id", ReviewController.getDetailReview)
  * @swagger
  * /api/reviews:
  *   post:
- *     summary: Create Review
+ *     summary: Create Review (NOT USE)
  *     security:
  *       - bearerAuth: []
  *     tags: [Create Review]

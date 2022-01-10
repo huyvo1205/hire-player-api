@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import NotificationConstant from "../constants/NotificationConstant"
 import pick from "../utils/pick"
 import NotificationService from "../services/NotificationService"
@@ -5,7 +6,11 @@ import NotificationService from "../services/NotificationService"
 class NotificationController {
     async getNotifications(req, res) {
         const userIdLogin = req.user.id
+        const { latestId } = req.query
         const filter = { receiver: userIdLogin }
+        if (latestId) {
+            filter._id = { $lt: latestId }
+        }
         const options = pick(req.query, ["sortBy", "limit", "page", "populate"])
         const notifications = await NotificationService.getListNotifications(filter, options)
         return res.status(200).send({

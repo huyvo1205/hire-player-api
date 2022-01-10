@@ -4,14 +4,19 @@ import HireConstant from "../constants/HireConstant"
 import NotificationConstant from "../constants/NotificationConstant"
 import HireValidator from "../validators/HireValidator"
 import ConversationValidator from "../validators/ConversationValidator"
+import ReviewValidator from "../validators/ReviewValidator"
 import HireService from "../services/HireService"
 import ConversationService from "../services/ConversationService"
+import ReviewService from "../services/ReviewService"
 import BalanceFluctuationService from "../services/BalanceFluctuationService"
 import NotificationService from "../services/NotificationService"
 import SocketHelper from "../helpers/SocketHelper"
 import PlayerInfoConstant from "../constants/PlayerConstant"
 import UserModel from "../models/UserModel"
 import { ROLES } from "../constants/UserConstant"
+import ReviewConstant from "../constants/ReviewConstant"
+import ReviewHelper from "../helpers/ReviewHelper"
+import PlayerService from "../services/PlayerService"
 import BalanceFluctuationConstant from "../constants/BalanceFluctuationConstant"
 
 class HireController {
@@ -91,9 +96,7 @@ class HireController {
         const customerId = newHire.customer.id
         const playerId = newHire.player.id
         /* update status for Player */
-        const newPlayerInfo = newHire.player.playerInfo
-        newPlayerInfo.statusHire = PlayerInfoConstant.STATUS_HIRE.BUSY
-        const dataUpdatePlayer = { playerInfo: newPlayerInfo }
+        const dataUpdatePlayer = { "playerInfo.statusHire": PlayerInfoConstant.STATUS_HIRE.BUSY }
         await UserModel.updateOne({ _id: playerId }, { $set: dataUpdatePlayer })
         /* create notify */
         const createNotifyData = {
@@ -229,9 +232,7 @@ class HireController {
         const customerId = newHire.customer.id
         const playerId = newHire.player.id
         /* update status hire player */
-        const newPlayerInfo = newHire.player.playerInfo
-        newPlayerInfo.statusHire = PlayerInfoConstant.STATUS_HIRE.READY
-        const dataUpdatePlayer = { playerInfo: newPlayerInfo }
+        const dataUpdatePlayer = { "playerInfo.statusHire": PlayerInfoConstant.STATUS_HIRE.READY }
         await UserModel.updateOne({ _id: playerId }, { $set: dataUpdatePlayer })
 
         const createNotifyData = {
@@ -328,9 +329,7 @@ class HireController {
         const customerId = newHire.customer.id
         const playerId = newHire.player.id
         /* update status hire player */
-        const newPlayerInfo = newHire.player.playerInfo
-        newPlayerInfo.statusHire = PlayerInfoConstant.STATUS_HIRE.READY
-        const dataUpdatePlayer = { playerInfo: newPlayerInfo }
+        const dataUpdatePlayer = { "playerInfo.statusHire": PlayerInfoConstant.STATUS_HIRE.READY }
         await UserModel.updateOne({ _id: playerId }, { $set: dataUpdatePlayer })
         /* create notify */
         const createNotifyData = {
@@ -371,6 +370,33 @@ class HireController {
         res.status(200).send({
             data: hire,
             message: HireConstant.SUCCESS_CODES.GET_DETAIL_HIRE_SUCCESS
+        })
+    }
+
+    async reviewHire(req, res) {
+        const userIdLogin = req.user.id
+        const hireId = req.params.id
+        const { starPoint, content } = req.body
+        const hire = await HireValidator.validateGetHire({ hireId })
+        const { customer } = hire
+        await ReviewValidator.validateCreateReview({ customer, reviewer: userIdLogin, hireId })
+        const dataCreateReview = {
+            reviewer: userIdLogin,
+            receiver: hire.player,
+            starPoint,
+            content,
+            timeRent: hire.timeRent,
+            hire: hire.id
+        }
+        const newReview = await ReviewService.createReview(dataCreateReview)
+        /* update avg rating for player */
+        const userId = hire.player
+        const avgRating = await ReviewHelper.calculateAvgRating({ userId })
+        const updateDataPlayer = { "playerInfo.avgRating": avgRating }
+        await PlayerService.updatePlayerInfo(userId, updateDataPlayer)
+        res.status(201).send({
+            data: newReview,
+            message: ReviewConstant.SUCCESS_CODES.CREATE_REVIEW_SUCCESS
         })
     }
 }

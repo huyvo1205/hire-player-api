@@ -2,6 +2,7 @@ import express from "express"
 import HireController from "../controllers/HireController"
 import { validateBody } from "../validators"
 import HireSchema from "../schemas/HireSchema"
+import ReviewSchema from "../schemas/ReviewSchema"
 import auth from "../middlewares/auth"
 import "express-async-errors"
 /**
@@ -318,4 +319,44 @@ router.put("/:id/complain", auth(), HireController.requestComplain)
  */
 router.put("/:id/complete", auth(), HireController.completeHire)
 
+/**
+ * @swagger
+ * /api/hires/:id/reviews:
+ *   put:
+ *     summary: Create Review For Hire
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [Create Review For Hire]
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: starPoint
+ *         description: "Star Point integer number"
+ *         in: body
+ *         schema:
+ *              type: integer
+ *         required: true
+ *       - name: content
+ *         description: "Content"
+ *         in: body
+ *         schema:
+ *              type: string
+ *     responses:
+ *       200:
+ *         description: The response has fields
+ *           <br> - data{Review}
+ *           <br> - message=CREATE_REVIEW_SUCCESS
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Review'
+ *       400:
+ *         description: Bad Request
+ *           <br> - ERROR_ONLY_CUSTOMER_CREATE_REVIEW
+ *           <br> - ERROR_CUSTOMER_ALREADY_REVIEW_THIS_HIRE
+ *       404:
+ *         description: Not Found
+ *           <br> - ERROR_HIRE_NOT_FOUND
+ */
+router.post("/:id/reviews", auth(), validateBody(ReviewSchema.createReview), HireController.reviewHire)
 export default router

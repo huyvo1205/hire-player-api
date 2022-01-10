@@ -1,13 +1,9 @@
-import { mongoObjectId } from "./SharedSchema"
-
 const createReview = {
     type: "object",
-    required: ["starPoint", "content", "reviewerId", "receiverId"],
+    required: ["starPoint"],
     properties: {
         starPoint: { type: "integer", minimum: 0, maximum: 5 },
-        content: { type: "string", minLength: 0, maxLength: 255 },
-        reviewerId: mongoObjectId,
-        receiverId: mongoObjectId
+        content: { type: "string", maxLength: 255 }
     }
 }
 
@@ -16,9 +12,7 @@ const updateReview = {
     required: [],
     properties: {
         starPoint: { type: "integer", minimum: 0, maximum: 5 },
-        content: { type: "string", minLength: 0, maxLength: 255 },
-        reviewerId: mongoObjectId,
-        receiverId: mongoObjectId
+        content: { type: "string", maxLength: 255 }
     }
 }
 
