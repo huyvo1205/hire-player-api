@@ -1,4 +1,5 @@
 import SocketServer from "socket.io"
+import * as _ from "lodash"
 import { ERROR_CODES } from "../constants/GlobalConstant"
 import { ERROR_CODES as USER_ERROR_CODES } from "../constants/UserConstant"
 import AuthHelper from "../helpers/AuthHelper"
@@ -48,6 +49,7 @@ const initSocket = server => {
             socket.userId = userId
             if (UsersOnline[userId]) {
                 UsersOnline[userId].push(socket.id)
+                UsersOnline[userId] = _.uniq(UsersOnline[userId])
             } else {
                 UsersOnline[userId] = [socket.id]
             }
