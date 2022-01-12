@@ -63,8 +63,7 @@ class PlayerController {
 
     async getDetailPlayerInfo(req, res) {
         const userId = req.params.id
-        await PlayerValidator.validateUpdatePlayerInfo({ userId })
-        const player = await PlayerService.getDetailPlayerInfo(userId)
+        const player = await PlayerValidator.validateGetPlayer(userId)
         res.status(200).send({
             data: player,
             message: PlayerConstant.SUCCESS_CODES.GET_DETAIL_PLAYER_INFO_SUCCESS

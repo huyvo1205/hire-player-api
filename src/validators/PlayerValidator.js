@@ -5,7 +5,7 @@ import ReviewsModel from "../models/ReviewsModel"
 
 class PlayerValidator {
     async validateUpdatePlayerInfo({ userId }) {
-        const player = await UserModel.findOne({ _id: userId })
+        const player = await UserModel.findOne({ _id: userId, isPlayer: true })
         if (!player) throw new CreateError.NotFound(PlayerConstant.ERROR_CODES.ERROR_PLAYER_NOT_FOUND)
         return player
     }
@@ -30,7 +30,7 @@ class PlayerValidator {
     }
 
     async validateGetPlayer(id) {
-        const player = await UserModel.findOne({ _id: id })
+        const player = await UserModel.findOne({ _id: id, isPlayer: true })
         if (!player) throw new CreateError.NotFound(PlayerConstant.ERROR_CODES.ERROR_PLAYER_NOT_FOUND)
         return player
     }

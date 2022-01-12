@@ -10,9 +10,11 @@ import HireRouter from "./HireRouter"
 import ServiceUploadRouter from "./ServiceUploadRouter"
 import NotificationRouter from "./NotificationRouter"
 import DonateRouter from "./DonateRouter"
+import AdminRouter from "./AdminRouter"
 
 const router = express.Router()
 
+router.use("/admin", AdminRouter)
 router.use("/users", UserRouter)
 router.use("/players", PlayerRouter)
 router.use("/auth", AuthRouter)

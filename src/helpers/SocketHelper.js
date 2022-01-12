@@ -16,6 +16,15 @@ class SocketHelper {
             }
         })
     }
+
+    sendConversation({ userId, conversation }) {
+        const socketIds = global.UsersOnline[`${userId.toString()}`] || []
+        socketIds.forEach(socketId => {
+            if (socketId) {
+                global.io.to(socketId).emit("onConversations", conversation)
+            }
+        })
+    }
 }
 
 export default new SocketHelper()
