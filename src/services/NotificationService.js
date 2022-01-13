@@ -45,7 +45,11 @@ class NotificationService {
     }
 
     async readersNotifications(receiver) {
-        await NotificationModel.updateMany({ receiver }, { $set: { isRead: true } }, { timestamps: false })
+        await NotificationModel.updateMany(
+            { receiver, isRead: false },
+            { $set: { isRead: true } },
+            { timestamps: false }
+        )
     }
 }
 
