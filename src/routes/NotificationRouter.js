@@ -174,7 +174,7 @@ router.get("/:id", auth(), NotificationController.getDetailNotification)
  *     responses:
  *       200:
  *         description: The response has fields
- *           <br> - message=READERS_NOTIFICATION_SUCCESS
+ *           <br> - message=READERS_NOTIFICATIONS_SUCCESS
  */
 router.post("/readers", auth(), NotificationController.readersAllNotifications)
 export default router
