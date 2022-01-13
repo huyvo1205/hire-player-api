@@ -520,11 +520,12 @@ class HireController {
 
     async reviewHire(req, res) {
         const userIdLogin = req.user.id
+        const userLogin = req.user
         const hireId = req.params.id
         const { starPoint, content } = req.body
         const hire = await HireValidator.validateGetHire({ hireId })
         const { customer } = hire
-        await ReviewValidator.validateCreateReview({ customer, reviewer: userIdLogin, hireId })
+        await ReviewValidator.validateCreateReview({ customer, reviewer: userIdLogin, hireId, hire })
         const dataCreateReview = {
             reviewer: userIdLogin,
             receiver: hire.player,
@@ -539,6 +540,43 @@ class HireController {
         const avgRating = await ReviewHelper.calculateAvgRating({ userId })
         const updateDataPlayer = { "playerInfo.avgRating": avgRating }
         await PlayerService.updatePlayerInfo(userId, updateDataPlayer)
+        /* create notify */
+        const createNotifyData = {
+            customer: hire.customer,
+            player: hire.player,
+            receiver: hire.player,
+            action: NotificationConstant.ACTIONS.REVIEW,
+            href: `hires/${hire.id}`,
+            payload: {
+                conversation: hire.conversation,
+                hire: hireId,
+                review: newReview.id
+            },
+            image: userLogin.playerInfo.playerAvatar
+        }
+
+        const notify = await NotificationService.createNotification(createNotifyData)
+        /* create message */
+        const createDataMessage = {
+            conversation: hire.conversation,
+            sender: userIdLogin,
+            body: {
+                content: `${HireConstant.HIRE_STEPS_MESSAGE.CUSTOMER_REVIEW_HIRE} ${newReview.starPoint} star`
+            }
+        }
+        const conversation = await ConversationModel.findById(hire.conversation)
+        const createMessage = await MessageService.createMessage(createDataMessage, false)
+        const dataRes = await ConversationService.updateLatestMessageConversation({
+            conversation,
+            message: createMessage,
+            userIdLogin,
+            sender: userIdLogin
+        })
+        SocketHelper.sendNotify({ userId: hire.player, notify })
+        dataRes.conversation.members.forEach(member => {
+            SocketHelper.sendMessage({ userId: member, message: dataRes })
+        })
+
         res.status(201).send({
             data: newReview,
             message: ReviewConstant.SUCCESS_CODES.CREATE_REVIEW_SUCCESS

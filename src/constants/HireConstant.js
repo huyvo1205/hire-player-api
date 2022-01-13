@@ -22,7 +22,8 @@ const HIRE_STEPS_MESSAGE = {
     CUSTOMER_CANCEL_HIRE: "I cancel hire",
     CUSTOMER_FINISH_SOON_HIRE: "I finish soon hire",
     CUSTOMER_REQUEST_COMPLAIN: "I request complain",
-    PLAYER_COMPLETE_HIRE: "I complete hire"
+    PLAYER_COMPLETE_HIRE: "I complete hire",
+    CUSTOMER_REVIEW_HIRE: "I review hire"
 }
 
 const POPULATE_OPTIONS = { path: "sender" }

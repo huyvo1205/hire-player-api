@@ -32,6 +32,7 @@ import "express-async-errors"
  *                       <br> CUSTOMER_FINISH_SOON: 5 -> When customer finish soon
  *                       <br> CUSTOMER_REQUEST_COMPLAIN: 6 -> When customer request complain
  *                       <br> COMPLETE: 7 -> When player complete
+ *                       <br> REVIEW: 8 -> When customer review hire
  *                       <br> Data will be added later...
  *                      "
  *           enum:
@@ -49,6 +50,7 @@ import "express-async-errors"
  *                       <br> action ===  CUSTOMER_FINISH_SOON: 5 -> hires/:id
  *                       <br> action ===  CUSTOMER_REQUEST_COMPLAIN: 6 -> hires/:id
  *                       <br> action ===  COMPLETE: 7 -> hires/:id
+ *                       <br> action ===  REVIEW: 8 -> hires/:id
  *                       <br> Data will be added later...
  *                      "
  *         payload:
@@ -60,6 +62,9 @@ import "express-async-errors"
  *              hire:
  *                type: string
  *                description: "hire Id"
+ *              review:
+ *                type: string
+ *                description: "review Id"
  *         deletedAt:
  *           type: string
  *           format: "date-time"
@@ -155,4 +160,21 @@ router.get("/", auth(), NotificationController.getNotifications)
  *           <br> - ERROR_CONVERSATION_NOT_FOUND
  */
 router.get("/:id", auth(), NotificationController.getDetailNotification)
+/**
+ * @swagger
+ * /api/notifications/readers:
+ *   post:
+ *     summary: Readers All Notifications of User Login
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [Readers All Notifications]
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *     responses:
+ *       200:
+ *         description: The response has fields
+ *           <br> - message=READERS_NOTIFICATION_SUCCESS
+ */
+router.post("/readers", auth(), NotificationController.readersAllNotifications)
 export default router

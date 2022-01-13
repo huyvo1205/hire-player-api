@@ -27,6 +27,14 @@ class NotificationController {
             message: NotificationConstant.SUCCESS_CODES.GET_DETAIL_NOTIFICATION_SUCCESS
         })
     }
+
+    async readersAllNotifications(req, res) {
+        const userIdLogin = req.user.id
+        await NotificationService.readersNotifications(userIdLogin)
+        res.status(200).send({
+            message: NotificationConstant.SUCCESS_CODES.READERS_NOTIFICATIONS_SUCCESS
+        })
+    }
 }
 
 export default new NotificationController()

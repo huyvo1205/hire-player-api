@@ -354,6 +354,7 @@ router.put("/:id/complete", auth(), HireController.completeHire)
  *         description: Bad Request
  *           <br> - ERROR_ONLY_CUSTOMER_CREATE_REVIEW
  *           <br> - ERROR_CUSTOMER_ALREADY_REVIEW_THIS_HIRE
+ *           <br> - ERROR_HIRE_NOT_COMPLETE
  *       404:
  *         description: Not Found
  *           <br> - ERROR_HIRE_NOT_FOUND

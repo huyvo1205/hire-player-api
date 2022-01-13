@@ -9,6 +9,7 @@ class NotificationService {
                 .populate(NotificationConstant.POPULATE_CUSTOMER)
                 .populate(NotificationConstant.POPULATE_PLAYER)
                 .populate(NotificationConstant.POPULATE_HIRE)
+                .populate(NotificationConstant.POPULATE_REVIEW)
         }
         return newNotification
     }
@@ -20,6 +21,7 @@ class NotificationService {
                 .populate(NotificationConstant.POPULATE_CUSTOMER)
                 .populate(NotificationConstant.POPULATE_PLAYER)
                 .populate(NotificationConstant.POPULATE_HIRE)
+                .populate(NotificationConstant.POPULATE_REVIEW)
             return Notification
         }
         return newNotification
@@ -30,6 +32,7 @@ class NotificationService {
             .populate(NotificationConstant.POPULATE_CUSTOMER)
             .populate(NotificationConstant.POPULATE_PLAYER)
             .populate(NotificationConstant.POPULATE_HIRE)
+            .populate(NotificationConstant.POPULATE_REVIEW)
     }
 
     async deleteNotification(id) {
@@ -39,6 +42,10 @@ class NotificationService {
     async getListNotifications(filter, options) {
         const notifications = await NotificationModel.paginate(filter, options)
         return notifications
+    }
+
+    async readersNotifications(receiver) {
+        await NotificationModel.updateMany({ receiver }, { $set: { isRead: true } }, { timestamps: false })
     }
 }
 

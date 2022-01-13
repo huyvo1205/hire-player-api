@@ -15,7 +15,8 @@ const NotificationSchema = new Schema(
         href: String, // hires/61976bbda6125e5448f0e01e
         payload: {
             conversation: { type: ObjectId, ref: "Conversation", index: true },
-            hire: { type: ObjectId, ref: "Hire", index: true }
+            hire: { type: ObjectId, ref: "Hire", index: true },
+            review: { type: ObjectId, ref: "Review" }
         },
         image: {},
         deletedAt: Date,
