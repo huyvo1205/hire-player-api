@@ -84,6 +84,11 @@ const router = express.Router()
  *         in: query
  *         schema:
  *              type: string
+ *       - name: latestId
+ *         description: "Latest conversation Id"
+ *         in: query
+ *         schema:
+ *              type: string
  *       - name: status
  *         description: "Status Conversation: ACTIVE: 1, INACTIVE: 2"
  *         in: query

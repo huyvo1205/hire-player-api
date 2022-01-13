@@ -18,7 +18,7 @@ import { UserModel } from "../models"
 class ConversationController {
     async getConversations(req, res) {
         const userIdLogin = req.user.id
-        const { playerId, customerId, status, searchText, ignoreIds } = req.query
+        const { playerId, customerId, status, searchText, ignoreIds, latestId } = req.query
         const filter = await ConversationHelper.getConversationFilter({
             playerId,
             customerId,
@@ -27,6 +27,9 @@ class ConversationController {
             ignoreIds,
             userIdLogin
         })
+        if (latestId) {
+            filter._id = { $lt: latestId }
+        }
         const options = pick(req.query, ["sortBy", "limit", "page", "populate"])
         const conversations = await ConversationService.getListConversations(filter, options)
         return res.status(200).send({
