@@ -1,5 +1,6 @@
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-restricted-syntax */
+import * as _ from "lodash"
 import HireConstant from "../constants/HireConstant"
 import NotificationConstant from "../constants/NotificationConstant"
 import HireValidator from "../validators/HireValidator"
@@ -13,9 +14,11 @@ import NotificationService from "../services/NotificationService"
 import SocketHelper from "../helpers/SocketHelper"
 import PlayerInfoConstant from "../constants/PlayerConstant"
 import UserModel from "../models/UserModel"
+import ConversationModel from "../models/ConversationModel"
 import { ROLES } from "../constants/UserConstant"
 import ReviewConstant from "../constants/ReviewConstant"
 import ReviewHelper from "../helpers/ReviewHelper"
+import MessageService from "../services/MessageService"
 import PlayerService from "../services/PlayerService"
 import BalanceFluctuationConstant from "../constants/BalanceFluctuationConstant"
 
@@ -42,6 +45,22 @@ class HireController {
         }
 
         createData.conversation = createConversation.id
+        /* create message */
+        const createDataMessage = {
+            conversation: createConversation.id,
+            sender: customerId,
+            body: {
+                content: HireConstant.HIRE_STEPS_MESSAGE.CUSTOMER_HIRE
+            }
+        }
+        const createMessage = await MessageService.createMessage(createDataMessage, false)
+        const dataRes = await ConversationService.updateLatestMessageConversation({
+            conversation: createConversation,
+            message: createMessage,
+            userIdLogin: customerId,
+            sender: customer
+        })
+        createConversation = _.cloneDeep(dataRes.conversation)
         const createHire = await HireService.createHire(createData)
         const { customer: customerInfo } = createConversation
         /* create notify */
@@ -62,6 +81,9 @@ class HireController {
         SocketHelper.sendNotify({ userId: playerId, notify })
         SocketHelper.sendHire({ userId: playerId, hire: createHire })
         SocketHelper.sendHire({ userId: customerId, hire: createHire })
+        createConversation.members.forEach(member => {
+            SocketHelper.sendMessage({ userId: member, message: dataRes })
+        })
         /* create balance fluctuation */
         const dataCreate = {
             user: customerId,
@@ -82,6 +104,7 @@ class HireController {
     async acceptHire(req, res) {
         const hireId = req.params.id
         const userIdLogin = req.user.id
+        const player = req.user
 
         const hire = await HireValidator.validateGetHire({ hireId })
         await HireValidator.validateAcceptHire({ userIdLogin, playerId: hire.player })
@@ -93,6 +116,7 @@ class HireController {
             acceptedAt: new Date()
         }
         const newHire = await HireService.updateHire(hireId, updateData)
+
         const customerId = newHire.customer.id
         const playerId = newHire.player.id
         /* update status for Player */
@@ -113,9 +137,30 @@ class HireController {
         }
 
         const notify = await NotificationService.createNotification(createNotifyData)
+        /* create message */
+        const createDataMessage = {
+            conversation: newHire.conversation,
+            sender: playerId,
+            body: {
+                content: HireConstant.HIRE_STEPS_MESSAGE.PLAYER_ACCEPT_HIRE
+            }
+        }
+        const conversation = await ConversationModel.findById(newHire.conversation)
+        const createMessage = await MessageService.createMessage(createDataMessage, false)
+        const dataRes = await ConversationService.updateLatestMessageConversation({
+            conversation,
+            message: createMessage,
+            userIdLogin,
+            sender: player
+        })
+
         SocketHelper.sendNotify({ userId: customerId, notify })
         SocketHelper.sendHire({ userId: playerId, hire: newHire })
         SocketHelper.sendHire({ userId: customerId, hire: newHire })
+        dataRes.conversation.members.forEach(member => {
+            SocketHelper.sendMessage({ userId: member, message: dataRes })
+        })
+
         res.status(200).send({
             data: newHire,
             message: HireConstant.SUCCESS_CODES.ACCEPT_HIRE_SUCCESS
@@ -125,6 +170,7 @@ class HireController {
     async playerCancelHire(req, res) {
         const hireId = req.params.id
         const userIdLogin = req.user.id
+        const player = req.user
         const { cancelReason } = req.body
 
         const hire = await HireValidator.validateGetHire({ hireId })
@@ -153,9 +199,28 @@ class HireController {
         }
 
         const notify = await NotificationService.createNotification(createNotifyData)
+        /* create message */
+        const createDataMessage = {
+            conversation: newHire.conversation,
+            sender: playerId,
+            body: {
+                content: HireConstant.HIRE_STEPS_MESSAGE.PLAYER_CANCEL_HIRE
+            }
+        }
+        const conversation = await ConversationModel.findById(newHire.conversation)
+        const createMessage = await MessageService.createMessage(createDataMessage, false)
+        const dataRes = await ConversationService.updateLatestMessageConversation({
+            conversation,
+            message: createMessage,
+            userIdLogin,
+            sender: player
+        })
         SocketHelper.sendNotify({ userId: customerId, notify })
         SocketHelper.sendHire({ userId: playerId, hire: newHire })
         SocketHelper.sendHire({ userId: customerId, hire: newHire })
+        dataRes.conversation.members.forEach(member => {
+            SocketHelper.sendMessage({ userId: member, message: dataRes })
+        })
         /* create balance fluctuation */
         const dataCreate = {
             user: customerId,
@@ -173,6 +238,7 @@ class HireController {
     async customerCancelHire(req, res) {
         const hireId = req.params.id
         const userIdLogin = req.user.id
+        const customer = req.user
         const hire = await HireValidator.validateGetHire({ hireId })
         await HireValidator.validateCustomerCancelHire({ userIdLogin, customerId: hire.customer })
         const currentHireStep = hire.hireStep
@@ -199,9 +265,28 @@ class HireController {
         }
 
         const notify = await NotificationService.createNotification(createNotifyData)
+        /* create message */
+        const createDataMessage = {
+            conversation: newHire.conversation,
+            sender: playerId,
+            body: {
+                content: HireConstant.HIRE_STEPS_MESSAGE.CUSTOMER_CANCEL_HIRE
+            }
+        }
+        const conversation = await ConversationModel.findById(newHire.conversation)
+        const createMessage = await MessageService.createMessage(createDataMessage, false)
+        const dataRes = await ConversationService.updateLatestMessageConversation({
+            conversation,
+            message: createMessage,
+            userIdLogin,
+            sender: customer
+        })
         SocketHelper.sendNotify({ userId: playerId, notify })
         SocketHelper.sendHire({ userId: playerId, hire: newHire })
         SocketHelper.sendHire({ userId: customerId, hire: newHire })
+        dataRes.conversation.members.forEach(member => {
+            SocketHelper.sendMessage({ userId: member, message: dataRes })
+        })
         /* create balance fluctuation */
         const dataCreate = {
             user: customerId,
@@ -218,6 +303,7 @@ class HireController {
 
     async finishSoonHire(req, res) {
         const userIdLogin = req.user.id
+        const customer = req.user
         const hireId = req.params.id
         const hire = await HireValidator.validateGetHire({ hireId })
         await HireValidator.validateRequestFinishSoon({ userIdLogin, customerId: hire.customer })
@@ -249,9 +335,28 @@ class HireController {
         }
 
         const notify = await NotificationService.createNotification(createNotifyData)
+        /* create message */
+        const createDataMessage = {
+            conversation: newHire.conversation,
+            sender: playerId,
+            body: {
+                content: HireConstant.HIRE_STEPS_MESSAGE.CUSTOMER_FINISH_SOON_HIRE
+            }
+        }
+        const conversation = await ConversationModel.findById(newHire.conversation)
+        const createMessage = await MessageService.createMessage(createDataMessage, false)
+        const dataRes = await ConversationService.updateLatestMessageConversation({
+            conversation,
+            message: createMessage,
+            userIdLogin,
+            sender: customer
+        })
         SocketHelper.sendNotify({ userId: playerId, notify })
         SocketHelper.sendHire({ userId: playerId, hire: newHire })
         SocketHelper.sendHire({ userId: customerId, hire: newHire })
+        dataRes.conversation.members.forEach(member => {
+            SocketHelper.sendMessage({ userId: member, message: dataRes })
+        })
         /* create balance fluctuation */
         const dataCreate = {
             user: playerId,
@@ -268,6 +373,7 @@ class HireController {
 
     async requestComplain(req, res) {
         const userIdLogin = req.user.id
+        const customer = req.user
         const hireId = req.params.id
         const oldHire = await HireValidator.validateGetHire({ hireId })
         await HireValidator.validateRequestComplain({ userIdLogin, customerId: oldHire.customer })
@@ -295,8 +401,26 @@ class HireController {
             image: newHire.customer.avatar
         }
         const notify = await NotificationService.createNotification(createNotifyData)
+        /* create message */
+        const createDataMessage = {
+            conversation: newHire.conversation,
+            sender: playerId,
+            body: {
+                content: HireConstant.HIRE_STEPS_MESSAGE.CUSTOMER_REQUEST_COMPLAIN
+            }
+        }
+        const conversation = await ConversationModel.findById(newHire.conversation)
+        const createMessage = await MessageService.createMessage(createDataMessage, false)
+        const dataRes = await ConversationService.updateLatestMessageConversation({
+            conversation,
+            message: createMessage,
+            userIdLogin,
+            sender: customer
+        })
         SocketHelper.sendNotify({ userId: playerId, notify })
-
+        dataRes.conversation.members.forEach(member => {
+            SocketHelper.sendMessage({ userId: member, message: dataRes })
+        })
         const usersAdmin = await UserModel.find({ roles: { $in: [ROLES.ADMIN] } }).select("_id")
         for (const userAdmin of usersAdmin) {
             createNotifyData.receiver = userAdmin.id
@@ -315,6 +439,7 @@ class HireController {
 
     async completeHire(req, res) {
         const userIdLogin = req.user.id
+        const player = req.user
         const hireId = req.params.id
         const hire = await HireValidator.validateGetHire({ hireId })
         const currentHireStep = hire.hireStep
@@ -346,9 +471,29 @@ class HireController {
         }
 
         const notify = await NotificationService.createNotification(createNotifyData)
+        /* create message */
+        const createDataMessage = {
+            conversation: newHire.conversation,
+            sender: playerId,
+            body: {
+                content: HireConstant.HIRE_STEPS_MESSAGE.PLAYER_COMPLETE_HIRE
+            }
+        }
+        const conversation = await ConversationModel.findById(newHire.conversation)
+        const createMessage = await MessageService.createMessage(createDataMessage, false)
+        const dataRes = await ConversationService.updateLatestMessageConversation({
+            conversation,
+            message: createMessage,
+            userIdLogin,
+            sender: player
+        })
         SocketHelper.sendNotify({ userId: customerId, notify })
         SocketHelper.sendHire({ userId: playerId, hire: newHire })
         SocketHelper.sendHire({ userId: customerId, hire: newHire })
+        dataRes.conversation.members.forEach(member => {
+            SocketHelper.sendMessage({ userId: member, message: dataRes })
+        })
+
         /* create balance fluctuation */
         const dataCreate = {
             user: playerId,

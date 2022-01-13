@@ -25,6 +25,15 @@ class SocketHelper {
             }
         })
     }
+
+    sendMessage({ userId, message }) {
+        const socketIds = global.UsersOnline[`${userId.toString()}`] || []
+        socketIds.forEach(socketId => {
+            if (socketId) {
+                global.io.to(socketId).emit("onMessages", message)
+            }
+        })
+    }
 }
 
 export default new SocketHelper()

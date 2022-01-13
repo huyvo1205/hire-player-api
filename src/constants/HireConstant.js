@@ -14,6 +14,17 @@ const HIRE_STEPS = {
     COMPLETE: 5,
     COMPLAIN: 6
 }
+
+const HIRE_STEPS_MESSAGE = {
+    CUSTOMER_HIRE: "I want to hire you",
+    PLAYER_ACCEPT_HIRE: "I accept request hire",
+    PLAYER_CANCEL_HIRE: "I cancel hire",
+    CUSTOMER_CANCEL_HIRE: "I cancel hire",
+    CUSTOMER_FINISH_SOON_HIRE: "I finish soon hire",
+    CUSTOMER_REQUEST_COMPLAIN: "I request complain",
+    PLAYER_COMPLETE_HIRE: "I complete hire"
+}
+
 const POPULATE_OPTIONS = { path: "sender" }
 const POPULATE_CUSTOMER = { path: "customer" }
 const POPULATE_PLAYER = { path: "player" }
@@ -63,5 +74,6 @@ export default {
     SUCCESS_CODES,
     ERROR_CODES,
     POPULATE_OPTIONS,
-    TYPES
+    TYPES,
+    HIRE_STEPS_MESSAGE
 }

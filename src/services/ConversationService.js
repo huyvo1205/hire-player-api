@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import ConversationModel from "../models/ConversationModel"
 import ConversationConstant from "../constants/ConversationConstant"
 
@@ -33,6 +34,29 @@ class ConversationService {
     async getListConversations(filter, options) {
         const conversations = await ConversationModel.paginate(filter, options)
         return conversations
+    }
+
+    async updateLatestMessageConversation({ conversation, message, userIdLogin, sender }) {
+        const conversationId = conversation.id
+        /* update latestMessage for conversation */
+        const messageObject = message.toObject()
+        messageObject.id = messageObject._id
+        messageObject.unreadStatus = conversation.members.reduce(
+            (preValue, currentValue) => ({ ...preValue, [currentValue]: 1 }),
+            {}
+        )
+        delete messageObject.unreadStatus[`${userIdLogin}`]
+        delete messageObject._id
+
+        const updateData = { latestMessage: messageObject }
+        const newConversation = await this.updateConversation(conversationId, updateData)
+        const dataRes = {
+            conversation: newConversation,
+            body: messageObject.body,
+            sender,
+            latestMessage: messageObject
+        }
+        return dataRes
     }
 }
 
