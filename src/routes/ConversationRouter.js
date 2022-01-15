@@ -43,6 +43,9 @@ import "express-async-errors"
  *             updatedAt:
  *               type: string
  *               format: "date-time"
+ *         latestHire:
+ *           type: string
+ *           description: "Latest Hire Id"
  *         customer:
  *           type: string
  *           description: "User Id"
@@ -405,40 +408,14 @@ router.post(
     validateBody(ConversationSchema.createConversationMessage),
     ConversationController.createConversationMessage
 )
-/**
- * @swagger
- * /api/conversations/:id/complain:
- *   post:
- *     summary: Create Request Complain
- *     security:
- *       - bearerAuth: []
- *     tags: [Create Request Complain]
- *     produces:
- *       - application/json
- *     parameters:
- *       - name: hireId
- *         description: "hireId"
- *         in: body
- *         schema:
- *              type: string
- *         required: true
- *     responses:
- *       201:
- *         description: The response has fields
- *           <br> - data{empty}
- *           <br> - message=CREATE_COMPLAIN_SUCCESS
- *       404:
- *         description: Not Found
- *           <br> - ERROR_USER_NOT_FOUND
- *           <br> - ERROR_CONVERSATION_NOT_FOUND
- *           <br> - ERROR_HIRE_NOT_FOUND
- */
-router.post(
-    "/:id/complain",
-    auth(),
-    validateBody(ConversationSchema.createComplain),
-    ConversationController.handleComplainConversation
-)
+
+// router.post(
+//     "/:id/complain",
+//     auth(),
+//     validateBody(ConversationSchema.createComplain),
+//     ConversationController.handleComplainConversation
+// )
+
 /**
  * @swagger
  * /api/conversations/:id/message/readers:

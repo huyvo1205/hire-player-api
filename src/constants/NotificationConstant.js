@@ -6,7 +6,8 @@ const ACTIONS = {
     CUSTOMER_FINISH_SOON: 5,
     CUSTOMER_REQUEST_COMPLAIN: 6,
     COMPLETE: 7,
-    REVIEW: 8
+    REVIEW: 8,
+    ADMIN_JOIN_CHAT: 9
 }
 
 const POPULATE_CUSTOMER = { path: "customer" }

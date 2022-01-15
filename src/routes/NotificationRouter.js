@@ -33,6 +33,7 @@ import "express-async-errors"
  *                       <br> CUSTOMER_REQUEST_COMPLAIN: 6 -> When customer request complain
  *                       <br> COMPLETE: 7 -> When player complete
  *                       <br> REVIEW: 8 -> When customer review hire
+ *                       <br> ADMIN_JOIN_CHAT: 9 -> When admin join chat
  *                       <br> Data will be added later...
  *                      "
  *           enum:
@@ -51,6 +52,7 @@ import "express-async-errors"
  *                       <br> action ===  CUSTOMER_REQUEST_COMPLAIN: 6 -> hires/:id
  *                       <br> action ===  COMPLETE: 7 -> hires/:id
  *                       <br> action ===  REVIEW: 8 -> hires/:id
+ *                       <br> action ===  ADMIN_JOIN_CHAT: 9 -> hires/:id
  *                       <br> Data will be added later...
  *                      "
  *         payload:

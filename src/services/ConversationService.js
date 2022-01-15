@@ -36,7 +36,7 @@ class ConversationService {
         return conversations
     }
 
-    async updateLatestMessageConversation({ conversation, message, userIdLogin, sender }) {
+    async updateLatestMessageConversation({ conversation, message, userIdLogin, sender, hireId }) {
         const conversationId = conversation.id
         /* update latestMessage for conversation */
         const messageObject = message.toObject()
@@ -49,6 +49,7 @@ class ConversationService {
         delete messageObject._id
 
         const updateData = { latestMessage: messageObject }
+        if (hireId) updateData.latestHire = hireId
         const newConversation = await this.updateConversation(conversationId, updateData)
         const dataRes = {
             conversation: newConversation,

@@ -54,14 +54,16 @@ class HireController {
             }
         }
         const createMessage = await MessageService.createMessage(createDataMessage, false)
+        const createHire = await HireService.createHire(createData)
+
         const dataRes = await ConversationService.updateLatestMessageConversation({
             conversation: createConversation,
             message: createMessage,
             userIdLogin: customerId,
-            sender: customer
+            sender: customer,
+            hireId: createHire.id
         })
         createConversation = _.cloneDeep(dataRes.conversation)
-        const createHire = await HireService.createHire(createData)
         const { customer: customerInfo } = createConversation
         /* create notify */
         const createNotifyData = {

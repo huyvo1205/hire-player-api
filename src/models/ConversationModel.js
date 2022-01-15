@@ -30,7 +30,8 @@ const ConversationSchema = new Schema(
             createdAt: Date,
             updatedAt: Date,
             unreadStatus: {}
-        }
+        },
+        latestHire: { type: ObjectId, ref: "Hire", index: true }
     },
     { versionKey: false, timestamps: true }
 )

@@ -1,10 +1,9 @@
 import * as CreateError from "http-errors"
-import * as _ from "lodash"
 import ConversationConstant from "../constants/ConversationConstant"
-import MessageConstant from "../constants/MessageConstant"
 import UserModel from "../models/UserModel"
 import ConversationModel from "../models/ConversationModel"
 import MessageModel from "../models/MessageModel"
+import HireConstant from "../constants/HireConstant"
 
 class ConversationValidator {
     async validateCreateConversation({ customerId, playerId }) {
@@ -43,6 +42,13 @@ class ConversationValidator {
         const conversation = await ConversationModel.findOne({ _id: conversationId })
         if (!conversation) throw new CreateError.NotFound(ConversationConstant.ERROR_CODES.ERROR_CONVERSATION_NOT_FOUND)
         return conversation
+    }
+
+    validateAdminJoinConversation({ hire }) {
+        const { hireStep } = hire
+        if (hireStep !== HireConstant.HIRE_STEPS.COMPLAIN) {
+            throw new CreateError.BadRequest(ConversationConstant.ERROR_CODES.ERROR_HIRE_NOT_COMPLAIN)
+        }
     }
 
     async validateUserInConversation({ conversationId, userIdLogin }) {
