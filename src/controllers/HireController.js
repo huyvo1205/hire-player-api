@@ -20,6 +20,7 @@ import ReviewConstant from "../constants/ReviewConstant"
 import ReviewHelper from "../helpers/ReviewHelper"
 import MessageService from "../services/MessageService"
 import PlayerService from "../services/PlayerService"
+import NotificationHelper from "../helpers/NotificationHelper"
 import BalanceFluctuationConstant from "../constants/BalanceFluctuationConstant"
 
 class HireController {
@@ -66,18 +67,15 @@ class HireController {
         createConversation = _.cloneDeep(dataRes.conversation)
         const { customer: customerInfo } = createConversation
         /* create notify */
-        const createNotifyData = {
-            customer: customerId,
-            player: playerId,
-            receiver: playerId,
-            action: NotificationConstant.ACTIONS.REQUEST_HIRE,
-            href: `hires/${createHire.id}`,
-            payload: {
-                conversation: createConversation.id,
-                hire: createHire.id
-            },
-            image: customerInfo.avatar
-        }
+        const createNotifyData = NotificationHelper.getDataCreateNotify({
+            customer,
+            player: oldPlayer,
+            receiver: { id: playerId },
+            hire: createHire,
+            conversation: createConversation,
+            image: customerInfo.avatar,
+            action: NotificationConstant.ACTIONS.REQUEST_HIRE
+        })
 
         const notify = await NotificationService.createNotification(createNotifyData)
         SocketHelper.sendNotify({ userId: playerId, notify })
@@ -125,18 +123,15 @@ class HireController {
         const dataUpdatePlayer = { "playerInfo.statusHire": PlayerInfoConstant.STATUS_HIRE.BUSY }
         await UserModel.updateOne({ _id: playerId }, { $set: dataUpdatePlayer })
         /* create notify */
-        const createNotifyData = {
-            customer: customerId,
-            player: playerId,
-            receiver: customerId,
-            action: NotificationConstant.ACTIONS.PLAYER_ACCEPT_HIRE,
-            href: `hires/${newHire.id}`,
-            payload: {
-                conversation: newHire.conversation,
-                hire: hireId
-            },
-            image: newHire.player.playerInfo.playerAvatar
-        }
+        const createNotifyData = NotificationHelper.getDataCreateNotify({
+            customer: newHire.customer,
+            player: newHire.player,
+            hire,
+            receiver: { id: customerId },
+            conversation: { id: newHire.conversation },
+            image: newHire.player.playerInfo.playerAvatar,
+            action: NotificationConstant.ACTIONS.PLAYER_ACCEPT_HIRE
+        })
 
         const notify = await NotificationService.createNotification(createNotifyData)
         /* create message */
@@ -186,19 +181,15 @@ class HireController {
         /* create notify */
         const customerId = newHire.customer.id
         const playerId = newHire.player.id
-
-        const createNotifyData = {
-            customer: customerId,
-            player: playerId,
-            receiver: customerId,
-            action: NotificationConstant.ACTIONS.PLAYER_CANCEL_HIRE,
-            href: `hires/${newHire.id}`,
-            payload: {
-                conversation: newHire.conversation,
-                hire: hireId
-            },
-            image: newHire.player.playerInfo.playerAvatar
-        }
+        const createNotifyData = NotificationHelper.getDataCreateNotify({
+            customer: newHire.customer,
+            player: newHire.player,
+            hire: newHire,
+            receiver: { id: customerId },
+            conversation: { id: newHire.conversation },
+            image: newHire.player.playerInfo.playerAvatar,
+            action: NotificationConstant.ACTIONS.PLAYER_CANCEL_HIRE
+        })
 
         const notify = await NotificationService.createNotification(createNotifyData)
         /* create message */
@@ -253,18 +244,15 @@ class HireController {
         const customerId = newHire.customer.id
         const playerId = newHire.player.id
 
-        const createNotifyData = {
-            customer: customerId,
-            player: playerId,
-            receiver: playerId,
-            action: NotificationConstant.ACTIONS.CUSTOMER_CANCEL_HIRE,
-            href: `hires/${newHire.id}`,
-            payload: {
-                conversation: newHire.conversation,
-                hire: hireId
-            },
-            image: newHire.customer.avatar
-        }
+        const createNotifyData = NotificationHelper.getDataCreateNotify({
+            customer: newHire.customer,
+            player: newHire.player,
+            hire: newHire,
+            receiver: { id: playerId },
+            conversation: { id: newHire.conversation },
+            image: newHire.customer.avatar,
+            action: NotificationConstant.ACTIONS.CUSTOMER_CANCEL_HIRE
+        })
 
         const notify = await NotificationService.createNotification(createNotifyData)
         /* create message */
@@ -322,19 +310,15 @@ class HireController {
         /* update status hire player */
         const dataUpdatePlayer = { "playerInfo.statusHire": PlayerInfoConstant.STATUS_HIRE.READY }
         await UserModel.updateOne({ _id: playerId }, { $set: dataUpdatePlayer })
-
-        const createNotifyData = {
-            customer: customerId,
-            player: playerId,
-            receiver: playerId,
-            action: NotificationConstant.ACTIONS.CUSTOMER_FINISH_SOON,
-            href: `hires/${newHire.id}`,
-            payload: {
-                conversation: newHire.conversation,
-                hire: hireId
-            },
-            image: newHire.customer.avatar
-        }
+        const createNotifyData = NotificationHelper.getDataCreateNotify({
+            customer: newHire.customer,
+            player: newHire.player,
+            hire: newHire,
+            receiver: { id: playerId },
+            conversation: { id: newHire.conversation },
+            image: newHire.customer.avatar,
+            action: NotificationConstant.ACTIONS.CUSTOMER_FINISH_SOON
+        })
 
         const notify = await NotificationService.createNotification(createNotifyData)
         /* create message */
@@ -389,19 +373,15 @@ class HireController {
         /* create notify */
         const customerId = newHire.customer.id
         const playerId = newHire.player.id
-
-        const createNotifyData = {
-            customer: customerId,
-            player: playerId,
-            receiver: playerId,
-            action: NotificationConstant.ACTIONS.CUSTOMER_REQUEST_COMPLAIN,
-            href: `hires/${newHire.id}`,
-            payload: {
-                conversation: newHire.conversation,
-                hire: hireId
-            },
-            image: newHire.customer.avatar
-        }
+        const createNotifyData = NotificationHelper.getDataCreateNotify({
+            customer: newHire.customer,
+            player: newHire.player,
+            hire: newHire,
+            receiver: { id: playerId },
+            conversation: { id: newHire.conversation },
+            image: newHire.customer.avatar,
+            action: NotificationConstant.ACTIONS.CUSTOMER_REQUEST_COMPLAIN
+        })
         const notify = await NotificationService.createNotification(createNotifyData)
         /* create message */
         const createDataMessage = {
@@ -459,18 +439,15 @@ class HireController {
         const dataUpdatePlayer = { "playerInfo.statusHire": PlayerInfoConstant.STATUS_HIRE.READY }
         await UserModel.updateOne({ _id: playerId }, { $set: dataUpdatePlayer })
         /* create notify */
-        const createNotifyData = {
-            customer: customerId,
-            player: playerId,
-            receiver: customerId,
-            action: NotificationConstant.ACTIONS.COMPLETE,
-            href: `hires/${newHire.id}`,
-            payload: {
-                conversation: newHire.conversation,
-                hire: hireId
-            },
-            image: newHire.player.playerInfo.playerAvatar
-        }
+        const createNotifyData = NotificationHelper.getDataCreateNotify({
+            customer: newHire.customer,
+            player: newHire.player,
+            hire: newHire,
+            receiver: { id: customerId },
+            conversation: { id: newHire.conversation },
+            image: newHire.player.playerInfo.playerAvatar,
+            action: NotificationConstant.ACTIONS.COMPLETE
+        })
 
         const notify = await NotificationService.createNotification(createNotifyData)
         /* create message */
@@ -543,19 +520,18 @@ class HireController {
         const updateDataPlayer = { "playerInfo.avgRating": avgRating }
         await PlayerService.updatePlayerInfo(userId, updateDataPlayer)
         /* create notify */
-        const createNotifyData = {
-            customer: hire.customer,
-            player: hire.player,
-            receiver: hire.player,
+        const customerInfo = await UserModel.findOne({ _id: hire.customer })
+        const player = await UserModel.findOne({ _id: hire.player })
+        const createNotifyData = NotificationHelper.getDataCreateNotify({
+            customer: customerInfo,
+            player,
+            hire,
+            receiver: { id: hire.player },
+            conversation: { id: hire.conversation },
+            image: userLogin.playerInfo.playerAvatar,
             action: NotificationConstant.ACTIONS.REVIEW,
-            href: `hires/${hire.id}`,
-            payload: {
-                conversation: hire.conversation,
-                hire: hireId,
-                review: newReview.id
-            },
-            image: userLogin.playerInfo.playerAvatar
-        }
+            review: newReview
+        })
 
         const notify = await NotificationService.createNotification(createNotifyData)
         /* create message */

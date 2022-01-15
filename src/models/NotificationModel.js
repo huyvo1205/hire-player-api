@@ -8,16 +8,23 @@ const { ObjectId } = Schema.Types
 
 const NotificationSchema = new Schema(
     {
-        customer: { type: ObjectId, ref: "User" },
-        player: { type: ObjectId, ref: "User" },
+        customer: {
+            avatar: {},
+            userName: String,
+            id: { type: ObjectId, ref: "User" }
+        },
+        player: {
+            playerInfo: {
+                playerName: String,
+                rank: String,
+                playerAvatar: {}
+            },
+            id: { type: ObjectId, ref: "User" }
+        },
         receiver: { type: ObjectId, ref: "User", index: true },
         action: { type: Number, enum: Object.values(NotificationConstant.ACTIONS), index: true },
         href: String, // hires/61976bbda6125e5448f0e01e
-        payload: {
-            conversation: { type: ObjectId, ref: "Conversation", index: true },
-            hire: { type: ObjectId, ref: "Hire", index: true },
-            review: { type: ObjectId, ref: "Review" }
-        },
+        payload: Schema.Types.Mixed,
         image: {},
         deletedAt: Date,
         isRead: { type: Boolean, default: false }

@@ -26,8 +26,8 @@ router.use(auth("ADMIN"))
  *     responses:
  *       200:
  *         description: The response has fields
- *           <br> - data {results[], page, limit, totalPages, totalResults}
- *           <br> - message=GET_NOTIFICATIONS_SUCCESS
+ *           <br> - data {Conversation}
+ *           <br> - message=JOIN_CHAT_SUCCESS
  *         content:
  *           application/json:
  *             schema:
@@ -59,8 +59,8 @@ router.post("/join-chat", validateBody(AdminSchema.joinChat), AdminController.jo
  *     responses:
  *       200:
  *         description: The response has fields
- *           <br> - data {results[], page, limit, totalPages, totalResults}
- *           <br> - message=GET_NOTIFICATIONS_SUCCESS
+ *           <br> - data {Conversation}
+ *           <br> - message=LEAVE_CHAT_SUCCESS
  *         content:
  *           application/json:
  *             schema:

@@ -12,11 +12,26 @@ import "express-async-errors"
  *         id:
  *           type: string
  *         customer:
- *           type: string
- *           description: "User Id"
+ *           type: object
+ *           properties:
+ *              avatar:
+ *                type: object
+ *                description: "Object avatar image"
+ *              userName:
+ *                type: string
+ *                description: "userName"
+ *              id:
+ *                type: string
+ *                description: "customer Id"
  *         player:
- *           type: string
- *           description: "User Id"
+ *           type: object
+ *           properties:
+ *              playerInfo:
+ *                type: object
+ *                description: "Object playerInfo has fields playerName, rank, playerAvatar"
+ *              id:
+ *                type: string
+ *                description: "player Id"
  *         image:
  *           type: object
  *           description: "Image to display"
@@ -57,16 +72,11 @@ import "express-async-errors"
  *                      "
  *         payload:
  *           type: object
- *           properties:
- *              conversation:
- *                type: string
- *                description: "conversation Id"
- *              hire:
- *                type: string
- *                description: "hire Id"
- *              review:
- *                type: string
- *                description: "review Id"
+ *           description: "Object data type Mixed default has hireId, conversationId
+ *                       <br> action ===  REQUEST_HIRE: 1 -> add fields timeRent, customerNote
+ *                       <br> action ===  REVIEW: 8 -> add fields starPoint, reviewId
+ *                       <br> Data will be added later...
+ *                      "
  *         deletedAt:
  *           type: string
  *           format: "date-time"
