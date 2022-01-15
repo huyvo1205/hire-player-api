@@ -35,7 +35,7 @@ router.put("/users/:id", AdminController.updateUser)
 /**
  * @swagger
  * /api/admin/join-chat:
- *   get:
+ *   post:
  *     summary: Admin Join Chat
  *     tags: [Admin Join Chat]
  *     produces:
@@ -68,7 +68,7 @@ router.post("/join-chat", validateBody(AdminSchema.joinChat), AdminController.jo
 /**
  * @swagger
  * /api/admin/leave-chat:
- *   get:
+ *   post:
  *     summary: Admin Leave Chat
  *     tags: [Admin Leave Chat]
  *     produces:
