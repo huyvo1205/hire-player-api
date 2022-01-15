@@ -2,9 +2,8 @@ import UserModel from "../models/UserModel"
 
 class UserService {
     async updateUser(id, updateData) {
-        await UserModel.updateOne({ _id: id }, updateData)
-        const user = await UserModel.findById(id).populate({ path: "player" })
-        return user
+        const newUser = await UserModel.findOneAndUpdate({ _id: id }, updateData, { new: true })
+        return newUser
     }
 }
 

@@ -71,30 +71,6 @@ router.get("/", PlayerController.getPlayersInfo)
 /**
  * @swagger
  * /api/players/:id:
- *   put:
- *     summary: Update Player Info
- *     security:
- *       - bearerAuth: []
- *     tags: [Update Player Info]
- *     produces:
- *       - application/json
- *     responses:
- *       200:
- *         description: The response has fields
- *           <br> - data{User}
- *           <br> - message=UPDATE_PLAYER_INFO_SUCCESS
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/User'
- *       404:
- *         description: Not Found
- *           <br> - ERROR_PLAYER_NOT_FOUND
- */
-router.put("/:id", auth(), PlayerController.updatePlayer)
-/**
- * @swagger
- * /api/players/:id:
  *   get:
  *     summary: Get Detail Player Info
  *     tags: [Get Detail Player Info]

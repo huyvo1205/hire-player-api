@@ -10,6 +10,30 @@ const router = express.Router()
 router.use(auth("ADMIN"))
 /**
  * @swagger
+ * /api/admin/users/:id:
+ *   put:
+ *     summary: Update User Info
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [Update User Info]
+ *     produces:
+ *       - application/json
+ *     responses:
+ *       200:
+ *         description: The response has fields
+ *           <br> - data{User}
+ *           <br> - message=UPDATE_USER_SUCCESS
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *       404:
+ *         description: Not Found
+ *           <br> - ERROR_USER_NOT_FOUND
+ */
+router.put("/users/:id", AdminController.updateUser)
+/**
+ * @swagger
  * /api/admin/join-chat:
  *   get:
  *     summary: Admin Join Chat

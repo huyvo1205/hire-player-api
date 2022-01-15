@@ -8,7 +8,7 @@ class NotificationService {
     }
 
     async updateNotification(id, updateData) {
-        const newNotification = await NotificationModel.updateOne({ _id: id }, updateData)
+        const newNotification = await NotificationModel.findOneAndUpdate({ _id: id }, updateData, { new: true })
         return newNotification
     }
 

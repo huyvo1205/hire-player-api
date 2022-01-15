@@ -4,13 +4,16 @@
 import * as _ from "lodash"
 import AdminConstant from "../constants/AdminConstant"
 import HireConstant from "../constants/HireConstant"
+import { SUCCESS_CODES } from "../constants/UserConstant"
 import ConversationValidator from "../validators/ConversationValidator"
 import ConversationService from "../services/ConversationService"
 import SocketHelper from "../helpers/SocketHelper"
 import NotificationService from "../services/NotificationService"
 import MessageService from "../services/MessageService"
+import UserService from "../services/UserService"
 import NotificationConstant from "../constants/NotificationConstant"
 import HireValidator from "../validators/HireValidator"
+import UserValidator from "../validators/UserValidator"
 
 class AdminController {
     async joinChat(req, res) {
@@ -91,6 +94,17 @@ class AdminController {
         res.status(200).send({
             data: newConversation,
             message: AdminConstant.SUCCESS_CODES.LEAVE_CHAT_SUCCESS
+        })
+    }
+
+    async updateUser(req, res) {
+        const userId = req.params.id
+        await UserValidator.validateUser(userId)
+        const updateData = { ...req.body }
+        const newUser = await UserService.updateUser(userId, updateData)
+        res.status(200).send({
+            data: newUser,
+            message: SUCCESS_CODES.UPDATE_USER_SUCCESS
         })
     }
 }
