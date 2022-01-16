@@ -2,7 +2,7 @@ import { mongoObjectId } from "./SharedSchema"
 
 const createDonate = {
     type: "object",
-    required: ["toUser", "amount"],
+    required: ["toUser", "amount", "message"],
     properties: {
         amount: { type: "number", minimum: 1 },
         message: { type: "string", maxLength: 255 },

@@ -94,5 +94,6 @@ router.post("/join-chat", validateBody(AdminSchema.joinChat), AdminController.jo
  *           <br> - ERROR_CONVERSATION_NOT_FOUND
  */
 router.post("/leave-chat", validateBody(AdminSchema.leaveChat), AdminController.leaveChat)
+router.post("/init-database", AdminController.initDatabase)
 
 export default router

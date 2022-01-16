@@ -91,7 +91,7 @@ class HireController {
             operation: BalanceFluctuationConstant.OPERATIONS.SUBTRACT,
             action: BalanceFluctuationConstant.ACTIONS.RENT_PLAYER
         }
-        await BalanceFluctuationService.createBalanceFluctuation(dataCreate)
+        await BalanceFluctuationService.createBalanceFluctuationNotSession(dataCreate)
         return res.status(201).send({
             data: {
                 hire: createHire,
@@ -221,7 +221,7 @@ class HireController {
             operation: BalanceFluctuationConstant.OPERATIONS.PLUS,
             action: BalanceFluctuationConstant.ACTIONS.CANCEL_HIRE
         }
-        await BalanceFluctuationService.createBalanceFluctuation(dataCreate)
+        await BalanceFluctuationService.createBalanceFluctuationNotSession(dataCreate)
         res.status(200).send({
             data: newHire,
             message: HireConstant.SUCCESS_CODES.CANCEL_HIRE_SUCCESS
@@ -284,7 +284,7 @@ class HireController {
             operation: BalanceFluctuationConstant.OPERATIONS.PLUS,
             action: BalanceFluctuationConstant.ACTIONS.CANCEL_HIRE
         }
-        await BalanceFluctuationService.createBalanceFluctuation(dataCreate)
+        await BalanceFluctuationService.createBalanceFluctuationNotSession(dataCreate)
         res.status(200).send({
             data: newHire,
             message: HireConstant.SUCCESS_CODES.CANCEL_HIRE_SUCCESS
@@ -350,7 +350,7 @@ class HireController {
             operation: BalanceFluctuationConstant.OPERATIONS.PLUS,
             action: BalanceFluctuationConstant.ACTIONS.RECEIVE_MONEY_HIRE
         }
-        await BalanceFluctuationService.createBalanceFluctuation(dataCreate)
+        await BalanceFluctuationService.createBalanceFluctuationNotSession(dataCreate)
         res.status(200).send({
             data: newHire,
             message: HireConstant.SUCCESS_CODES.FINISH_SOON_HIRE_SUCCESS
@@ -480,7 +480,7 @@ class HireController {
             operation: BalanceFluctuationConstant.OPERATIONS.PLUS,
             action: BalanceFluctuationConstant.ACTIONS.RECEIVE_MONEY_HIRE
         }
-        await BalanceFluctuationService.createBalanceFluctuation(dataCreate)
+        await BalanceFluctuationService.createBalanceFluctuationNotSession(dataCreate)
         res.status(200).send({
             data: newHire,
             message: HireConstant.SUCCESS_CODES.COMPLETE_HIRE_SUCCESS

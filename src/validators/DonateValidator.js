@@ -8,10 +8,11 @@ class DonateValidator {
         if (amount > money) {
             throw new CreateError.BadRequest(DonateConstant.ERROR_CODES.ERROR_USER_NOT_ENOUGH_MONEY)
         }
-        const user = await UserModel.findById(toUser).lean()
+        const user = await UserModel.findById(toUser)
         if (!user) {
             throw new CreateError.NotFound(DonateConstant.ERROR_CODES.ERROR_TO_USER_NOT_FOUND)
         }
+        return user
     }
 }
 

@@ -15,19 +15,16 @@ services:
             - ./src:/app/src
             - .env:/app/.env
             - ./logs:/app/logs
-        depends_on:
-            - mongodb
         restart: always
-    mongodb:
-        image: mongo:4.2
-        ports:
-            - "27017:27017"
-        environment:
-            - MONGO_INITDB_ROOT_USERNAME=${MONGO_USER}
-            - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD}
-        volumes:
-            - mongodb-data:/data/db
-        restart: always
+    # mongodb:
+    #     image: mongo:4.2
+    #     ports:
+    #         - "27017:27017"
+    #     environment:
+    #         - MONGO_INITDB_ROOT_USERNAME=${MONGO_USER}
+    #         - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD}
+    #     volumes:
+    #         - mongodb-data:/data/db
+    #     restart: always
 volumes:
-    mongodb-data:
     logs:

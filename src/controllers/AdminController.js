@@ -14,6 +14,7 @@ import UserService from "../services/UserService"
 import NotificationConstant from "../constants/NotificationConstant"
 import HireValidator from "../validators/HireValidator"
 import UserValidator from "../validators/UserValidator"
+import InitHelper from "../helpers/InitHelper"
 
 class AdminController {
     async joinChat(req, res) {
@@ -105,6 +106,13 @@ class AdminController {
         res.status(200).send({
             data: newUser,
             message: SUCCESS_CODES.UPDATE_USER_SUCCESS
+        })
+    }
+
+    async initDatabase(req, res) {
+        await InitHelper.initPlayers()
+        res.status(200).send({
+            message: SUCCESS_CODES.INIT_DATABASE_SUCCESS
         })
     }
 }
