@@ -92,8 +92,6 @@ server.on("listening", () => {
 
 // setupWebSocket(server)
 SocketServer.initSocket(server)
-console.log("Database.MONGO_OPTIONS", Database.MONGO_OPTIONS)
-console.log("Database.URL", Database.URL)
 mongoose.connect(Database.URL, Database.MONGO_OPTIONS, err => {
     server.listen(port)
     if (err) {

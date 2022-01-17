@@ -6,6 +6,5 @@ const { MONGO_OPTIONS } = ConfigDB
 if (process.env.NODE_ENV === "production") {
     URL = `mongodb://${ConfigDB.MONGO_USER}:${ConfigDB.MONGO_PASSWORD}@${ConfigDB.MONGO_IP}:${ConfigDB.MONGO_PORT}/${ConfigDB.MONGO_DB_NAME}?authSource=admin`
 }
-console.log("URL DATABASE: ", URL)
 
 export default { URL, MONGO_OPTIONS }
