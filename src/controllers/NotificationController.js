@@ -35,6 +35,15 @@ class NotificationController {
             message: NotificationConstant.SUCCESS_CODES.READERS_NOTIFICATIONS_SUCCESS
         })
     }
+
+    async countUnreadNotifications(req, res) {
+        const userIdLogin = req.user.id
+        const count = await NotificationService.countUnreadNotifications(userIdLogin)
+        res.status(200).send({
+            data: { count },
+            message: NotificationConstant.SUCCESS_CODES.COUNT_UNREAD_NOTIFICATIONS_SUCCESS
+        })
+    }
 }
 
 export default new NotificationController()

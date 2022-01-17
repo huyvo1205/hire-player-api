@@ -188,28 +188,23 @@ router.get("/:id", auth(), ConversationController.getDetailConversation)
  *     produces:
  *       - application/json
  *     parameters:
- *       - name: members
- *         description: "Array Player Ids"
+ *       - name: userId
+ *         description: "user Id"
  *         in: body
- *         schema:
- *           type: array
- *           description: "Player Ids, uniqueItems: true, minItems: 2"
- *           items:
- *              type: string
- *              description: "Player Id"
+ *         type: string
  *         required: true
  *     responses:
  *       201:
  *         description: The response has fields
- *           <br> - data{ conversation:Conversation, status, body, type, sender:{User}, latestMessage:{Message} }
+ *           <br> - data{Conversation}
  *           <br> - message=CREATE_CONVERSATION_SUCCESS
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Message'
+ *               $ref: '#/components/schemas/Conversation'
  *       404:
  *         description: Not Found
- *           <br> - ERROR_MEMBERS_NOT_FOUND
+ *           <br> - ERROR_USER_NOT_FOUND
  */
 router.post("/", auth(), validateBody(ConversationSchema.createConversation), ConversationController.createConversation)
 /**
@@ -440,4 +435,35 @@ router.post(
  *           <br> - ERROR_SENDER_NOT_FOUND
  */
 router.post("/:id/message/readers", auth(), ConversationController.readerMessages)
+/**
+ * @swagger
+ * /api/conversations/check-exist:
+ *   post:
+ *     summary: Check Exist Conversation
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [Check Exist Conversation]
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: userId
+ *         description: "user Id"
+ *         in: body
+ *         type: string
+ *         required: true
+ *     responses:
+ *       200:
+ *         description: "The response has fields
+ *           <br> - data{ conversationId, isExist: true/false }
+ *           <br> - message=CHECK_EXIST_CONVERSATION_SUCCESS"
+ *       404:
+ *         description: Not Found
+ *           <br> - ERROR_USER_NOT_FOUND
+ */
+router.post(
+    "/check-exist",
+    auth(),
+    validateBody(ConversationSchema.checkExistConversation),
+    ConversationController.checkExist
+)
 export default router

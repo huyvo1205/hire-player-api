@@ -12,7 +12,7 @@ import SocketHelper from "../helpers/SocketHelper"
 import pick from "../utils/pick"
 
 class DonateController {
-    async createDonate(req, res) {
+    async createDonate(req, res, next) {
         const session = await mongoose.startSession()
         await session.startTransaction()
 
@@ -65,9 +65,7 @@ class DonateController {
             console.log("error", error)
             await session.abortTransaction()
             session.endSession()
-            return res.status(500).send({
-                message: "error"
-            })
+            return next(error)
         }
     }
 }

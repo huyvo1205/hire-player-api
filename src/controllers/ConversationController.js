@@ -1,7 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-unused-vars */
-/* eslint-disable no-undef */
 import ConversationConstant from "../constants/ConversationConstant"
 import ConversationValidator from "../validators/ConversationValidator"
 import HireValidator from "../validators/HireValidator"
@@ -14,6 +13,7 @@ import NotificationService from "../services/NotificationService"
 import NotificationConstant from "../constants/NotificationConstant"
 import { ROLES } from "../constants/UserConstant"
 import { UserModel } from "../models"
+import SocketHelper from "../helpers/SocketHelper"
 
 class ConversationController {
     async getConversations(req, res) {
@@ -39,21 +39,33 @@ class ConversationController {
     }
 
     async createConversation(req, res) {
-        const { customerId, playerId, type } = req.body
-        const conversation = await ConversationValidator.validateCreateConversation({ customerId, playerId })
+        const userIdLogin = req.user.id
+        const { userId } = req.body
+        await UserValidator.validateUser(userId)
+        const conversation = await ConversationService.checkExistConversation({
+            customerId: userIdLogin,
+            playerId: userId
+        })
+
         if (conversation) {
+            conversation.members.forEach(member => {
+                SocketHelper.sendConversation({ userId: member, conversation })
+            })
             return res.status(201).send({
                 data: conversation,
                 message: ConversationConstant.SUCCESS_CODES.CREATE_CONVERSATION_SUCCESS
             })
         }
+
         const createData = {
-            members: [customerId, playerId],
-            customer: customerId,
-            player: playerId,
-            type
+            members: [userIdLogin, userId],
+            customer: userIdLogin,
+            player: userId
         }
         const createConversation = await ConversationService.createConversation(createData)
+        createConversation.members.forEach(member => {
+            SocketHelper.sendConversation({ userId: member, conversation: createConversation })
+        })
         return res.status(201).send({
             data: createConversation,
             message: ConversationConstant.SUCCESS_CODES.CREATE_CONVERSATION_SUCCESS
@@ -219,6 +231,21 @@ class ConversationController {
         return res.status(200).send({
             data: {},
             message: ConversationConstant.SUCCESS_CODES.CREATE_COMPLAIN_SUCCESS
+        })
+    }
+
+    async checkExist(req, res) {
+        const userIdLogin = req.user.id
+        const { userId } = req.body
+        await UserValidator.validateUser(userId)
+        const conversation = await ConversationService.checkExistConversation({
+            customerId: userIdLogin,
+            playerId: userId
+        })
+        const conversationId = conversation ? conversation.id : ""
+        return res.status(200).send({
+            data: { conversationId, isExist: !!conversation },
+            message: ConversationConstant.SUCCESS_CODES.CHECK_EXIST_CONVERSATION_SUCCESS
         })
     }
 }

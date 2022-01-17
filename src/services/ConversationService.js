@@ -59,6 +59,16 @@ class ConversationService {
         }
         return dataRes
     }
+
+    async checkExistConversation({ customerId, playerId }) {
+        const conversation = await ConversationModel.findOne({
+            customer: { $in: [customerId, playerId] },
+            player: { $in: [customerId, playerId] }
+        })
+            .populate(ConversationConstant.POPULATE_CUSTOMER)
+            .populate(ConversationConstant.POPULATE_PLAYER)
+        return conversation
+    }
 }
 
 export default new ConversationService()

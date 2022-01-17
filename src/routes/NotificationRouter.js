@@ -144,6 +144,24 @@ const router = express.Router()
 router.get("/", auth(), NotificationController.getNotifications)
 /**
  * @swagger
+ * /api/notifications/count-unread:
+ *   get:
+ *     summary: Count Unread Notifications of User Login
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [Count Unread Notifications]
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *     responses:
+ *       200:
+ *         description: The response has fields
+ *           <br> data{count}
+ *           <br> - message=COUNT_UNREAD_NOTIFICATIONS_SUCCESS
+ */
+router.get("/count-unread/", auth(), NotificationController.countUnreadNotifications)
+/**
+ * @swagger
  * /api/notifications/:id:
  *   get:
  *     summary: Get Detail Notifications

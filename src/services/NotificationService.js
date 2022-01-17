@@ -32,6 +32,11 @@ class NotificationService {
             { timestamps: false }
         )
     }
+
+    async countUnreadNotifications(receiver) {
+        const count = await NotificationModel.countDocuments({ receiver, isRead: false })
+        return count
+    }
 }
 
 export default new NotificationService()

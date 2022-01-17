@@ -67,6 +67,7 @@ class NotificationHelper {
             createNotifyData.payload.donateAmount = amount
             createNotifyData.payload.donateMessage = message
             createNotifyData.payload.donateId = mongoose.Types.ObjectId(donate.id)
+            createNotifyData.href = `donates/${donate.id}`
         }
         return createNotifyData
     }

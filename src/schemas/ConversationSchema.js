@@ -1,16 +1,10 @@
 import { mongoObjectId } from "./SharedSchema"
-import ConversationConstant from "../constants/ConversationConstant"
 
 const createConversation = {
     type: "object",
-    required: ["customerId", "playerId", "type"],
+    required: ["userId"],
     properties: {
-        customerId: mongoObjectId,
-        playerId: mongoObjectId,
-        type: {
-            type: "number",
-            enum: Object.values(ConversationConstant.TYPES)
-        }
+        userId: mongoObjectId
     }
 }
 
@@ -46,9 +40,18 @@ const createComplain = {
     }
 }
 
+const checkExistConversation = {
+    type: "object",
+    required: ["userId"],
+    properties: {
+        userId: mongoObjectId
+    }
+}
+
 export default {
     createComplain,
     createConversation,
     updateConversation,
-    createConversationMessage
+    createConversationMessage,
+    checkExistConversation
 }
