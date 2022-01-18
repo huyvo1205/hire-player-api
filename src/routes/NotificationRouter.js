@@ -77,8 +77,17 @@ import "express-async-errors"
  *         payload:
  *           type: object
  *           description: "Object data type Mixed default has hireId, conversationId
- *                       <br> action ===  REQUEST_HIRE: 1 -> add fields timeRent, customerNote
- *                       <br> action ===  REVIEW: 8 -> add fields starPoint, reviewId
+ *                       <br> action ===  REQUEST_HIRE: 1 -> {hireId, conversationId}
+ *                       <br> action ===  PLAYER_ACCEPT_HIRE: 2 -> {hireId, conversationId}
+ *                       <br> action ===  PLAYER_CANCEL_HIRE: 3 -> {hireId, conversationId}
+ *                       <br> action ===  CUSTOMER_CANCEL_HIRE: 4 -> {hireId, conversationId}
+ *                       <br> action ===  CUSTOMER_FINISH_SOON: 5 -> {hireId, conversationId}
+ *                       <br> action ===  CUSTOMER_REQUEST_COMPLAIN: 6 -> {hireId, conversationId}
+ *                       <br> action ===  COMPLETE: 7 ->  {hireId, conversationId}
+ *                       <br> action ===  REVIEW: 8 -> {hireId, conversationId, starPoint, reviewId}
+ *                       <br> action ===  ADMIN_JOIN_CHAT: 9 -> {hireId, conversationId}
+ *                       <br> action ===  DONATE: 10 -> { donateAmount, donateRealAmount, donateMessage, donateId }
+ *                       <br> action ===  REPLY_DONATE: 11 -> { donateReplyMessage, donateId }
  *                       <br> Data will be added later...
  *                      "
  *         deletedAt:
