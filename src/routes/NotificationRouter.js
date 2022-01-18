@@ -49,6 +49,8 @@ import "express-async-errors"
  *                       <br> COMPLETE: 7 -> When player complete
  *                       <br> REVIEW: 8 -> When customer review hire
  *                       <br> ADMIN_JOIN_CHAT: 9 -> When admin join chat
+ *                       <br> DONATE: 10 -> User donate
+ *                       <br> REPLY_DONATE: 11 -> User reply donate
  *                       <br> Data will be added later...
  *                      "
  *           enum:
@@ -68,6 +70,8 @@ import "express-async-errors"
  *                       <br> action ===  COMPLETE: 7 -> hires/:id
  *                       <br> action ===  REVIEW: 8 -> hires/:id
  *                       <br> action ===  ADMIN_JOIN_CHAT: 9 -> hires/:id
+ *                       <br> action ===  DONATE: 10 -> donates/:id
+ *                       <br> action ===  REPLY_DONATE: 11 -> donates/:id
  *                       <br> Data will be added later...
  *                      "
  *         payload:
