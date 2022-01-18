@@ -63,12 +63,21 @@ class NotificationHelper {
         }
 
         if (action === NotificationConstant.ACTIONS.DONATE && donate.id) {
-            const { amount, message } = donate
+            const { amount, message, realAmount } = donate
             createNotifyData.payload.donateAmount = amount
+            createNotifyData.payload.donateRealAmount = realAmount
             createNotifyData.payload.donateMessage = message
             createNotifyData.payload.donateId = mongoose.Types.ObjectId(donate.id)
             createNotifyData.href = `donates/${donate.id}`
         }
+
+        if (action === NotificationConstant.ACTIONS.REPLY_DONATE && donate.id) {
+            const { replyMessage } = donate
+            createNotifyData.payload.donateReplyMessage = replyMessage
+            createNotifyData.payload.donateId = mongoose.Types.ObjectId(donate.id)
+            createNotifyData.href = `donates/${donate.id}`
+        }
+
         return createNotifyData
     }
 }

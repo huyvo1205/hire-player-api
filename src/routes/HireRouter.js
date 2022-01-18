@@ -43,6 +43,8 @@ import "express-async-errors"
  *           type: number
  *         cost:
  *           type: number
+ *         realCost:
+ *           type: number
  *         conversation:
  *           type: string
  *           description: "Conversation Id"

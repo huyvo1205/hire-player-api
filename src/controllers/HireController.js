@@ -2,6 +2,7 @@
 /* eslint-disable no-restricted-syntax */
 import * as _ from "lodash"
 import HireConstant from "../constants/HireConstant"
+import { SYSTEM_FEE } from "../constants/GlobalConstant"
 import NotificationConstant from "../constants/NotificationConstant"
 import HireValidator from "../validators/HireValidator"
 import ConversationValidator from "../validators/ConversationValidator"
@@ -31,7 +32,8 @@ class HireController {
         const oldPlayer = await HireValidator.validateCreateHire({ customerId, playerId, timeRent, customer })
         const { costPerHour } = oldPlayer.playerInfo
         const cost = timeRent * costPerHour
-        const createData = { ...req.body, customer: customerId, player: playerId, cost }
+        const realCost = cost - (cost * SYSTEM_FEE) / 100
+        const createData = { ...req.body, customer: customerId, player: playerId, cost, realCost }
         /* create conversation */
         const dataCreateConversation = {
             members: [playerId, customerId],
@@ -346,7 +348,7 @@ class HireController {
         /* create balance fluctuation */
         const dataCreate = {
             user: playerId,
-            amount: newHire.cost,
+            amount: newHire.realCost,
             operation: BalanceFluctuationConstant.OPERATIONS.PLUS,
             action: BalanceFluctuationConstant.ACTIONS.RECEIVE_MONEY_HIRE
         }
@@ -476,7 +478,7 @@ class HireController {
         /* create balance fluctuation */
         const dataCreate = {
             user: playerId,
-            amount: newHire.cost,
+            amount: newHire.realCost,
             operation: BalanceFluctuationConstant.OPERATIONS.PLUS,
             action: BalanceFluctuationConstant.ACTIONS.RECEIVE_MONEY_HIRE
         }

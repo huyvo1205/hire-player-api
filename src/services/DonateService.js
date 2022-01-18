@@ -17,6 +17,11 @@ class DonateService {
         const donates = await DonateModel.paginate(filter, options)
         return donates
     }
+
+    async updateDonate(id, dataUpdate) {
+        const donates = await DonateModel.findByIdAndUpdate({ _id: id }, { $set: dataUpdate }, { new: true })
+        return donates
+    }
 }
 
 export default new DonateService()

@@ -5,8 +5,16 @@ const createDonate = {
     required: ["toUser", "amount", "message"],
     properties: {
         amount: { type: "number", minimum: 1 },
-        message: { type: "string", maxLength: 255 },
+        message: { type: "string", maxLength: 255, minLength: 1 },
         toUser: mongoObjectId
+    }
+}
+
+const replyDonate = {
+    type: "object",
+    required: ["replyMessage"],
+    properties: {
+        replyMessage: { type: "string", maxLength: 255, minLength: 1 }
     }
 }
 
@@ -20,4 +28,4 @@ const updateDonate = {
     }
 }
 
-export default { createDonate, updateDonate }
+export default { createDonate, updateDonate, replyDonate }

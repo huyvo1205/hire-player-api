@@ -26,7 +26,8 @@ const HireSchema = mongoose.Schema(
         rate: Number,
         conversation: { type: ObjectId, ref: "Conversation", index: true },
         timeRent: Number,
-        cost: Number
+        cost: Number,
+        realCost: Number
     },
     { versionKey: false, timestamps: true }
 )

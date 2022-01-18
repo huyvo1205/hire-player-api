@@ -8,7 +8,9 @@ const { ObjectId } = Schema.Types
 const DonateSchema = mongoose.Schema(
     {
         amount: { type: Number, default: 0 },
+        realAmount: { type: Number, default: 0 },
         message: String,
+        replyMessage: String,
         fromUser: { type: ObjectId, ref: "User", required: true },
         toUser: { type: ObjectId, ref: "User", required: true }
     },
