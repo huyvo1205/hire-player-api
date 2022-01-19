@@ -2,6 +2,7 @@
 import NotificationConstant from "../constants/NotificationConstant"
 import pick from "../utils/pick"
 import NotificationService from "../services/NotificationService"
+import NotificationValidator from "../validators/NotificationValidator"
 
 class NotificationController {
     async getNotifications(req, res) {
@@ -21,10 +22,21 @@ class NotificationController {
 
     async getDetailNotification(req, res) {
         const notificationId = req.params.id
-        const notification = await NotificationService.getDetailNotification(notificationId)
+        const notification = await NotificationValidator.validateGetNotification(notificationId)
         res.status(200).send({
             data: notification,
             message: NotificationConstant.SUCCESS_CODES.GET_DETAIL_NOTIFICATION_SUCCESS
+        })
+    }
+
+    async readNotification(req, res) {
+        const notificationId = req.params.id
+        await NotificationValidator.validateGetNotification(notificationId)
+        const dataUpdate = { isRead: true }
+        const newNotification = await NotificationService.updateNotification(notificationId, dataUpdate)
+        res.status(200).send({
+            data: newNotification,
+            message: NotificationConstant.SUCCESS_CODES.READ_NOTIFICATION_SUCCESS
         })
     }
 

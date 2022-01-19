@@ -200,9 +200,39 @@ router.get("/count-unread/", auth(), NotificationController.countUnreadNotificat
  *               $ref: '#/components/schemas/Notification'
  *       404:
  *         description: Not Found
- *           <br> - ERROR_CONVERSATION_NOT_FOUND
+ *           <br> - ERROR_NOTIFICATION_NOT_FOUND
  */
 router.get("/:id", auth(), NotificationController.getDetailNotification)
+/**
+ * @swagger
+ * /api/notifications/:id/read:
+ *   put:
+ *     summary: Read Notification
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [Read Notification]
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: id
+ *         description: "Notification Id"
+ *         in: path
+ *         schema:
+ *              type: string
+ *     responses:
+ *       200:
+ *         description: The response has fields
+ *           <br> - data{Notification}
+ *           <br> - message=READ_NOTIFICATION_SUCCESS
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Notification'
+ *       404:
+ *         description: Not Found
+ *           <br> - ERROR_NOTIFICATION_NOT_FOUND
+ */
+router.put("/:id/read", auth(), NotificationController.readNotification)
 /**
  * @swagger
  * /api/notifications/readers:
