@@ -4,10 +4,10 @@ const createPlayerInfo = {
     type: "object",
     required: ["userId"],
     properties: {
-        gameName: { type: "string" },
-        rank: { type: "string" },
+        gameName: { type: "string", maxLength: 500 },
+        rank: { type: "string", maxLength: 500 },
         costPerHour: { type: "number" },
-        description: { type: "string" },
+        description: { type: "string", maxLength: 1000 },
         userId: mongoObjectId
     }
 }
@@ -16,11 +16,11 @@ const updatePlayerInfo = {
     type: "object",
     required: [],
     properties: {
-        playerName: { type: "string" },
-        gameName: { type: "string" },
-        rank: { type: "string" },
-        costPerHour: { type: "number" },
-        description: { type: "string" }
+        playerName: { type: "string", maxLength: 70 },
+        gameName: { type: "string", maxLength: 500 },
+        rank: { type: "string", maxLength: 255 },
+        costPerHour: { type: "number", minimum: 0 },
+        description: { type: "string", maxLength: 1000 }
     },
     additionalProperties: false
 }
@@ -41,4 +41,23 @@ const updateHireSettings = {
     additionalProperties: false
 }
 
-export default { createPlayerInfo, updatePlayerInfo, updateHireSettings }
+const removeImages = {
+    type: "object",
+    required: ["images"],
+    properties: {
+        images: {
+            type: "array",
+            items: {
+                type: "object",
+                required: ["filename"],
+                properties: {
+                    filename: { type: "string" }
+                }
+            },
+            minItems: 1,
+            uniqueItems: true
+        }
+    }
+}
+
+export default { createPlayerInfo, updatePlayerInfo, updateHireSettings, removeImages }

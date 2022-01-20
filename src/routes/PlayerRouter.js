@@ -1,9 +1,9 @@
 import express from "express"
 import PlayerController from "../controllers/PlayerController"
 import { validateBody } from "../validators"
-import PlayerInfoSchema from "../schemas/PlayerSchema"
 import auth from "../middlewares/auth"
 import "express-async-errors"
+import PlayerSchema from "../schemas/PlayerSchema"
 
 const router = express.Router()
 /**
@@ -113,7 +113,9 @@ router.get("/:id", PlayerController.getDetailPlayerInfo)
  *         schema:
  *              type: string
  *       - name: images
- *         description: "Key files upload is: images"
+ *         description: "Key files upload is: images
+ *                        <br>- only upload 15 images for one
+ *                      "
  *         in: form
  *         schema:
  *              type: file
@@ -130,13 +132,112 @@ router.get("/:id", PlayerController.getDetailPlayerInfo)
  *         description: Bad Request
  *           <br> - ERROR_KEY_UPLOAD_INVALID
  *           <br> - ERROR_MIMETYPE_INVALID
+ *           <br> - ERROR_LIMIT_FILE_SIZE
+ *           <br> - ERROR_LIMIT_UNEXPECTED_FILE
  *       404:
  *         description: Not Found
  *           <br> - ERROR_PLAYER_NOT_FOUND
+ *           <br> - ERROR_FILE_NOT_FOUND
  *       500:
  *         description: Internal Server
  */
 router.post("/:id/upload-images", auth(), PlayerController.uploadImagesPlayerInfo)
+/**
+ * @swagger
+ * /api/players/:id/upload-avatar:
+ *   put:
+ *     summary: Player Upload Avatar
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [Player Upload Avatar]
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: id
+ *         description: "Player Id"
+ *         in: path
+ *         schema:
+ *              type: string
+ *       - name: images
+ *         description: "Key files upload is: avatar
+ *                        <br>- only upload 1 avatar
+ *                      "
+ *         in: form
+ *         schema:
+ *              type: file
+ *     responses:
+ *       200:
+ *         description: The response has fields
+ *           <br> - data{User}
+ *           <br> - message=UPLOAD_IMAGES_SUCCESS
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *       400:
+ *         description: Bad Request
+ *           <br> - ERROR_KEY_UPLOAD_INVALID
+ *           <br> - ERROR_MIMETYPE_INVALID
+ *           <br> - ERROR_LIMIT_FILE_SIZE
+ *           <br> - ERROR_LIMIT_UNEXPECTED_FILE
+ *       404:
+ *         description: Not Found
+ *           <br> - ERROR_PLAYER_NOT_FOUND
+ *           <br> - ERROR_FILE_NOT_FOUND
+ *       500:
+ *         description: Internal Server
+ */
+router.post("/:id/upload-avatar", auth(), PlayerController.uploadAvatarPlayerInfo)
+/**
+ * @swagger
+ * /api/players/:id/remove-images:
+ *   put:
+ *     summary: Player Remove Images
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [Player Remove Images]
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: id
+ *         description: "Player Id"
+ *         in: path
+ *         schema:
+ *              type: string
+ *       - name: images
+ *         description: "Array images user want remove [ {filename: file_name}, { filename: file_name } ]
+ *                      <br>- minItems: 1
+ *                      <br>- uniqueItems: true
+ *                      "
+ *         in: body
+ *         schema:
+ *           items:
+ *              type: object
+ *              properties:
+ *                  filename:
+ *                      type: string
+ *     responses:
+ *       200:
+ *         description: The response has fields
+ *           <br> - data{User}
+ *           <br> - message=REMOVE_IMAGES_SUCCESS
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *       404:
+ *         description: Not Found
+ *           <br> - ERROR_PLAYER_NOT_FOUND
+ *           <br> - ERROR_FILE_NOT_FOUND
+ *       500:
+ *         description: Internal Server
+ */
+router.post(
+    "/:id/remove-images",
+    auth(),
+    validateBody(PlayerSchema.removeImages),
+    PlayerController.removeImagesPlayerInfo
+)
 /**
  * @swagger
  * /api/players/:id/update-info:
@@ -154,27 +255,27 @@ router.post("/:id/upload-images", auth(), PlayerController.uploadImagesPlayerInf
  *         schema:
  *              type: string
  *       - name: playerName
- *         description: "playerName"
+ *         description: "playerName, maxLength: 70"
  *         in: body
  *         schema:
  *              type: string
  *       - name: gameName
- *         description: "gameName"
+ *         description: "gameName, maxLength: 500"
  *         in: body
  *         schema:
  *              type: string
  *       - name: rank
- *         description: "rank"
+ *         description: "rank, maxLength: 255"
  *         in: body
  *         schema:
  *              type: string
  *       - name: costPerHour
- *         description: "costPerHour"
+ *         description: "costPerHour, minimum: 0"
  *         in: body
  *         schema:
  *              type: number
  *       - name: description
- *         description: "description"
+ *         description: "description, maxLength: 1000"
  *         in: body
  *         schema:
  *              type: string
@@ -191,12 +292,7 @@ router.post("/:id/upload-images", auth(), PlayerController.uploadImagesPlayerInf
  *         description: Not Found
  *           <br> - ERROR_PLAYER_NOT_FOUND
  */
-router.put(
-    "/:id/update-info",
-    auth(),
-    validateBody(PlayerInfoSchema.updatePlayerInfo),
-    PlayerController.updatePlayerInfo
-)
+router.put("/:id/update-info", auth(), validateBody(PlayerSchema.updatePlayerInfo), PlayerController.updatePlayerInfo)
 /**
  * @swagger
  * /api/players/:id/hire-settings:
@@ -249,7 +345,7 @@ router.put(
 router.put(
     "/:id/hire-settings",
     auth(),
-    validateBody(PlayerInfoSchema.updateHireSettings),
+    validateBody(PlayerSchema.updateHireSettings),
     PlayerController.updateHireSettings
 )
 export default router

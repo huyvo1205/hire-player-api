@@ -8,7 +8,7 @@ import util from "util"
 import CreateError from "http-errors"
 import url from "url"
 import sharp from "sharp"
-import { ERROR_CODES } from "../constants/GlobalConstant"
+import { ERROR_CODES, QUALITY } from "../constants/GlobalConstant"
 import Config from "../config/config"
 
 const formatFiles = async ({ req, config, files }) => {
@@ -26,13 +26,12 @@ const formatFiles = async ({ req, config, files }) => {
     //         newFiles.push(file)
     //     })
     // })
-    const quality = 30
     for (const item of config.FIELDS) {
         for (const file of files[item.name]) {
             await sharp(file.path)
-                .jpeg({ quality })
-                .toFile(path.resolve(`src/public/storage/${config.BUCKET}/${quality}_${file.filename}`))
-            file.link = `${host}/storage/${config.BUCKET}/${quality}_${file.filename}`
+                .jpeg({ quality: QUALITY })
+                .toFile(path.resolve(`src/public/storage/${config.BUCKET}/${QUALITY}_${file.filename}`))
+            file.link = `${host}/storage/${config.BUCKET}/${QUALITY}_${file.filename}`
             fs.unlinkSync(file.path)
             delete file.path
             delete file.destination
@@ -74,11 +73,17 @@ const uploadFiles = async (key = "IMAGES", req, res) => {
         storage,
         limits: { fileSize: CONFIG_BY_KEY.MAX_FILE_SIZE }
     })
-    const uploadFilesMiddleware = util.promisify(uploadMulter.fields(CONFIG_BY_KEY.FIELDS))
-    await uploadFilesMiddleware(req, res)
-    /* ~ handle files ~ */
-    const files = await formatFiles({ req, config: CONFIG_BY_KEY, files: req.files })
-    return files
+
+    try {
+        const uploadFilesMiddleware = util.promisify(uploadMulter.fields(CONFIG_BY_KEY.FIELDS))
+        await uploadFilesMiddleware(req, res)
+        /* ~ handle files ~ */
+        const files = await formatFiles({ req, config: CONFIG_BY_KEY, files: req.files })
+        return files
+    } catch (error) {
+        console.log("error uploadFilesMiddleware", error)
+        throw new CreateError.BadRequest(`ERROR_${error.code}`)
+    }
 }
 
 export default { uploadFiles }

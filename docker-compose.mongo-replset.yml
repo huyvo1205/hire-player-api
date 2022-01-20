@@ -16,6 +16,7 @@ services:
       - mongodb1:/data/db
     restart: always
     entrypoint: [ "/usr/bin/mongod", "--bind_ip_all", "--replSet", "rs0" ]
+    command: mongod --auth
   mongo2:
     hostname: mongo2
     container_name: localmongo2
@@ -31,6 +32,7 @@ services:
       - mongodb2:/data/db
     restart: always
     entrypoint: [ "/usr/bin/mongod", "--bind_ip_all", "--replSet", "rs0" ]
+    command: mongod --auth
   mongo3:
     hostname: mongo3
     container_name: localmongo3
@@ -46,7 +48,7 @@ services:
       - mongodb3:/data/db
     restart: always
     entrypoint: [ "/usr/bin/mongod", "--bind_ip_all", "--replSet", "rs0" ]
-
+    command: mongod --auth
   mongosetup:
     image: mongo:4.4
     depends_on:

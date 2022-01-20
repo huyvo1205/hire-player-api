@@ -73,16 +73,52 @@ class PlayerController {
     async uploadImagesPlayerInfo(req, res) {
         const KEY = "IMAGES"
         const playerId = req.params.id
-        const player = await PlayerValidator.validateUpdatePlayerInfo({ playerId })
+        const player = await PlayerValidator.validateUpdatePlayerInfo({ userId: playerId })
         const files = await UploadFileMiddleware.uploadFiles(KEY, req, res)
-        const updateData = { images: files }
+        const oldImages = [...player.playerInfo.images]
+        const imagesUpload = [...files]
+        const newImages = [...files, ...oldImages]
+        await PlayerValidator.validateUploadPlayerImages({ newImages, key: KEY, imagesUpload })
+        const updateData = { "playerInfo.images": newImages }
         const updatePlayerInfo = await PlayerService.updatePlayerInfo(playerId, updateData)
-        const imagesOld = player.images
-        FileHelper.removeFilesFromDisk({ key: KEY, files: imagesOld })
-        /* remove images old */
         res.status(200).send({
             data: updatePlayerInfo,
             message: PlayerConstant.SUCCESS_CODES.UPLOAD_IMAGES_SUCCESS
+        })
+    }
+
+    async uploadAvatarPlayerInfo(req, res) {
+        const KEY = "AVATAR"
+        const playerId = req.params.id
+        const player = await PlayerValidator.validateUpdatePlayerInfo({ userId: playerId })
+        const files = await UploadFileMiddleware.uploadFiles(KEY, req, res)
+        const avatar = files.length ? files[0] : {}
+        const updateData = { "playerInfo.playerAvatar": avatar }
+        const updatePlayerInfo = await PlayerService.updatePlayerInfo(playerId, updateData)
+        /* remove old avatar */
+        const oldAvatar = player.playerInfo.playerAvatar || null
+        if (oldAvatar.filename) {
+            await FileHelper.removeFilesFromDisk({ files: [oldAvatar], key: KEY })
+        }
+        res.status(200).send({
+            data: updatePlayerInfo,
+            message: PlayerConstant.SUCCESS_CODES.UPLOAD_AVATAR_SUCCESS
+        })
+    }
+
+    async removeImagesPlayerInfo(req, res) {
+        const KEY = "IMAGES"
+        const { images = [] } = req.body
+        const playerId = req.params.id
+        const player = await PlayerValidator.validateUpdatePlayerInfo({ userId: playerId })
+        const imagesFilename = images.map(file => file.filename)
+        const newImages = player.playerInfo.images.filter(image => !imagesFilename.includes(image.filename))
+        const updateData = { "playerInfo.images": newImages }
+        const updatePlayerInfo = await PlayerService.updatePlayerInfo(playerId, updateData)
+        await FileHelper.removeFilesFromDisk({ files: images, key: KEY })
+        res.status(200).send({
+            data: updatePlayerInfo,
+            message: PlayerConstant.SUCCESS_CODES.REMOVE_IMAGES_SUCCESS
         })
     }
 }

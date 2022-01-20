@@ -29,12 +29,12 @@ export default {
             FIELDS: [
                 {
                     name: "images",
-                    maxCount: 5
+                    maxCount: 15
                 }
             ],
             BUCKET: "images",
             ALLOWED_CONTENT_TYPES: ["image/png", "image/jpeg"],
-            MAX_FILE_SIZE: 8388608
+            MAX_FILE_SIZE: 5388608
         },
         /* Upload images for chat */
         CHAT: {
@@ -45,6 +45,17 @@ export default {
                 }
             ],
             BUCKET: "chat",
+            ALLOWED_CONTENT_TYPES: ["image/png", "image/jpeg"],
+            MAX_FILE_SIZE: 5388608
+        },
+        AVATAR: {
+            FIELDS: [
+                {
+                    name: "avatar",
+                    maxCount: 1
+                }
+            ],
+            BUCKET: "avatar",
             ALLOWED_CONTENT_TYPES: ["image/png", "image/jpeg"],
             MAX_FILE_SIZE: 5388608
         }

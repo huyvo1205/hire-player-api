@@ -1,13 +1,22 @@
+/* eslint-disable no-restricted-syntax */
 import * as CreateError from "http-errors"
 import PlayerConstant from "../constants/PlayerConstant"
 import UserModel from "../models/UserModel"
 import ReviewsModel from "../models/ReviewsModel"
+import FileHelper from "../helpers/FileHelper"
 
 class PlayerValidator {
     async validateUpdatePlayerInfo({ userId }) {
         const player = await UserModel.findOne({ _id: userId, isPlayer: true })
         if (!player) throw new CreateError.NotFound(PlayerConstant.ERROR_CODES.ERROR_PLAYER_NOT_FOUND)
         return player
+    }
+
+    async validateUploadPlayerImages({ newImages = [], key, imagesUpload = [] }) {
+        if (newImages.length > 15) {
+            await FileHelper.removeFilesFromDisk({ files: imagesUpload, key })
+            throw new CreateError.BadRequest(PlayerConstant.ERROR_CODES.ERROR_ONLY_UPLOAD_FIFTEEN_IMAGES)
+        }
     }
 
     async validateCreateReview({ reviewerId, receiverId }) {
