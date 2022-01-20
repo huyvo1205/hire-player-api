@@ -15,6 +15,8 @@ import NotificationConstant from "../constants/NotificationConstant"
 import HireValidator from "../validators/HireValidator"
 import UserValidator from "../validators/UserValidator"
 import InitHelper from "../helpers/InitHelper"
+import NotificationHelper from "../helpers/NotificationHelper"
+import UserModel from "../models/UserModel"
 
 class AdminController {
     async joinChat(req, res) {
@@ -37,6 +39,9 @@ class AdminController {
             SocketHelper.sendConversation({ userId: member, conversation: newConversation })
         })
 
+        const customerInfo = await UserModel.findById(hire.customer)
+        const playerInfo = await UserModel.findById(hire.player)
+
         for (const member of newConversation.members) {
             /* create message */
             const createDataMessage = {
@@ -57,18 +62,15 @@ class AdminController {
 
             if (isSendNotify) {
                 /* create notify */
-                const createNotifyData = {
-                    customer: hire.customer,
-                    player: hire.player,
-                    receiver: member,
+                const createNotifyData = NotificationHelper.getDataCreateNotify({
+                    customer: customerInfo,
+                    player: playerInfo,
+                    receiver: { id: member },
+                    conversation: conversationOld,
+                    image: userLogin.avatar,
                     action: NotificationConstant.ACTIONS.ADMIN_JOIN_CHAT,
-                    href: `hires/${hire.id}`,
-                    payload: {
-                        conversation: hire.conversation,
-                        hire: hire.id
-                    },
-                    image: userLogin.avatar
-                }
+                    hire
+                })
                 const notify = await NotificationService.createNotification(createNotifyData)
                 SocketHelper.sendNotify({ userId: member, notify })
             }
