@@ -1,0 +1,55 @@
+version: "3"
+
+services:
+  mongo2:
+    hostname: mongo2
+    container_name: localmongo2
+    image: mongo:4.4
+    expose:
+      - 27017
+    ports:
+      - 27018:27017
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_USER}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD}
+    volumes: 
+      - mongodb2:/data/db
+      - ./file.key:/data/file.key
+    restart: always
+    entrypoint: [ "/usr/bin/mongod", "--keyFile", "/data/file.key", "--bind_ip_all", "--replSet", "rs0" ]
+  mongo3:
+    hostname: mongo3
+    container_name: localmongo3
+    image: mongo:4.4
+    ports:
+      - 27019:27017
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_USER}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD}
+    volumes: 
+      - mongodb3:/data/db
+      - ./file.key:/data/file.key
+    restart: always
+    entrypoint: [ "/usr/bin/mongod", "--keyFile", "/data/file.key", "--bind_ip_all", "--replSet", "rs0" ]
+  mongo1:
+      hostname: mongo1
+      container_name: localmongo1
+      image: mongo:4.4
+      ports:
+        - 27017:27017
+      environment:
+        - MONGO_INITDB_ROOT_USERNAME=${MONGO_USER}
+        - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD}
+      volumes:
+      - mongodb1:/data/db
+      - "./mongo_setup_new_v2.sh:/scripts/setup.sh"
+      - "./file.key:/data/file.key"
+      links: 
+        - mongo2
+        - mongo3
+      restart: always
+      command: bash -c "/usr/bin/mongod --keyFile /data/file.key --replSet rs0 --journal --bind_ip_all" 
+volumes:
+  mongodb1:
+  mongodb2:
+  mongodb3:
