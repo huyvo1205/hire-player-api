@@ -101,6 +101,7 @@ class HireValidator {
         const validStatusCustomerCancel = [HireConstant.HIRE_STEPS.WAITING]
         const validStatusComplete = [HireConstant.HIRE_STEPS.ACCEPT, HireConstant.HIRE_STEPS.COMPLAIN]
         const validStatusComplain = [HireConstant.HIRE_STEPS.ACCEPT]
+        const validStatusAdminCancel = [HireConstant.HIRE_STEPS.COMPLAIN]
         let isValid = false
 
         if (action === HireConstant.HIRE_STEPS.ACCEPT) {
@@ -121,6 +122,10 @@ class HireValidator {
 
         if (action === HireConstant.HIRE_STEPS.COMPLAIN) {
             isValid = validStatusComplain.includes(currentHireStep)
+        }
+
+        if (action === HireConstant.HIRE_STEPS.ADMIN_CANCEL) {
+            isValid = validStatusAdminCancel.includes(currentHireStep)
         }
 
         if (!isValid) {

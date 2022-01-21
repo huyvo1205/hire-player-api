@@ -9,7 +9,8 @@ const ACTIONS = {
     REVIEW: 8,
     ADMIN_JOIN_CHAT: 9,
     DONATE: 10,
-    REPLY_DONATE: 11
+    REPLY_DONATE: 11,
+    ADMIN_CANCEL_HIRE: 12
 }
 
 const POPULATE_CUSTOMER = { path: "customer" }

@@ -15,7 +15,7 @@ class NotificationHelper {
         review
     }) {
         const { id: receiverId } = receiver
-        const { id: hireId, timeRent, customerNote } = hire
+        const { id: hireId, timeRent, customerNote, cost } = hire
         const { id: conversationId } = conversation
         const { avatar, userName, id: customerId } = customer
         const { playerInfo, id: playerId } = player
@@ -76,6 +76,10 @@ class NotificationHelper {
             createNotifyData.payload.donateReplyMessage = replyMessage
             createNotifyData.payload.donateId = mongoose.Types.ObjectId(donate.id)
             createNotifyData.href = `donates/${donate.id}`
+        }
+
+        if (action === NotificationConstant.ACTIONS.ADMIN_CANCEL_HIRE && hire.id) {
+            createNotifyData.payload.cost = cost
         }
 
         return createNotifyData

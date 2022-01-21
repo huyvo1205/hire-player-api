@@ -51,6 +51,7 @@ import "express-async-errors"
  *                       <br> ADMIN_JOIN_CHAT: 9 -> When admin join chat
  *                       <br> DONATE: 10 -> User donate
  *                       <br> REPLY_DONATE: 11 -> User reply donate
+ *                       <br> ADMIN_CANCEL_HIRE: 12 -> Admin cancel hire
  *                       <br> Data will be added later...
  *                      "
  *           enum:
@@ -72,6 +73,7 @@ import "express-async-errors"
  *                       <br> action ===  ADMIN_JOIN_CHAT: 9 -> hires/:id
  *                       <br> action ===  DONATE: 10 -> donates/:id
  *                       <br> action ===  REPLY_DONATE: 11 -> donates/:id
+ *                       <br> action ===  ADMIN_CANCEL_HIRE: 12 -> hires/:id
  *                       <br> Data will be added later...
  *                      "
  *         payload:
@@ -88,6 +90,7 @@ import "express-async-errors"
  *                       <br> action ===  ADMIN_JOIN_CHAT: 9 -> {hireId, conversationId}
  *                       <br> action ===  DONATE: 10 -> { donateAmount, donateRealAmount, donateMessage, donateId }
  *                       <br> action ===  REPLY_DONATE: 11 -> { donateReplyMessage, donateId }
+ *                       <br> action ===  ADMIN_CANCEL_HIRE: 12 ->  {hireId, conversationId, cost}
  *                       <br> Data will be added later...
  *                      "
  *         deletedAt:

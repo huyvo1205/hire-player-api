@@ -27,7 +27,15 @@ import "express-async-errors"
  *           type: string
  *         hireStep:
  *           type: number
- *           description: "WAITING: 1, ACCEPT: 2, PLAYER_CANCEL: 3, CUSTOMER_CANCEL: 4, COMPLETE: 5, COMPLAIN: 6, default: 1"
+ *           description: "
+ *                  <br>WAITING: 1
+ *                  <br>ACCEPT: 2
+ *                  <br>PLAYER_CANCEL: 3
+ *                  <br>CUSTOMER_CANCEL: 4
+ *                  <br>COMPLETE: 5
+ *                  <br>COMPLAIN: 6
+ *                  <br>ADMIN_CANCEL: 7
+ *                  <br>Default: 1"
  *         acceptedAt:
  *           type: string
  *           format: "date-time"
@@ -362,4 +370,32 @@ router.put("/:id/complete", auth(), HireController.completeHire)
  *           <br> - ERROR_HIRE_NOT_FOUND
  */
 router.post("/:id/reviews", auth(), validateBody(ReviewSchema.createReview), HireController.reviewHire)
+
+/**
+ * @swagger
+ * /api/hires/:id/refund:
+ *   put:
+ *     summary: Admin Refund Hire
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [Admin Refund Hire]
+ *     produces:
+ *       - application/json
+ *     responses:
+ *       200:
+ *         description: The response has fields
+ *           <br> - data{Hire}
+ *           <br> - message=ADMIN_CANCEL_HIRE_SUCCESS
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Hire'
+ *       400:
+ *         description: Bad Request
+ *           <br> - ERROR_STATUS_HIRE_INVALID
+ *       404:
+ *         description: Not Found
+ *           <br> - ERROR_HIRE_NOT_FOUND
+ */
+router.put("/:id/refund", auth("ADMIN"), HireController.refundHire)
 export default router
