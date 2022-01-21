@@ -141,7 +141,7 @@ router.get("/:id", PlayerController.getDetailPlayerInfo)
  *       500:
  *         description: Internal Server
  */
-router.post("/:id/upload-images", auth(), PlayerController.uploadImagesPlayerInfo)
+router.put("/:id/upload-images", auth(), PlayerController.uploadImagesPlayerInfo)
 /**
  * @swagger
  * /api/players/:id/upload-avatar:
@@ -187,7 +187,7 @@ router.post("/:id/upload-images", auth(), PlayerController.uploadImagesPlayerInf
  *       500:
  *         description: Internal Server
  */
-router.post("/:id/upload-avatar", auth(), PlayerController.uploadAvatarPlayerInfo)
+router.put("/:id/upload-avatar", auth(), PlayerController.uploadAvatarPlayerInfo)
 /**
  * @swagger
  * /api/players/:id/remove-images:
@@ -232,7 +232,7 @@ router.post("/:id/upload-avatar", auth(), PlayerController.uploadAvatarPlayerInf
  *       500:
  *         description: Internal Server
  */
-router.post(
+router.put(
     "/:id/remove-images",
     auth(),
     validateBody(PlayerSchema.removeImages),
