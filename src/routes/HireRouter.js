@@ -332,7 +332,7 @@ router.put("/:id/complete", auth(), HireController.completeHire)
 /**
  * @swagger
  * /api/hires/:id/reviews:
- *   put:
+ *   post:
  *     summary: Create Review For Hire
  *     security:
  *       - bearerAuth: []
