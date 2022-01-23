@@ -72,6 +72,104 @@ import "express-async-errors"
 const router = express.Router()
 /**
  * @swagger
+ * /api/hires:
+ *   get:
+ *     summary: Get Hires
+ *     tags: [Get Hires]
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: sortBy
+ *         description: "Sorting criteria using the format: sortField:(desc|asc). Multiple sorting criteria should be separated by commas (,)"
+ *         in: query
+ *         schema:
+ *              type: string
+ *       - name: limit
+ *         description: "Maximum number of results per page (default = 10)"
+ *         in: query
+ *         schema:
+ *              type: string
+ *       - name: page
+ *         description: "Current page (default = 1)"
+ *         in: query
+ *         schema:
+ *              type: string
+ *       - name: populate
+ *         description: "Populate data fields. Only support 1 level and custom take fields
+ *                       <br> EXAMPLE_1: populate=user:firstName,lastName
+ *                       <br> -> populate user and only take 2 fields firstName, lastName
+ *                       <br> EXAMPLE_2: populate=user:-firstName,-lastName
+ *                       <br> -> populate user and take all fields except firstName, lastName
+ *                       <br> EXAMPLE_3: populate=user
+ *                       <br> -> populate user and take all fields
+ *                       <br> EXAMPLE_4: populate=player:firstName|customer:firstName
+ *                       <br> -> populate multi fields split by |
+ *                      "
+ *         in: query
+ *         schema:
+ *              type: string
+ *     responses:
+ *       200:
+ *         description: The response has fields
+ *           <br> - data {results[], page, limit, totalPages, totalResults}
+ *           <br> - message=GET_LIST_HIRES_SUCCESS
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Hire'
+ */
+router.get("/", auth(), HireController.getHires)
+/**
+ * @swagger
+ * /api/hires/receive:
+ *   get:
+ *     summary: Get Receive Hires
+ *     tags: [Get Receive Hires]
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: sortBy
+ *         description: "Sorting criteria using the format: sortField:(desc|asc). Multiple sorting criteria should be separated by commas (,)"
+ *         in: query
+ *         schema:
+ *              type: string
+ *       - name: limit
+ *         description: "Maximum number of results per page (default = 10)"
+ *         in: query
+ *         schema:
+ *              type: string
+ *       - name: page
+ *         description: "Current page (default = 1)"
+ *         in: query
+ *         schema:
+ *              type: string
+ *       - name: populate
+ *         description: "Populate data fields. Only support 1 level and custom take fields
+ *                       <br> EXAMPLE_1: populate=user:firstName,lastName
+ *                       <br> -> populate user and only take 2 fields firstName, lastName
+ *                       <br> EXAMPLE_2: populate=user:-firstName,-lastName
+ *                       <br> -> populate user and take all fields except firstName, lastName
+ *                       <br> EXAMPLE_3: populate=user
+ *                       <br> -> populate user and take all fields
+ *                       <br> EXAMPLE_4: populate=player:firstName|customer:firstName
+ *                       <br> -> populate multi fields split by |
+ *                      "
+ *         in: query
+ *         schema:
+ *              type: string
+ *     responses:
+ *       200:
+ *         description: The response has fields
+ *           <br> - data {results[], page, limit, totalPages, totalResults}
+ *           <br> - message=GET_LIST_RECEIVE_HIRES_SUCCESS
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Hire'
+ */
+router.get("/receive", auth(), HireController.getReceiveHires)
+/**
+ * @swagger
  * /api/hires/:id:
  *   get:
  *     summary: Get Detail Hire

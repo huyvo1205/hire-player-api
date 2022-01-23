@@ -9,8 +9,8 @@ const { ObjectId } = Schema.Types
 const BalanceFluctuationSchema = mongoose.Schema(
     {
         amount: { type: Number, default: 0 },
-        user: { type: ObjectId, ref: "User", required: true },
-        action: { type: String, required: true, index: true, enum: Object.values(BalanceFluctuationConstant.ACTIONS) },
+        user: { type: ObjectId, ref: "User", required: true, index: true },
+        action: { type: String, required: true, enum: Object.values(BalanceFluctuationConstant.ACTIONS) },
         operation: {
             type: String,
             enum: Object.values(BalanceFluctuationConstant.OPERATIONS)
@@ -21,7 +21,7 @@ const BalanceFluctuationSchema = mongoose.Schema(
 
 BalanceFluctuationSchema.plugin(toJSON(false))
 BalanceFluctuationSchema.plugin(paginate)
-
+BalanceFluctuationSchema.index({ action: 1, operation: 1 })
 const BalanceFluctuationModel = mongoose.model(
     "BalanceFluctuation",
     BalanceFluctuationSchema,

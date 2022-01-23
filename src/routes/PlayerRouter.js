@@ -70,6 +70,24 @@ const router = express.Router()
 router.get("/", PlayerController.getPlayersInfo)
 /**
  * @swagger
+ * /api/players/statistic-conditions:
+ *   get:
+ *     summary: Get Statistic Conditions
+ *     tags: [Get Statistic Conditions]
+ *     produces:
+ *       - application/json
+ *     responses:
+ *       200:
+ *         description: "The response has fields
+ *           <br> - data = {
+ *           <br>   hotPlayer: { incomeMin7Day, countRate, avgRate, ratioComplete },
+ *           <br>   vipPlayer: { incomeMin7Day, countRate, avgRate, ratioComplete }
+ *           <br>   }
+ *           <br> - message=GET_STATISTIC_CONDITIONS_SUCCESS"
+ */
+router.get("/statistic-conditions/", auth(), PlayerController.getStatisticConditions)
+/**
+ * @swagger
  * /api/players/:id:
  *   get:
  *     summary: Get Detail Player Info
@@ -96,6 +114,37 @@ router.get("/", PlayerController.getPlayersInfo)
  *           <br> - ERROR_PLAYER_NOT_FOUND
  */
 router.get("/:id", PlayerController.getDetailPlayerInfo)
+
+/**
+ * @swagger
+ * /api/players/:id/statistics:
+ *   get:
+ *     summary: Get Statistics of Player
+ *     tags: [Get Statistics]
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: id
+ *         description: Player Id
+ *         in: path
+ *         schema:
+ *              type: string
+ *     responses:
+ *       200:
+ *         description: "The response has fields
+ *           <br> - data = {
+ *           <br>   revenue7Day,
+ *           <br>   revenue30Day: { ratings, revenue },
+ *           <br>   ratioComplete,
+ *           <br>   countRate,
+ *           <br>   avgRate,
+ *           <br>   }
+ *           <br> - message=GET_STATISTICS_PLAYER_SUCCESS"
+ *       404:
+ *         description: Not Found
+ *           <br> - ERROR_PLAYER_NOT_FOUND
+ */
+router.get("/:id/statistics", auth(), PlayerController.getStatistics)
 /**
  * @swagger
  * /api/players/:id/upload-images:

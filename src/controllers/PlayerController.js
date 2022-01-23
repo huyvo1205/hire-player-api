@@ -70,6 +70,28 @@ class PlayerController {
         })
     }
 
+    async getStatistics(req, res) {
+        const playerId = req.params.id
+        const player = await PlayerValidator.validateGetPlayer(playerId)
+        const { avgRating } = player.playerInfo
+        const result = await PlayerService.getStatistics(playerId)
+        result.avgRate = avgRating
+        res.status(200).send({
+            data: result,
+            message: PlayerConstant.SUCCESS_CODES.GET_STATISTICS_PLAYER_SUCCESS
+        })
+    }
+
+    async getStatisticConditions(req, res) {
+        res.status(200).send({
+            data: {
+                hotPlayer: PlayerConstant.PLAYER_CONDITIONS.HOT_PLAYER,
+                vipPlayer: PlayerConstant.PLAYER_CONDITIONS.VIP_PLAYER
+            },
+            message: PlayerConstant.SUCCESS_CODES.GET_STATISTIC_CONDITIONS_SUCCESS
+        })
+    }
+
     async uploadImagesPlayerInfo(req, res) {
         const KEY = "IMAGES"
         const playerId = req.params.id

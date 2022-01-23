@@ -23,8 +23,31 @@ import MessageService from "../services/MessageService"
 import PlayerService from "../services/PlayerService"
 import NotificationHelper from "../helpers/NotificationHelper"
 import BalanceFluctuationConstant from "../constants/BalanceFluctuationConstant"
+import pick from "../utils/pick"
 
 class HireController {
+    async getHires(req, res) {
+        const userIdLogin = req.user.id
+        const filter = { customer: userIdLogin }
+        const options = pick(req.query, ["sortBy", "limit", "page", "populate"])
+        const hires = await HireService.getListHires(filter, options)
+        return res.status(200).send({
+            data: hires,
+            message: HireConstant.SUCCESS_CODES.GET_LIST_HIRES_SUCCESS
+        })
+    }
+
+    async getReceiveHires(req, res) {
+        const userIdLogin = req.user.id
+        const filter = { player: userIdLogin }
+        const options = pick(req.query, ["sortBy", "limit", "page", "populate"])
+        const hires = await HireService.getListHires(filter, options)
+        return res.status(200).send({
+            data: hires,
+            message: HireConstant.SUCCESS_CODES.GET_LIST_RECEIVE_HIRES_SUCCESS
+        })
+    }
+
     async createHire(req, res) {
         const customerId = req.user.id
         const customer = req.user
