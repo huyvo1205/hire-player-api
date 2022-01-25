@@ -96,7 +96,9 @@ const initSocket = server => {
         socket.on("disconnect", async () => {
             console.log(`${socket.id} disconnect !!!`)
             console.log("socket.userId", socket.userId)
-            const newSocketIds = UsersOnline[socket.userId].filter(socketId => socketId !== socket.id)
+            const newSocketIds = UsersOnline[socket.userId]
+                ? UsersOnline[socket.userId].filter(socketId => socketId !== socket.id)
+                : []
             UsersOnline[socket.userId] = newSocketIds
             if (newSocketIds.length <= 0) {
                 delete UsersOnline[socket.userId]
