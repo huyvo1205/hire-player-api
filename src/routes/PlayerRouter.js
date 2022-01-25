@@ -207,7 +207,7 @@ router.put("/:id/upload-images", auth(), PlayerController.uploadImagesPlayerInfo
  *         in: path
  *         schema:
  *              type: string
- *       - name: images
+ *       - name: avatar
  *         description: "Key files upload is: avatar
  *                        <br>- only upload 1 avatar
  *                      "
@@ -218,7 +218,7 @@ router.put("/:id/upload-images", auth(), PlayerController.uploadImagesPlayerInfo
  *       200:
  *         description: The response has fields
  *           <br> - data{User}
- *           <br> - message=UPLOAD_IMAGES_SUCCESS
+ *           <br> - message=UPLOAD_AVATAR_SUCCESS
  *         content:
  *           application/json:
  *             schema:

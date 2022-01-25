@@ -229,7 +229,7 @@ router.post("/", auth(), validateBody(DonateSchema.createDonate), DonateControll
  *     responses:
  *       201:
  *         description: The response has fields
- *           <br> - message=CREATE_DONATE_SUCCESS
+ *           <br> - message=REPLY_DONATE_SUCCESS
  *         content:
  *           application/json:
  *             schema:
