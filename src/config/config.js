@@ -14,14 +14,17 @@ export default {
     },
     BASE_URL: process.env.BASE_URL || "http://localhost:3000",
     PAYPAL: {
-        CLIENT_ID:
-            process.env.PAYPAL_CLIENT_ID ||
-            "AZvB_LTg9fAUJurPkA_Ru_oUapmSSum2vD0fIBDy37S_15JLwRDV4Ez5uI2vovD6gv0o1DdIsl4x4h7k",
-        CLIENT_SECRET:
-            process.env.PAYPAL_CLIENT_SECRET ||
-            "EIWg8QmJPoaww2UEZSJ57fOpskUYOYCa6f-wGmQxsv7ZyUb4IZY8eY7ajISGZfdZwqDLW5MNnoKUZYIT",
-        PAYPAL_SUCCESS_URL: process.env.PAYPAL_SUCCESS_URL || "/api/transactions/recharge/success",
-        PAYPAL_CANCEL_URL: process.env.PAYPAL_CANCEL_URL || "/api/transactions/recharge/cancel"
+        CLIENT_ID: process.env.PAYPAL_CLIENT_ID || "PAYPAL_CLIENT_ID",
+        CLIENT_SECRET: process.env.PAYPAL_CLIENT_SECRET || "PAYPAL_CLIENT_SECRET",
+        PAYPAL_SUCCESS_URL: process.env.PAYPAL_SUCCESS_URL || "/api/recharges/success",
+        PAYPAL_CANCEL_URL: process.env.PAYPAL_CANCEL_URL || "/api/recharges/cancel"
+    },
+    STRIPE: {
+        STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY || "YOUR_STRIPE_SECRET_KEY"
+    },
+    RAZORPAY: {
+        RAZORPAY_KEY_ID: process.env.RAZORPAY_KEY_ID || "RAZORPAY_KEY_ID",
+        RAZORPAY_KEY_SECRET: process.env.RAZORPAY_KEY_SECRET || "RAZORPAY_KEY_SECRET"
     },
     UPLOAD_FILES: {
         /* Upload images */

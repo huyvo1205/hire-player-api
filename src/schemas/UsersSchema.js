@@ -1,4 +1,5 @@
 import { getListSkip, getListLimit } from "./SharedSchema"
+import { GENDER } from "../constants/UserConstant"
 
 const getList = {
     type: "object",
@@ -8,6 +9,13 @@ const getList = {
     }
 }
 
-module.exports = {
-    getList
+const updateUserInfo = {
+    type: "object",
+    required: [],
+    properties: {
+        fullName: { type: "string", maxLength: 70 },
+        gender: { type: "integer", enum: Object.values(GENDER) }
+    }
 }
+
+export default { getList, updateUserInfo }

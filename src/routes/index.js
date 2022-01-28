@@ -1,7 +1,7 @@
 import express from "express"
 import UserRouter from "./UserRouter"
 import AuthRouter from "./AuthRouter"
-import TransactionRouter from "./TransactionRouter"
+import RechargeRouter from "./RechargeRouter"
 import PlayerRouter from "./PlayerRouter"
 import ReviewRouter from "./ReviewRouter"
 import ConversationRouter from "./ConversationRouter"
@@ -18,7 +18,7 @@ router.use("/admin", AdminRouter)
 router.use("/users", UserRouter)
 router.use("/players", PlayerRouter)
 router.use("/auth", AuthRouter)
-router.use("/transactions", TransactionRouter)
+router.use("/recharges", RechargeRouter)
 router.use("/reviews", ReviewRouter)
 router.use("/conversations", ConversationRouter)
 router.use("/messages", MessageRouter)

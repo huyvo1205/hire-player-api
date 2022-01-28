@@ -1,8 +1,10 @@
 import express from "express"
 import auth from "../middlewares/auth"
 import { validateBody } from "../validators"
-import { createPaymentSettings, updatePaymentSettings } from "../schemas/PaymentSchema"
+import { createPaymentSettings, updatePaymentSettings, updatePaymentSettingsCreditCard } from "../schemas/PaymentSchema"
 import UserController from "../controllers/UserController"
+import UsersSchema from "../schemas/UsersSchema"
+
 import "express-async-errors"
 
 const router = express.Router()
@@ -142,7 +144,7 @@ router.get("/payment-settings", auth(), UserController.getPaymentSettings)
 router.post("/payment-settings", auth(), validateBody(createPaymentSettings), UserController.createPaymentSettings)
 /**
  * @swagger
- * /api/users/payment-settings/:id:
+ * /api/users/:id/payment-settings:
  *   put:
  *     summary: Update Payment Setting
  *     tags: [Update Payment Setting]
@@ -183,5 +185,52 @@ router.post("/payment-settings", auth(), validateBody(createPaymentSettings), Us
  *         description: Not Found
  *           <br> - ERROR_PAYMENT_SETTING_NOT_FOUND
  */
-router.put("/payment-settings/:id", auth(), validateBody(updatePaymentSettings), UserController.updatePaymentSettings)
+router.put("/:id/payment-settings", auth(), validateBody(updatePaymentSettings), UserController.updatePaymentSettings)
+/**
+ * @swagger
+ * /api/users/:id:
+ *   put:
+ *     summary: Update User Info
+ *     tags: [Update User Info]
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: id
+ *         description: User Id
+ *         in: path
+ *         schema:
+ *              type: string
+ *       - name: fullName
+ *         description: "fullName
+ *                      <br>- maxLength: 70
+ *                      "
+ *         in: body
+ *       - name: gender
+ *         description: "gender
+ *                      <br>- enum: MALE: 1, FEMALE: 2
+ *                      "
+ *         schema:
+ *              type: integer
+ *         in: body
+ *     responses:
+ *       200:
+ *         description: The response has fields
+ *           <br> - data {User}
+ *           <br> - message=UPDATE_USER_INFO_SUCCESS
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *       404:
+ *         description: Not Found
+ *           <br> - ERROR_USER_NOT_FOUND
+ */
+router.put("/:id", auth(), validateBody(UsersSchema.updateUserInfo), UserController.updateUserInfo)
+router.put(
+    "/payment-settings/credit-card",
+    auth(),
+    validateBody(updatePaymentSettingsCreditCard),
+    UserController.updatePaymentSettingsCreditCard
+)
+router.get("/:id/payment-settings", auth(), UserController.createPaymentSettings)
 export default router

@@ -8,21 +8,15 @@ const { ObjectId } = Schema.Types
 
 const PaymentSettingSchema = mongoose.Schema(
     {
-        methods: [
-            {
-                _id: false,
-                type: { type: Number, enum: Object.values(TYPES) },
-                cardId: String,
-                email: String
-            }
-        ],
-        user: { type: ObjectId, ref: "User", required: true },
-        status: {
-            type: Number,
-            enum: Object.values(STATUS),
-            default: STATUS.ACTIVE
+        user: { type: ObjectId, ref: "User", required: true, unique: true },
+        deletedAt: { type: Date },
+        creditCardConfig: {
+            paymentMethods: [],
+            customerId: String
         },
-        deletedAt: { type: Date }
+        paypalConfig: {
+            email: String
+        }
     },
     { versionKey: false, timestamps: true }
 )

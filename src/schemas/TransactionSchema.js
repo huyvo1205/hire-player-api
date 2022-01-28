@@ -1,14 +1,29 @@
 import { mongoObjectId } from "./SharedSchema"
-import TransactionConstant from "../constants/TransactionConstant"
+import RechargeConstant from "../constants/RechargeConstant"
 
-const recharge = {
+const rechargePaypal = {
     type: "object",
-    required: ["method", "userId", "amount"],
+    required: ["amount"],
     properties: {
-        method: { type: "number", enum: Object.values(TransactionConstant.METHOD) },
-        amount: { type: "number", minimum: 0 },
-        userId: mongoObjectId
+        amount: { type: "number", minimum: 0 }
     }
 }
 
-export default { recharge }
+const rechargeStripe = {
+    type: "object",
+    required: ["paymentMethodId", "amount"],
+    properties: {
+        amount: { type: "number", minimum: 0 },
+        paymentMethodId: { type: "string" }
+    }
+}
+
+const rechargeRazorpay = {
+    type: "object",
+    required: ["amount"],
+    properties: {
+        amount: { type: "number", minimum: 0 }
+    }
+}
+
+export default { rechargePaypal, rechargeStripe, rechargeRazorpay }
