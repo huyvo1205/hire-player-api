@@ -16,6 +16,12 @@ class PaymentService {
         return PaymentSettingModel.create(data)
     }
 
+    async getDetailPaymentSetting(userId) {
+        return PaymentSettingModel.findOne({
+            user: userId
+        })
+    }
+
     async updatePaymentSetting(id, updateData) {
         return PaymentSettingModel.findByIdAndUpdate(id, updateData, { new: true })
     }
@@ -37,7 +43,19 @@ class PaymentService {
             return order
         } catch (error) {
             console.error("error: ", error)
-            throw new CreateError.InternalServerError(RechargeConstant.ERROR_CODES.CREATE_PAYMENT_RAZORPAY_FAIL)
+            throw new CreateError.InternalServerError(RechargeConstant.ERROR_CODES.ERROR_CREATE_PAYMENT_RAZORPAY_FAIL)
+        }
+    }
+
+    async getDetailPaymentRazorpay(paymentId) {
+        try {
+            const payment = await razorpay.payments.fetch(paymentId)
+            return payment
+        } catch (error) {
+            console.error("error: ", error)
+            throw new CreateError.InternalServerError(
+                RechargeConstant.ERROR_CODES.ERROR_GET_DETAIL_PAYMENT_RAZORPAY_FAIL
+            )
         }
     }
 
@@ -54,7 +72,7 @@ class PaymentService {
             return payment
         } catch (error) {
             console.error("error: ", error)
-            throw new CreateError.InternalServerError(RechargeConstant.ERROR_CODES.CREATE_PAYMENT_STRIPE_FAIL)
+            throw new CreateError.InternalServerError(RechargeConstant.ERROR_CODES.ERROR_CREATE_PAYMENT_STRIPE_FAIL)
         }
     }
 
@@ -67,7 +85,9 @@ class PaymentService {
             return customer
         } catch (error) {
             console.error("error: ", error)
-            throw new CreateError.InternalServerError(RechargeConstant.ERROR_CODES.CREATE_PAYMENT_CUSTOMER_STRIPE_FAIL)
+            throw new CreateError.InternalServerError(
+                RechargeConstant.ERROR_CODES.ERROR_CREATE_PAYMENT_CUSTOMER_STRIPE_FAIL
+            )
         }
     }
 
@@ -87,7 +107,9 @@ class PaymentService {
             return newPaymentMethod
         } catch (error) {
             console.error("error: ", error)
-            throw new CreateError.InternalServerError(RechargeConstant.ERROR_CODES.CREATE_PAYMENT_CUSTOMER_STRIPE_FAIL)
+            throw new CreateError.InternalServerError(
+                RechargeConstant.ERROR_CODES.ERROR_UPDATE_PAYMENT_METHOD_STRIPE_FAIL
+            )
         }
     }
 
@@ -97,7 +119,9 @@ class PaymentService {
             return paymentMethod
         } catch (error) {
             console.error("error: ", error)
-            throw new CreateError.InternalServerError(RechargeConstant.ERROR_CODES.CREATE_PAYMENT_CUSTOMER_STRIPE_FAIL)
+            throw new CreateError.InternalServerError(
+                RechargeConstant.ERROR_CODES.ERROR_CREATE_PAYMENT_METHOD_STRIPE_FAIL
+            )
         }
     }
 }

@@ -5,6 +5,8 @@ import UserValidator from "../validators/UserValidator"
 import PaymentSettingModel from "../models/PaymentSettingModel"
 import { SUCCESS_CODES } from "../constants/PaymentSettingConstant"
 import RechargeConstant from "../constants/RechargeConstant"
+import UploadFileMiddleware from "../middlewares/UploadFileMiddleware"
+import FileHelper from "../helpers/FileHelper"
 import pick from "../utils/pick"
 
 class UserController {
@@ -18,6 +20,15 @@ class UserController {
         return res.status(200).send({
             data: paymentSettings,
             message: SUCCESS_CODES.GET_PAYMENT_SETTING_SUCCESS
+        })
+    }
+
+    async getPaymentSetting(req, res) {
+        const userId = req.user.id
+        const paymentSetting = await PaymentService.getDetailPaymentSetting(userId)
+        return res.status(200).send({
+            data: paymentSetting,
+            message: SUCCESS_CODES.GET_DETAIL_PAYMENT_SETTING_SUCCESS
         })
     }
 
@@ -35,7 +46,6 @@ class UserController {
         const userId = req.user.id
         const customerName = req.user.userName
         const { number, expMonth, expYear, cvc } = req.body
-
         const oldConfig = await PaymentSettingModel.findOne({
             user: userId,
             "creditCardConfig.paymentMethods.card.number": number
@@ -111,13 +121,31 @@ class UserController {
     }
 
     async updateUserInfo(req, res) {
-        const userId = req.params.id
-        await UserValidator.validateUser(userId)
+        const userId = req.user.id
         const dataUpdate = { ...req.body }
         const newUser = await UserService.updateUser(userId, dataUpdate)
         return res.status(200).send({
             data: newUser,
             message: SUCCESS_CODES.UPDATE_USER_INFO_SUCCESS
+        })
+    }
+
+    async uploadAvatarUserInfo(req, res) {
+        const KEY = "AVATAR"
+        const userId = req.user.id
+        const user = await UserValidator.validateUser(userId)
+        const files = await UploadFileMiddleware.uploadFiles(KEY, req, res)
+        const avatar = files.length ? files[0] : {}
+        const updateData = { avatar }
+        const newUser = await UserService.updateUser(userId, updateData)
+        /* remove old avatar */
+        const oldAvatar = user.avatar || null
+        if (oldAvatar && oldAvatar.filename) {
+            await FileHelper.removeFilesFromDisk({ files: [oldAvatar], key: KEY })
+        }
+        res.status(200).send({
+            data: newUser,
+            message: SUCCESS_CODES.UPLOAD_AVATAR_SUCCESS
         })
     }
 }

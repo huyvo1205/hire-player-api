@@ -17,7 +17,7 @@ class TransactionController {
             const approvalUrl = result.links.find(link => link.rel === "approval_url")
             if (approvalUrl) return res.status(200).send({ data: approvalUrl })
         }
-        return res.status(200).send({ message: RechargeConstant.ERROR_CODES.ERROR_RECHARGE_PAYPAL_FAIL })
+        return res.status(400).send({ message: RechargeConstant.ERROR_CODES.ERROR_RECHARGE_PAYPAL_FAIL })
     }
 
     async rechargeStripe(req, res) {
@@ -25,7 +25,7 @@ class TransactionController {
         const { paymentMethodId, amount } = req.body
         const paymentMethod = await RechargeValidator.validateRechargeStripe({ paymentMethodId, userIdLogin })
         const customerId = paymentMethod.customer
-        const amountConvert = amount * 10
+        const amountConvert = amount * 100
         const payment = await PaymentService.createPaymentStripe({
             paymentMethodId,
             amount: amountConvert,
@@ -36,6 +36,7 @@ class TransactionController {
                 method: RechargeConstant.METHODS.CREDIT_CARD,
                 user: userIdLogin,
                 payload: payment,
+                key: payment.id,
                 status: RechargeConstant.STATUS.SUCCESS
             }
             await RechargeService.createRecharge(dataCreate)
@@ -47,16 +48,44 @@ class TransactionController {
                 action: BalanceFluctuationConstant.ACTIONS.RECHARGE
             }
             await BalanceFluctuationService.createBalanceFluctuationNotSession(dataCreateBalance)
+            return res.status(200).send({ message: RechargeConstant.SUCCESS_CODES.RECHARGE_SUCCESS })
         }
-        return res.status(200).send({ message: RechargeConstant.SUCCESS_CODES.RECHARGE_SUCCESS })
+        return res.status(400).send({ message: RechargeConstant.ERROR_CODES.ERROR_RECHARGE_STRIPE_FAIL })
     }
 
     async rechargeRazorpay(req, res) {
-        const userIdLogin = req.user.id
         const { amount } = req.body
-        const order = await PaymentService.createOrderRazorpay({ amount })
-        console.log("order", order)
+        const amountConvert = amount * 100
+        const order = await PaymentService.createOrderRazorpay({ amount: amountConvert })
         return res.status(200).send({ data: order, message: RechargeConstant.SUCCESS_CODES.RECHARGE_SUCCESS })
+    }
+
+    async rechargeRazorpayVerify(req, res) {
+        const userIdLogin = req.user.id
+        const { razorpayPaymentId, razorpayOrderId, razorpaySignature } = req.body
+        const payment = await RechargeValidator.validateRechargeRazorpay({
+            razorpayOrderId,
+            razorpayPaymentId,
+            razorpaySignature
+        })
+        const dataCreate = {
+            method: RechargeConstant.METHODS.RAZOR_PAY,
+            user: userIdLogin,
+            payload: payment,
+            key: payment.id,
+            status: RechargeConstant.STATUS.SUCCESS
+        }
+        await RechargeService.createRecharge(dataCreate)
+        /* create balance fluctuation */
+        const amountConvert = payment.amount / 100
+        const dataCreateBalance = {
+            user: userIdLogin,
+            amount: amountConvert,
+            operation: BalanceFluctuationConstant.OPERATIONS.PLUS,
+            action: BalanceFluctuationConstant.ACTIONS.RECHARGE
+        }
+        await BalanceFluctuationService.createBalanceFluctuationNotSession(dataCreateBalance)
+        return res.status(200).send({ message: RechargeConstant.SUCCESS_CODES.RECHARGE_SUCCESS })
     }
 
     async rechargeSuccess(req, res) {
@@ -73,6 +102,7 @@ class TransactionController {
                 method: RechargeConstant.METHODS.PAYPAL,
                 user: userId,
                 payload: results,
+                key: results.id,
                 status: RechargeConstant.STATUS.SUCCESS
             }
             await RechargeService.createRecharge(dataCreate)
@@ -91,7 +121,7 @@ class TransactionController {
     }
 
     async rechargeCancel(req, res) {
-        return res.status(200).send({ data: {}, message: "cancel" })
+        return res.status(200).send({ message: RechargeConstant.SUCCESS_CODES.RECHARGE_CANCEL })
     }
 }
 

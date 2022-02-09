@@ -10,7 +10,7 @@ const BalanceFluctuationSchema = mongoose.Schema(
     {
         amount: { type: Number, default: 0 },
         user: { type: ObjectId, ref: "User", required: true, index: true },
-        action: { type: String, required: true, enum: Object.values(BalanceFluctuationConstant.ACTIONS) },
+        action: { type: String, required: true, enum: Object.values(BalanceFluctuationConstant.ACTIONS), index: true },
         operation: {
             type: String,
             enum: Object.values(BalanceFluctuationConstant.OPERATIONS)

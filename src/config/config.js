@@ -16,8 +16,8 @@ export default {
     PAYPAL: {
         CLIENT_ID: process.env.PAYPAL_CLIENT_ID || "PAYPAL_CLIENT_ID",
         CLIENT_SECRET: process.env.PAYPAL_CLIENT_SECRET || "PAYPAL_CLIENT_SECRET",
-        PAYPAL_SUCCESS_URL: process.env.PAYPAL_SUCCESS_URL || "/api/recharges/success",
-        PAYPAL_CANCEL_URL: process.env.PAYPAL_CANCEL_URL || "/api/recharges/cancel"
+        PAYPAL_SUCCESS_URL: process.env.PAYPAL_SUCCESS_URL || "/api/recharges/paypal-success",
+        PAYPAL_CANCEL_URL: process.env.PAYPAL_CANCEL_URL || "/api/recharges/paypal-cancel"
     },
     STRIPE: {
         STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY || "YOUR_STRIPE_SECRET_KEY"

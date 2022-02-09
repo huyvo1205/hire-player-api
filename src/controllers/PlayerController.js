@@ -119,7 +119,7 @@ class PlayerController {
         const updatePlayerInfo = await PlayerService.updatePlayerInfo(playerId, updateData)
         /* remove old avatar */
         const oldAvatar = player.playerInfo.playerAvatar || null
-        if (oldAvatar.filename) {
+        if (oldAvatar && oldAvatar.filename) {
             await FileHelper.removeFilesFromDisk({ files: [oldAvatar], key: KEY })
         }
         res.status(200).send({
