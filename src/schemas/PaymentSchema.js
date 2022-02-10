@@ -43,19 +43,11 @@ const updatePaymentSettingsCreditCard = {
     type: "object",
     required: ["number", "expMonth", "expYear", "cvc"],
     properties: {
-        number: { type: "number" },
+        number: { type: "string" },
         expMonth: { type: "number" },
         expYear: { type: "number" },
-        cvc: { type: "number" }
+        cvc: { type: "string" }
     }
 }
-
-// type: 'card',
-//   card: {
-//     number: '4242424242424242',
-//     exp_month: 1,
-//     exp_year: 2023,
-//     cvc: '314',
-//   },
 
 export { createPaymentSettings, updatePaymentSettings, updatePaymentSettingsCreditCard }

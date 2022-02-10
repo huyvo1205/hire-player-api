@@ -36,4 +36,27 @@ const rechargeRazorpayVerify = {
     }
 }
 
-export default { rechargePaypal, rechargeStripe, rechargeRazorpay, rechargeRazorpayVerify }
+const rechargeGooglePay = {
+    type: "object",
+    required: ["amount"],
+    properties: {
+        amount: { type: "number", minimum: 1 }
+    }
+}
+
+const rechargeGooglePayVerify = {
+    type: "object",
+    required: ["paymentIntentId"],
+    properties: {
+        paymentIntentId: { type: "string" }
+    }
+}
+
+export default {
+    rechargePaypal,
+    rechargeStripe,
+    rechargeRazorpay,
+    rechargeRazorpayVerify,
+    rechargeGooglePay,
+    rechargeGooglePayVerify
+}

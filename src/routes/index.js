@@ -11,6 +11,7 @@ import ServiceUploadRouter from "./ServiceUploadRouter"
 import NotificationRouter from "./NotificationRouter"
 import DonateRouter from "./DonateRouter"
 import AdminRouter from "./AdminRouter"
+import BalanceFluctuationRouter from "./BalanceFluctuationRouter"
 
 const router = express.Router()
 
@@ -26,4 +27,5 @@ router.use("/hires", HireRouter)
 router.use("/service-upload", ServiceUploadRouter)
 router.use("/notifications", NotificationRouter)
 router.use("/donates", DonateRouter)
+router.use("/balance-fluctuations", BalanceFluctuationRouter)
 export default router

@@ -54,6 +54,20 @@ class RechargeValidator {
         }
         return payment
     }
+
+    async validateRechargeGooglePay({ paymentIntent }) {
+        const { id: paymentIntentId, status } = paymentIntent
+
+        if (status !== "succeeded") {
+            throw new CreateError.BadRequest(RechargeConstant.ERROR_CODES.ERROR_PAYMENT_GOOGLE_PAY_FAIL)
+        }
+
+        const recharge = await RechargeModel.findOne({ key: paymentIntentId })
+
+        if (recharge) {
+            throw new CreateError.BadRequest(RechargeConstant.ERROR_CODES.ERROR_PAYMENT_INTENT_ID_INVALID)
+        }
+    }
 }
 
 export default new RechargeValidator()

@@ -76,6 +76,30 @@ class PaymentService {
         }
     }
 
+    async createPaymentIntentsStripe(params) {
+        try {
+            const paymentIntent = await stripe.paymentIntents.create(params)
+            return paymentIntent
+        } catch (error) {
+            console.error("error: ", error)
+            throw new CreateError.InternalServerError(
+                RechargeConstant.ERROR_CODES.ERROR_CREATE_PAYMENT_INTENTS_STRIPE_FAIL
+            )
+        }
+    }
+
+    async retrievePaymentIntentsStripe(paymentIntentId) {
+        try {
+            const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId)
+            return paymentIntent
+        } catch (error) {
+            console.error("error: ", error)
+            throw new CreateError.InternalServerError(
+                RechargeConstant.ERROR_CODES.ERROR_RETRIEVE_PAYMENT_INTENTS_STRIPE_FAIL
+            )
+        }
+    }
+
     async createCustomerPaymentStripe({ paymentMethodId, name }) {
         try {
             const customer = await stripe.customers.create({

@@ -44,13 +44,13 @@ const router = express.Router()
  *                          type: object
  *                          properties:
  *                              number:
- *                                  type: number
+ *                                  type: string
  *                              expMonth:
  *                                  type: number
  *                              expYear:
  *                                  type: number
  *                              cvc:
- *                                  type: number
+ *                                  type: string
  *               description: "Array Object Payment Methods has fields [{ paymentMethodId, type, card: { number, expMonth, expYear, cvc } }]"
  *             customerId:
  *               type: string

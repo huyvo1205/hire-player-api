@@ -41,9 +41,9 @@ class BalanceFluctuationService {
         return BalanceFluctuationModel.findOne({ _id: id })
     }
 
-    async getListPlayerInfo(filter, options) {
-        const users = await BalanceFluctuationModel.paginate(filter, options)
-        return users
+    async getListBalanceFluctuations(filter, options) {
+        const balanceFluctuations = await BalanceFluctuationModel.paginate(filter, options)
+        return balanceFluctuations
     }
 }
 

@@ -53,6 +53,61 @@ class TransactionController {
         return res.status(400).send({ message: RechargeConstant.ERROR_CODES.ERROR_RECHARGE_STRIPE_FAIL })
     }
 
+    async rechargeGooglePay(req, res) {
+        const { amount } = req.body
+        const amountConvert = amount * 100
+        const params = {
+            payment_method_types: ["card"],
+            amount: amountConvert,
+            currency: "usd"
+        }
+
+        // if (paymentMethodType === "acss_debit") {
+        //     params.payment_method_options = {
+        //         acss_debit: {
+        //             mandate_options: {
+        //                 payment_schedule: "sporadic",
+        //                 transaction_type: "personal"
+        //             }
+        //         }
+        //     }
+        // }
+
+        const paymentIntent = await PaymentService.createPaymentIntentsStripe(params)
+
+        return res.status(200).send({
+            data: { clientSecret: paymentIntent.client_secret },
+            message: RechargeConstant.ERROR_CODES.CREATE_PAYMENT_INTENTS_STRIPE_SUCCESS
+        })
+    }
+
+    async rechargeGooglePayVerify(req, res) {
+        const userIdLogin = req.user.id
+        const { paymentIntentId } = req.body
+        const paymentIntent = await PaymentService.retrievePaymentIntentsStripe(paymentIntentId)
+        await RechargeValidator.validateRechargeGooglePay({ paymentIntent })
+
+        const dataCreate = {
+            method: RechargeConstant.METHODS.CREDIT_CARD,
+            user: userIdLogin,
+            payload: paymentIntent,
+            key: paymentIntent.id,
+            status: RechargeConstant.STATUS.SUCCESS
+        }
+
+        await RechargeService.createRecharge(dataCreate)
+        /* create balance fluctuation */
+        const amountConvert = paymentIntent.amount / 100
+        const dataCreateBalance = {
+            user: userIdLogin,
+            amount: amountConvert,
+            operation: BalanceFluctuationConstant.OPERATIONS.PLUS,
+            action: BalanceFluctuationConstant.ACTIONS.RECHARGE
+        }
+        await BalanceFluctuationService.createBalanceFluctuationNotSession(dataCreateBalance)
+        return res.status(200).send({ message: RechargeConstant.SUCCESS_CODES.RECHARGE_SUCCESS })
+    }
+
     async rechargeRazorpay(req, res) {
         const { amount } = req.body
         const amountConvert = amount * 100

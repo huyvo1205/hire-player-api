@@ -151,6 +151,73 @@ router.post(
     validateBody(TransactionSchema.rechargeRazorpayVerify),
     RechargeController.rechargeRazorpayVerify
 )
+/**
+ * @swagger
+ * /api/recharges/google-pay:
+ *   post:
+ *     summary: Recharges With Google Pay
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [Recharges With Google Pay]
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: amount
+ *         description: "amount, minimum: 1"
+ *         in: body
+ *         required: true
+ *         schema:
+ *              type: number
+ *     responses:
+ *       200:
+ *         description: The response has fields
+ *           <br> - data {clientSecret}
+ *           <br> - message=CREATE_PAYMENT_INTENTS_STRIPE_SUCCESS
+ *       500:
+ *         description: Internal Server Error
+ *           <br> - ERROR_CREATE_PAYMENT_INTENTS_STRIPE_FAIL
+ */
+router.post(
+    "/google-pay",
+    auth(),
+    validateBody(TransactionSchema.rechargeGooglePay),
+    RechargeController.rechargeGooglePay
+)
+/**
+ * @swagger
+ * /api/recharges/google-pay-verify:
+ *   post:
+ *     summary: Google Pay Verify
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [Google Pay Verify]
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: paymentIntentId
+ *         description: "paymentIntentId"
+ *         in: body
+ *         required: true
+ *         schema:
+ *              type: string
+ *     responses:
+ *       200:
+ *         description: The response has fields
+ *           <br> - message=RECHARGE_SUCCESS
+ *       400:
+ *         description: Bad Request
+ *           <br> - ERROR_PAYMENT_GOOGLE_PAY_FAIL
+ *           <br> - ERROR_PAYMENT_INTENT_ID_INVALID
+ *       500:
+ *         description: Internal Server Error
+ *           <br> - ERROR_RETRIEVE_PAYMENT_INTENTS_STRIPE_FAIL
+ */
+router.post(
+    "/google-pay-verify",
+    auth(),
+    validateBody(TransactionSchema.rechargeGooglePayVerify),
+    RechargeController.rechargeGooglePayVerify
+)
 router.get("/paypal-success", RechargeController.rechargeSuccess)
 router.get("/paypal-cancel", RechargeController.rechargeCancel)
 export default router
