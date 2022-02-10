@@ -26,11 +26,10 @@ import auth from "../middlewares/auth"
  *         userName:
  *           type: string
  *           required: true
+ *         fullName:
+ *           type: string
  *         money:
  *           type: number
- *         lastName:
- *           type: string
- *           required: true
  *         googleId:
  *           type: string
  *         playerInfo:
