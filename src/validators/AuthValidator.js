@@ -6,14 +6,18 @@ import { ERROR_CODES } from "../constants/UserConstant"
 import { ERROR_CODES as ERROR_CODES_AUTH } from "../constants/GlobalConstant"
 import { UserModel, TokenModel } from "../models"
 import AuthHelper from "../helpers/AuthHelper"
+import UserValidator from "./UserValidator"
 import { BCRYPT_SALT } from "../config/tokens"
 
 class AuthValidator {
     async validateCreateUser(body) {
         const { email, password, userName } = body
-        if (!password.match(/\d/) || !password.match(/[a-zA-Z]/)) {
+        const isValidPassword = UserValidator.validatePassword(password)
+
+        if (!isValidPassword) {
             throw new CreateError.BadRequest(ERROR_CODES.ERROR_PASSWORD_INVALID)
         }
+
         if (!userName.match(/^(?=.{6,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$/)) {
             throw new CreateError.BadRequest(ERROR_CODES.ERROR_USERNAME_INVALID)
         }

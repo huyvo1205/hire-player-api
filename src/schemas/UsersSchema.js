@@ -18,4 +18,23 @@ const updateUserInfo = {
     }
 }
 
-export default { getList, updateUserInfo }
+const changePassword = {
+    type: "object",
+    required: ["oldPassword", "newPassword", "confirmPassword"],
+    properties: {
+        oldPassword: { type: "string" },
+        newPassword: { type: "string" },
+        confirmPassword: { type: "string" }
+    }
+}
+
+const blockUser = {
+    type: "object",
+    required: ["userId", "reason"],
+    properties: {
+        userId: { type: "string" },
+        reason: { type: "string" }
+    }
+}
+
+export default { getList, updateUserInfo, changePassword, blockUser }

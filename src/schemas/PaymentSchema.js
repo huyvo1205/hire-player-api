@@ -41,12 +41,9 @@ const updatePaymentSettings = {
 
 const updatePaymentSettingsCreditCard = {
     type: "object",
-    required: ["number", "expMonth", "expYear", "cvc"],
+    required: ["paymentMethodId"],
     properties: {
-        number: { type: "string" },
-        expMonth: { type: "number" },
-        expYear: { type: "number" },
-        cvc: { type: "string" }
+        paymentMethodId: { type: "string" }
     }
 }
 

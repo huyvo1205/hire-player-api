@@ -15,6 +15,7 @@ import Swagger from "./swagger/swaggerConfig"
 import HandlerErrorMiddleware from "./middlewares/HandlerErrorMiddleware"
 import Database from "./database"
 import SocketServer from "./socket/SocketServer"
+import RechargeController from "./controllers/RechargeController"
 
 global.logger = winston
 global.baseDir = __dirname
@@ -60,6 +61,10 @@ passport.use("jwt", jwtStrategy)
 app.get("/healthcheck", (req, res) => {
     res.send("healthcheck!!! BE server is up!")
 })
+
+app.get("/recharges/paypal-success", RechargeController.rechargeSuccess)
+app.get("/recharges/paypal-cancel", RechargeController.rechargeCancel)
+
 app.set("port", port)
 app.use("/api", routes)
 app.use(HandlerErrorMiddleware.errorMiddleware)

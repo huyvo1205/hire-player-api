@@ -218,6 +218,4 @@ router.post(
     validateBody(TransactionSchema.rechargeGooglePayVerify),
     RechargeController.rechargeGooglePayVerify
 )
-router.get("/paypal-success", RechargeController.rechargeSuccess)
-router.get("/paypal-cancel", RechargeController.rechargeCancel)
 export default router

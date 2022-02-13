@@ -1,12 +1,12 @@
-import * as CreateError from "http-errors"
+import bcrypt from "bcryptjs"
 import PaymentService from "../services/PaymentService"
 import UserService from "../services/UserService"
 import UserValidator from "../validators/UserValidator"
 import PaymentSettingModel from "../models/PaymentSettingModel"
 import { SUCCESS_CODES } from "../constants/PaymentSettingConstant"
-import RechargeConstant from "../constants/RechargeConstant"
 import UploadFileMiddleware from "../middlewares/UploadFileMiddleware"
 import FileHelper from "../helpers/FileHelper"
+import { BCRYPT_SALT } from "../config/tokens"
 import pick from "../utils/pick"
 
 class UserController {
@@ -45,41 +45,34 @@ class UserController {
     async updatePaymentSettingsCreditCard(req, res) {
         const userId = req.user.id
         const customerName = req.user.userName
-        const { number, expMonth, expYear, cvc } = req.body
+        const { paymentMethodId } = req.body
+        const paymentMethodStripe = await UserValidator.validateUpdatePaymentSettingsCreditCard({ paymentMethodId })
+
         const oldConfig = await PaymentSettingModel.findOne({
-            user: userId,
-            "creditCardConfig.paymentMethods.card.number": number
+            user: userId
         })
-        let paymentMethodId
         let customerId
         if (oldConfig) {
             /* update */
-            const oldPaymentMethod = oldConfig.creditCardConfig.paymentMethods.find(item => item.card.number === number)
-            paymentMethodId = oldPaymentMethod.paymentMethodId
-            const dataUpdate = {
-                card: { exp_month: expMonth, exp_year: expYear }
-            }
-            await PaymentService.updatePaymentMethodStripe(paymentMethodId, dataUpdate)
             customerId = oldConfig.creditCardConfig.customerId
-        } else {
-            const dataCreate = {
-                type: "card",
-                card: {
-                    number,
-                    exp_month: expMonth,
-                    exp_year: expYear,
-                    cvc
-                }
-            }
-            const paymentMethod = await PaymentService.createPaymentMethodStripe(dataCreate)
-            paymentMethodId = paymentMethod.id
+        }
+
+        if (!customerId) {
             const customer = await PaymentService.createCustomerPaymentStripe({
                 paymentMethodId,
                 name: customerName
             })
             customerId = customer.id
         }
-
+        const {
+            brand,
+            country,
+            exp_month: expMonth,
+            exp_year: expYear,
+            fingerprint,
+            funding,
+            last4
+        } = paymentMethodStripe.card
         const dataUpdateCreditCardConfig = {
             user: userId,
             creditCardConfig: {
@@ -89,15 +82,19 @@ class UserController {
                         paymentMethodId,
                         type: "card",
                         card: {
-                            number,
+                            brand,
+                            country,
                             expMonth,
                             expYear,
-                            cvc
+                            fingerprint,
+                            funding,
+                            last4
                         }
                     }
                 ]
             }
         }
+
         const newPaymentSetting = await PaymentSettingModel.findOneAndUpdate(
             { user: userId },
             dataUpdateCreditCardConfig,
@@ -105,7 +102,19 @@ class UserController {
         )
         return res.status(200).send({
             data: newPaymentSetting,
-            message: SUCCESS_CODES.CREATE_PAYMENT_SETTING_SUCCESS
+            message: SUCCESS_CODES.CREATE_PAYMENT_SETTING_CREDIT_CARD_SUCCESS
+        })
+    }
+
+    async getPaymentSettingsCreditCard(req, res) {
+        const userId = req.user.id
+        const paymentMethodStripe = await UserValidator.validateGetPaymentSettingsCreditCard({
+            userId
+        })
+        const { card = {} } = paymentMethodStripe
+        return res.status(200).send({
+            data: card,
+            message: SUCCESS_CODES.GET_DETAIL_CREDIT_CARD_SUCCESS
         })
     }
 
@@ -146,6 +155,19 @@ class UserController {
         res.status(200).send({
             data: newUser,
             message: SUCCESS_CODES.UPLOAD_AVATAR_SUCCESS
+        })
+    }
+
+    async changePassword(req, res) {
+        const { user } = req
+        const { oldPassword, newPassword, confirmPassword } = req.body
+        await UserValidator.validateChangePassword({ user, oldPassword, newPassword, confirmPassword })
+        const password = await bcrypt.hash(newPassword, Number(BCRYPT_SALT))
+        const dataUpdate = { password }
+        const newUser = await UserService.updateUser(user.id, dataUpdate)
+        res.status(200).send({
+            data: newUser,
+            message: SUCCESS_CODES.CHANGE_PASSWORD_SUCCESS
         })
     }
 }

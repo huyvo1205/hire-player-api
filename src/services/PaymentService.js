@@ -109,6 +109,12 @@ class PaymentService {
             return customer
         } catch (error) {
             console.error("error: ", error)
+            const { statusCode } = error.raw
+            if (statusCode === 400) {
+                throw new CreateError.BadRequest(
+                    RechargeConstant.ERROR_CODES.ERROR_THE_PAYMENT_METHOD_YOU_PROVIDED_HAS_ALREADY_BEEN_ATTACHED_TO_A_CUSTOMER
+                )
+            }
             throw new CreateError.InternalServerError(
                 RechargeConstant.ERROR_CODES.ERROR_CREATE_PAYMENT_CUSTOMER_STRIPE_FAIL
             )
@@ -121,7 +127,13 @@ class PaymentService {
             return paymentMethod
         } catch (error) {
             console.error("error: ", error)
-            throw new CreateError.InternalServerError(RechargeConstant.ERROR_CODES.CREATE_PAYMENT_CUSTOMER_STRIPE_FAIL)
+            const { statusCode } = error.raw
+            if (statusCode === 404) {
+                throw new CreateError.NotFound(RechargeConstant.ERROR_CODES.ERROR_PAYMENT_METHOD_ID_NOT_FOUND)
+            }
+            throw new CreateError.InternalServerError(
+                RechargeConstant.ERROR_CODES.ERROR_RETRIEVE_PAYMENT_METHOD_STRIPE_FAIL
+            )
         }
     }
 
