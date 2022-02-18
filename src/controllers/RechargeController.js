@@ -11,7 +11,8 @@ class TransactionController {
     async rechargePaypal(req, res) {
         const userIdLogin = req.user.id
         const { amount } = req.body
-        const createPaymentJson = PaypalService.createPaymentJson({ amount, userId: userIdLogin })
+        const host = req.get("host")
+        const createPaymentJson = PaypalService.createPaymentJson({ amount, userId: userIdLogin, host })
         const result = await PaypalService.createPaymentPaypal(createPaymentJson)
         if (result && result.links && result.links.length) {
             const approvalUrl = result.links.find(link => link.rel === "approval_url")
@@ -77,7 +78,7 @@ class TransactionController {
 
         return res.status(200).send({
             data: { clientSecret: paymentIntent.client_secret },
-            message: RechargeConstant.ERROR_CODES.CREATE_PAYMENT_INTENTS_STRIPE_SUCCESS
+            message: RechargeConstant.SUCCESS_CODES.CREATE_PAYMENT_INTENTS_STRIPE_SUCCESS
         })
     }
 

@@ -13,6 +13,8 @@ import DonateRouter from "./DonateRouter"
 import AdminRouter from "./AdminRouter"
 import BalanceFluctuationRouter from "./BalanceFluctuationRouter"
 import BlockUserRouter from "./BlockUserRouter"
+import WithdrawRouter from "./WithdrawRouter"
+import HookRouter from "./HookRouter"
 
 const router = express.Router()
 router.use("/admin", AdminRouter)
@@ -29,4 +31,6 @@ router.use("/notifications", NotificationRouter)
 router.use("/donates", DonateRouter)
 router.use("/balance-fluctuations", BalanceFluctuationRouter)
 router.use("/block-users", BlockUserRouter)
+router.use("/withdraws", WithdrawRouter)
+router.use("/hooks", HookRouter)
 export default router

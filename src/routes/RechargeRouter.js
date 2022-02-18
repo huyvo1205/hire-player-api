@@ -25,8 +25,9 @@ const router = express.Router()
  *              type: number
  *     responses:
  *       200:
- *         description: The response has fields
- *           <br> - message=RECHARGE_SUCCESS
+ *         description: "The response has fields
+ *           <br> - data {href: string, rel: string, method: string}
+ *           <br> - message=RECHARGE_SUCCESS"
  *       400:
  *         description: Bad Request
  *           <br> - ERROR_RECHARGE_PAYPAL_FAIL
@@ -94,8 +95,22 @@ router.post("/credit-card", auth(), validateBody(TransactionSchema.rechargeStrip
  *              type: number
  *     responses:
  *       200:
- *         description: The response has fields
- *           <br> - message=RECHARGE_SUCCESS
+ *         description: "The response has fields
+ *           <br> - data {
+ *           <br> id: string
+ *           <br> entity: string
+ *           <br> amount: number
+ *           <br> amount_paid: number
+ *           <br> amount_due: number
+ *           <br> currency: string
+ *           <br> receipt: string
+ *           <br> offer_id: string/null
+ *           <br> status: string
+ *           <br> attempts: number
+ *           <br> notes: string
+ *           <br> created_at: number
+ *           <br> }
+ *           <br> - message=RECHARGE_SUCCESS"
  *       500:
  *         description: Internal Server Error
  *           <br> - ERROR_CREATE_PAYMENT_RAZORPAY_FAIL
@@ -170,9 +185,9 @@ router.post(
  *              type: number
  *     responses:
  *       200:
- *         description: The response has fields
+ *         description: "The response has fields
  *           <br> - data {clientSecret}
- *           <br> - message=CREATE_PAYMENT_INTENTS_STRIPE_SUCCESS
+ *           <br> - message=CREATE_PAYMENT_INTENTS_STRIPE_SUCCESS"
  *       500:
  *         description: Internal Server Error
  *           <br> - ERROR_CREATE_PAYMENT_INTENTS_STRIPE_FAIL
