@@ -5,6 +5,7 @@ import AuthValidator from "../validators/AuthValidator"
 import AuthHelper from "../helpers/AuthHelper"
 import { ERROR_CODES, SUCCESS_CODES, STATUS } from "../constants/UserConstant"
 import { updateUserByIdNotPermission } from "../services/UsersService"
+import Config from "../config/config"
 
 class AuthController {
     async login(req, res) {
@@ -51,7 +52,8 @@ class AuthController {
 
     async requestResetPassword(req, res) {
         const { email } = req.body
-        const host = url.format({ protocol: req.protocol, host: req.get("host") })
+        // const host = url.format({ protocol: req.protocol, host: req.get("host") })
+        const host = Config.BASE_URL
         const link = await AuthValidator.validateRequestResetPassword({ email, host })
         await AuthHelper.sendMailRequestResetPassword({ email, link })
         return res.status(200).send({ message: SUCCESS_CODES.REQUEST_RESET_PASSWORD_SUCCESS })

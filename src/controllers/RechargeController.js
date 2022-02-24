@@ -6,12 +6,14 @@ import RechargeValidator from "../validators/RechargeValidator"
 import RechargeConstant from "../constants/RechargeConstant"
 import BalanceFluctuationService from "../services/BalanceFluctuationService"
 import BalanceFluctuationConstant from "../constants/BalanceFluctuationConstant"
+import Config from "../config/config"
 
 class TransactionController {
     async rechargePaypal(req, res) {
         const userIdLogin = req.user.id
         const { amount } = req.body
-        const host = req.get("host")
+        // const host = req.get("host")
+        const host = Config.BASE_URL
         const createPaymentJson = PaypalService.createPaymentJson({ amount, userId: userIdLogin, host })
         const result = await PaypalService.createPaymentPaypal(createPaymentJson)
         if (result && result.links && result.links.length) {

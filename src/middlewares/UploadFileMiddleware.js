@@ -6,13 +6,13 @@ import multer from "multer"
 import path from "path"
 import util from "util"
 import CreateError from "http-errors"
-import url from "url"
 import sharp from "sharp"
 import { ERROR_CODES, QUALITY } from "../constants/GlobalConstant"
 import Config from "../config/config"
 
 const formatFiles = async ({ req, config, files }) => {
-    const host = url.format({ protocol: req.protocol, host: req.get("host") })
+    // const host = url.format({ protocol: req.protocol, host: req.get("host") })
+    const host = Config.BASE_URL
     if (!files) {
         return []
     }
