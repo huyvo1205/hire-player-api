@@ -10,9 +10,9 @@ class initHelper {
                 avatar: {
                     fieldname: "images",
                     mimetype: "image/jpeg",
-                    filename: "1645710883557_6217602e4222c8c8d00243f9.jpeg",
+                    filename: "1645712321287_6217602e4222c8c8d00243f9.jpeg",
                     size: 52599.0,
-                    link: "http://hireplayer.xyz/storage/avatar/30_1645710883557_6217602e4222c8c8d00243f9.jpeg"
+                    link: "http://hireplayer.xyz/storage/avatar/30_1645712321287_6217602e4222c8c8d00243f9.jpeg"
                 },
                 playerInfo: {
                     costPerHour: 100,
@@ -26,15 +26,15 @@ class initHelper {
                         {
                             encoding: "7bit",
                             mimetype: "image/jpeg",
-                            filename: "1645710883557_6217602e4222c8c8d00243f9.jpeg",
+                            filename: "1645712321287_6217602e4222c8c8d00243f9.jpeg",
                             size: 52599.0,
-                            link: "http://hireplayer.xyz/storage/avatar/30_1645710883557_6217602e4222c8c8d00243f9.jpeg"
+                            link: "http://hireplayer.xyz/storage/avatar/30_1645712321287_6217602e4222c8c8d00243f9.jpeg"
                         },
                         {
                             mimetype: "image/jpeg",
-                            filename: "1645710883557_6217602e4222c8c8d00243f9.jpeg",
+                            filename: "1645712321287_6217602e4222c8c8d00243f9.jpeg",
                             size: 97606.0,
-                            link: "http://hireplayer.xyz/storage/avatar/30_1645710883557_6217602e4222c8c8d00243f9.jpeg"
+                            link: "http://hireplayer.xyz/storage/avatar/30_1645712321287_6217602e4222c8c8d00243f9.jpeg"
                         }
                     ],
                     statusHire: 1,
