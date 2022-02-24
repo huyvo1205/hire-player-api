@@ -58,6 +58,8 @@ Swagger.setupSwagger(app)
 app.use(passport.initialize())
 passport.use("jwt", jwtStrategy)
 
+// loginFacebook(passport);
+// loginGoogle(passport);
 app.get("/healthcheck", (req, res) => {
     res.send("healthcheck!!! BE server is up!")
 })
