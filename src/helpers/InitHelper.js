@@ -9,13 +9,10 @@ class initHelper {
             const player = {
                 avatar: {
                     fieldname: "images",
-                    originalname: "HD-wallpaper-anime-demon-slayer-kimetsu-no-yaiba-tanjirou-kamado.jpeg",
-                    encoding: "7bit",
                     mimetype: "image/jpeg",
-                    filename:
-                        "1639479826489-hire-player-HD-wallpaper-anime-demon-slayer-kimetsu-no-yaiba-tanjirou-kamado.jpeg",
+                    filename: "1645710883557_6217602e4222c8c8d00243f9.jpeg",
                     size: 52599.0,
-                    link: "http://104.248.150.205:3000/storage/images/1639479826489-hire-player-HD-wallpaper-anime-demon-slayer-kimetsu-no-yaiba-tanjirou-kamado.jpeg"
+                    link: "http://hireplayer.xyz/storage/avatar/30_1645710883557_6217602e4222c8c8d00243f9.jpeg"
                 },
                 playerInfo: {
                     costPerHour: 100,
@@ -27,23 +24,17 @@ class initHelper {
                     timeMaxHire: 1000,
                     images: [
                         {
-                            fieldname: "images",
-                            originalname: "HD-wallpaper-anime-demon-slayer-kimetsu-no-yaiba-tanjirou-kamado.jpeg",
                             encoding: "7bit",
                             mimetype: "image/jpeg",
-                            filename:
-                                "1639479826489-hire-player-HD-wallpaper-anime-demon-slayer-kimetsu-no-yaiba-tanjirou-kamado.jpeg",
+                            filename: "1645710883557_6217602e4222c8c8d00243f9.jpeg",
                             size: 52599.0,
-                            link: "http://104.248.150.205:3000/storage/images/1639479826489-hire-player-HD-wallpaper-anime-demon-slayer-kimetsu-no-yaiba-tanjirou-kamado.jpeg"
+                            link: "http://hireplayer.xyz/storage/avatar/30_1645710883557_6217602e4222c8c8d00243f9.jpeg"
                         },
                         {
-                            fieldname: "images",
-                            originalname: "h1.jpeg",
-                            encoding: "7bit",
                             mimetype: "image/jpeg",
-                            filename: "1639479826648-hire-player-h1.jpeg",
+                            filename: "1645710883557_6217602e4222c8c8d00243f9.jpeg",
                             size: 97606.0,
-                            link: "http://104.248.150.205:3000/storage/images/1639479826648-hire-player-h1.jpeg"
+                            link: "http://hireplayer.xyz/storage/avatar/30_1645710883557_6217602e4222c8c8d00243f9.jpeg"
                         }
                     ],
                     statusHire: 1,
