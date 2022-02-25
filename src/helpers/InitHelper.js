@@ -4,15 +4,28 @@ import UserModel from "../models/UserModel"
 
 class initHelper {
     async initPlayers() {
+        const listImages = [
+            "30_1645717405431_62179b122188febf9f4cb71f.jpeg",
+            "30_1645718027211_62179b122188fe6aac4cb71c.png",
+            "30_1645718310885_62179b122188fe28ac4cb71d.jpeg",
+            "30_1645717556919_62179b122188fe6d294cb71e.jpeg",
+            "30_1645718064260_62179b122188fe28ac4cb71d.png",
+            "30_1645717582309_62179b122188fe6d294cb71e.png",
+            "30_1645718274724_62179b122188fe6aac4cb71c.jpeg"
+        ]
         const players = []
         for (let index = 0; index < 20; index += 1) {
+            const numberRandom = Math.floor(Math.random() * 8)
+            const numberRandom2 = Math.floor(Math.random() * 8)
+            const image = listImages[numberRandom]
+            const image2 = listImages[numberRandom2]
             const player = {
                 avatar: {
                     fieldname: "images",
                     mimetype: "image/jpeg",
                     filename: "1645713965905_6217602e4222c8c8d00243f9.jpeg",
                     size: 52599.0,
-                    link: "http://hireplayer.xyz/storage/avatar/30_1645713965905_6217602e4222c8c8d00243f9.jpeg"
+                    link: `https://hireplayer.xyz/storage/avatar/${image}`
                 },
                 playerInfo: {
                     costPerHour: 100,
@@ -22,19 +35,26 @@ class initHelper {
                     timeReceiveHire: [],
                     isReceiveHire: true,
                     timeMaxHire: 1000,
+                    playerAvatar: {
+                        encoding: "7bit",
+                        mimetype: "image/jpeg",
+                        filename: "1645713965905_6217602e4222c8c8d00243f9.jpeg",
+                        size: 52599.0,
+                        link: `https://hireplayer.xyz/storage/avatar/${image}`
+                    },
                     images: [
                         {
                             encoding: "7bit",
                             mimetype: "image/jpeg",
                             filename: "1645713965905_6217602e4222c8c8d00243f9.jpeg",
                             size: 52599.0,
-                            link: "http://hireplayer.xyz/storage/avatar/30_1645713965905_6217602e4222c8c8d00243f9.jpeg"
+                            link: `https://hireplayer.xyz/storage/avatar/${image}`
                         },
                         {
                             mimetype: "image/jpeg",
                             filename: "1645713965905_6217602e4222c8c8d00243f9.jpeg",
                             size: 97606.0,
-                            link: "http://hireplayer.xyz/storage/avatar/30_1645713965905_6217602e4222c8c8d00243f9.jpeg"
+                            link: `https://hireplayer.xyz/storage/avatar/${image2}`
                         }
                     ],
                     statusHire: 1,
