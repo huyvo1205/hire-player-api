@@ -121,6 +121,7 @@ app.get("/auth/google/failed", (req, res) => {
 
 app.get("/auth/google/success", async (req, res) => {
     const isAuthenticated = req.isAuthenticated()
+    console.log('/auth/google/success: isAuthenticated', isAuthenticated);
     if (!isAuthenticated) {
         return res.status(401).send({ data: {}, message: ERROR_CODES.ERROR_LOGIN_GOOGLE_UNAUTHORIZED })
     }
