@@ -1,14 +1,17 @@
 import "./config/bootstrap"
 import http from "http"
 import express from "express"
+import session from "express-session"
 import path from "path"
 import morgan from "morgan"
 import cors from "cors"
 import passport from "passport"
 import mongoose from "mongoose"
 import winston from "./config/winston"
+import { ERROR_CODES, SUCCESS_CODES } from "./constants/UserConstant"
 import AppConf from "./config/application"
 import Messages from "./config/messages"
+import AuthService from "./services/AuthService"
 import { jwtStrategy } from "./config/passport"
 import routes from "./routes"
 import Swagger from "./swagger/swaggerConfig"
@@ -16,7 +19,11 @@ import HandlerErrorMiddleware from "./middlewares/HandlerErrorMiddleware"
 import Database from "./database"
 import SocketServer from "./socket/SocketServer"
 import RechargeController from "./controllers/RechargeController"
+import AuthHelper from "./helpers/AuthHelper"
 
+import Config from "./config/config"
+
+const { GOOGLE_SUCCESS_REDIRECT, GOOGLE_FAILURE_REDIRECT } = Config.GOOGLE_LOGIN
 global.logger = winston
 global.baseDir = __dirname
 
@@ -41,10 +48,28 @@ if (process.env.NODE_ENV === "production") {
 } else {
     app.use(morgan("dev"))
 }
+
+passport.serializeUser((user, done) => {
+    done(null, user)
+})
+
+passport.deserializeUser((obj, done) => {
+    done(null, obj)
+})
+
 app.use(express.json())
 app.use(express.static(path.resolve("src/public")))
-app.use(express.urlencoded({ extended: false }))
+app.use(express.urlencoded({ extended: true }))
+app.use(session({
+    secret: Config.SESSION_SECRET,
+    proxy: true,
+    resave: true,
+    saveUninitialized: true
+}));
+app.use(passport.initialize())
+app.use(passport.session())
 app.disable("x-powered-by")
+
 app.use(
     cors({
         allowedOrigin: AppConf.cors.allowedOrigin,
@@ -55,17 +80,60 @@ app.use(
     })
 )
 Swagger.setupSwagger(app)
-app.use(passport.initialize())
-passport.use("jwt", jwtStrategy)
 
-// loginFacebook(passport);
-// loginGoogle(passport);
+passport.use("jwt", jwtStrategy)
+AuthService.loginWithFacebook(passport)
+AuthService.loginWithGoogle(passport)
+
 app.get("/healthcheck", (req, res) => {
     res.send("healthcheck!!! BE server is up!")
 })
 
 app.get("/recharges/paypal-success", RechargeController.rechargeSuccess)
 app.get("/recharges/paypal-cancel", RechargeController.rechargeCancel)
+/* facebook callback */
+app.get(
+    "/auth/facebook/callback",
+    passport.authenticate("facebook", {
+        successRedirect: "/",
+        failureRedirect: "/auth/facebook/failed",
+        session: true
+    })
+)
+
+/* google callback */
+app.get(
+    "/auth/google/callback",
+    passport.authenticate("google", {
+        successRedirect: GOOGLE_SUCCESS_REDIRECT,
+        failureRedirect: GOOGLE_FAILURE_REDIRECT,
+        session: true
+    })
+)
+
+app.get("/auth/facebook/failed", (req, res) => {
+    res.send({ message: "/auth/facebook/failed" })
+})
+
+app.get("/auth/google/failed", (req, res) => {
+    res.status(400).send({ data: {}, message: ERROR_CODES.ERROR_LOGIN_GOOGLE_FAIL })
+})
+
+app.get("/auth/google/success", async (req, res) => {
+    const isAuthenticated = req.isAuthenticated()
+    if (!isAuthenticated) {
+        return res.status(401).send({ data: {}, message: ERROR_CODES.ERROR_LOGIN_GOOGLE_UNAUTHORIZED })
+    }
+    const userInfo = req.user
+    const payload = { id: userInfo.id }
+    const { accessToken, refreshToken } = await AuthHelper.generateTokens(payload)
+    return res.status(200).send({
+        data: userInfo,
+        accessToken,
+        refreshToken,
+        message: SUCCESS_CODES.LOGIN_WITH_GOOGLE_SUCCESS
+    })
+})
 
 app.set("port", port)
 app.use("/api", routes)

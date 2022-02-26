@@ -1,4 +1,5 @@
 import express from "express"
+import passport from "passport"
 import AuthController from "../controllers/AuthController"
 import { validateBody } from "../validators"
 import { AuthSchema } from "../schemas"
@@ -355,4 +356,6 @@ router.post(
  */
 router.post("/reset-password", validateBody(AuthSchema.resetPassword), AuthController.resetPassword)
 router.post("/migrate-data", AuthController.migrateData)
+router.get("/facebook", passport.authenticate("facebook", { scope: "profile" }))
+router.get("/google", passport.authenticate("google", { scope: ["profile", "email"] }))
 export default router

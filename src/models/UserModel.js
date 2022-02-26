@@ -51,6 +51,7 @@ const UserSchema = mongoose.Schema(
             }
         },
         googleId: { type: String },
+        facebookId: { type: String },
         isOnline: { type: Boolean, default: false },
         isPlayer: { type: Boolean, default: false },
         status: {
@@ -79,11 +80,6 @@ const UserSchema = mongoose.Schema(
             required: true,
             trim: true,
             minlength: 8,
-            validate(value) {
-                if (!value.match(/\d/) || !value.match(/[a-zA-Z]/)) {
-                    throw new CreateError.BadRequest("Password must contain at least one letter and one number")
-                }
-            },
             private: true
         }
     },
