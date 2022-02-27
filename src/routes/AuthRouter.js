@@ -356,6 +356,6 @@ router.post(
  */
 router.post("/reset-password", validateBody(AuthSchema.resetPassword), AuthController.resetPassword)
 router.post("/migrate-data", AuthController.migrateData)
-router.get("/facebook", passport.authenticate("facebook", { scope: "profile" }))
+router.get("/facebook", passport.authenticate("facebook"))
 router.get("/google", passport.authenticate("google", { scope: ["profile", "email"] }))
 export default router

@@ -24,6 +24,8 @@ import AuthHelper from "./helpers/AuthHelper"
 import Config from "./config/config"
 
 const { GOOGLE_SUCCESS_REDIRECT, GOOGLE_FAILURE_REDIRECT } = Config.GOOGLE_LOGIN
+const { FACEBOOK_SUCCESS_REDIRECT, FACEBOOK_FAILURE_REDIRECT } = Config.FACEBOOK_LOGIN
+
 global.logger = winston
 global.baseDir = __dirname
 
@@ -56,7 +58,7 @@ passport.serializeUser((user, done) => {
 passport.deserializeUser((obj, done) => {
     done(null, obj)
 })
-
+app.enable('trust proxy')
 app.use(express.json())
 app.use(express.static(path.resolve("src/public")))
 app.use(express.urlencoded({ extended: true }))
@@ -95,8 +97,8 @@ app.get("/recharges/paypal-cancel", RechargeController.rechargeCancel)
 app.get(
     "/auth/facebook/callback",
     passport.authenticate("facebook", {
-        successRedirect: "/",
-        failureRedirect: "/auth/facebook/failed",
+        successRedirect: FACEBOOK_SUCCESS_REDIRECT,
+        failureRedirect: FACEBOOK_FAILURE_REDIRECT,
         session: true
     })
 )
@@ -112,7 +114,7 @@ app.get(
 )
 
 app.get("/auth/facebook/failed", (req, res) => {
-    res.send({ message: "/auth/facebook/failed" })
+    res.status(400).send({ data: {}, message: ERROR_CODES.ERROR_LOGIN_FACEBOOK_FAIL })
 })
 
 app.get("/auth/google/failed", (req, res) => {
@@ -121,7 +123,6 @@ app.get("/auth/google/failed", (req, res) => {
 
 app.get("/auth/google/success", async (req, res) => {
     const isAuthenticated = req.isAuthenticated()
-    console.log('/auth/google/success: isAuthenticated', isAuthenticated);
     if (!isAuthenticated) {
         return res.status(401).send({ data: {}, message: ERROR_CODES.ERROR_LOGIN_GOOGLE_UNAUTHORIZED })
     }
@@ -133,6 +134,22 @@ app.get("/auth/google/success", async (req, res) => {
         accessToken,
         refreshToken,
         message: SUCCESS_CODES.LOGIN_WITH_GOOGLE_SUCCESS
+    })
+})
+
+app.get("/auth/facebook/success", async (req, res) => {
+    const isAuthenticated = req.isAuthenticated()
+    if (!isAuthenticated) {
+        return res.status(401).send({ data: {}, message: ERROR_CODES.ERROR_LOGIN_FACEBOOK_UNAUTHORIZED })
+    }
+    const userInfo = req.user
+    const payload = { id: userInfo.id }
+    const { accessToken, refreshToken } = await AuthHelper.generateTokens(payload)
+    return res.status(200).send({
+        data: userInfo,
+        accessToken,
+        refreshToken,
+        message: SUCCESS_CODES.LOGIN_WITH_FACEBOOK_SUCCESS
     })
 })
 

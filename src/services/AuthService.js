@@ -20,17 +20,30 @@ class AuthService {
                 {
                     clientID: FACEBOOK_CLIENT_ID,
                     clientSecret: FACEBOOK_CLIENT_SECRET,
-                    callbackURL: FACEBOOK_CALLBACK_URL || `/auth/facebook/callback`
+                    callbackURL: FACEBOOK_CALLBACK_URL || `/auth/facebook/callback`,
+                    profileFields: [
+                        "id",
+                        "first_name",
+                        "last_name",
+                        "email",
+                        "picture",
+                        "displayName",
+                        "profileUrl",
+                        "gender"
+                    ]
                 },
                 async (accessToken, refreshToken, profile, cb) => {
                     /* save user */
-                    const profileId = profile.id
-                    const name = profile.displayName
-                    const email = profile.emails[0].value
-                    console.log("profileId", profileId)
-                    console.log("name", name)
-                    console.log("email", email)
-                    return cb(null, { accessToken, refreshToken, profile })
+                    const { id: profileId, displayName, emails = [], photos = [] } = profile
+                    const email = emails.length ? emails[0].value : `login_facebook_${profileId}@gmail.com`
+                    const photo = photos.length ? photos[0].value : ""
+                    const newUser = await this.createUserLoginFacebook({
+                        profileId,
+                        name: displayName,
+                        picture: photo,
+                        email
+                    })
+                    return cb(null, newUser)
                 }
             )
         )
@@ -42,7 +55,7 @@ class AuthService {
                 {
                     clientID: GOOGLE_CLIENT_ID,
                     clientSecret: GOOGLE_CLIENT_SECRET,
-                    callbackURL: GOOGLE_CALLBACK_URL || "/auth/google/callback",
+                    callbackURL: GOOGLE_CALLBACK_URL || "/auth/google/callback"
                 },
                 async (accessToken, refreshToken, profile, cb) => {
                     const { sub: profileId, name, picture, email } = profile._json
@@ -75,13 +88,16 @@ class AuthService {
     async createUserLoginFacebook({ profileId, name, picture, email }) {
         const condition = { email }
         const [userName] = email.split("@")
+        const key = (Math.random() + 1).toString(36).substring(2)
+
         const dataCreate = {
             facebookId: profileId,
             fullName: name,
             avatar: { link: picture },
             userName,
             email,
-            emailVerifiedAt: new Date()
+            emailVerifiedAt: new Date(),
+            password: `${Config.SESSION_SECRET}${key}`
         }
         const userFound = await UserModel.findOne(condition)
         if (userFound) return userFound
