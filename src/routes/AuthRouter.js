@@ -356,6 +356,30 @@ router.post(
  */
 router.post("/reset-password", validateBody(AuthSchema.resetPassword), AuthController.resetPassword)
 router.post("/migrate-data", AuthController.migrateData)
+/**
+ * @swagger
+ * /api/auth/facebook:
+ *   get:
+ *     summary: Request Login With Facebook
+ *     tags: [Request Login With Facebook]
+ *     produces:
+ *       - application/json
+ *     responses:
+ *       200:
+ *         description: The response will redirect /auth/facebook/success or /auth/facebook/failed
+ */
 router.get("/facebook", passport.authenticate("facebook"))
+/**
+ * @swagger
+ * /api/auth/google:
+ *   get:
+ *     summary: Request Login With Google
+ *     tags: [Request Login With Google]
+ *     produces:
+ *       - application/json
+ *     responses:
+ *       200:
+ *         description: The response will redirect /auth/google/success or /auth/google/failed
+ */
 router.get("/google", passport.authenticate("google", { scope: ["profile", "email"] }))
 export default router

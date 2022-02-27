@@ -112,15 +112,63 @@ app.get(
         session: true
     })
 )
-
+/**
+ * @swagger
+ * /auth/facebook/failed:
+ *   get:
+ *     summary: Login With Facebook Failed
+ *     tags: [Login With Facebook Failed]
+ *     produces:
+ *       - application/json
+ *     responses:
+ *       400:
+ *         description: Bad Request
+ *           <br> - ERROR_LOGIN_FACEBOOK_FAIL
+ *       500:
+ *         description: Server Error
+ */
 app.get("/auth/facebook/failed", (req, res) => {
     res.status(400).send({ data: {}, message: ERROR_CODES.ERROR_LOGIN_FACEBOOK_FAIL })
 })
-
+/**
+ * @swagger
+ * /auth/google/failed:
+ *   get:
+ *     summary: Login With Google Failed
+ *     tags: [Login With Google Failed]
+ *     produces:
+ *       - application/json
+ *     responses:
+ *       400:
+ *         description: Bad Request
+ *           <br> - ERROR_LOGIN_GOOGLE_FAIL
+ *       500:
+ *         description: Server Error
+ */
 app.get("/auth/google/failed", (req, res) => {
     res.status(400).send({ data: {}, message: ERROR_CODES.ERROR_LOGIN_GOOGLE_FAIL })
 })
-
+/**
+ * @swagger
+ * /auth/google/success:
+ *   get:
+ *     summary: Login With Google Success
+ *     tags: [Login With Google Success]
+ *     produces:
+ *       - application/json
+ *     responses:
+ *       200:
+ *         description: The response has fields
+ *           <br> - data=User
+ *           <br> - accessToken
+ *           <br> - refreshToken
+ *           <br> - message=LOGIN_WITH_GOOGLE_SUCCESS
+ *       401:
+ *         description: Unauthorized
+ *           <br> - ERROR_LOGIN_GOOGLE_UNAUTHORIZED
+ *       500:
+ *         description: Server Error
+ */
 app.get("/auth/google/success", async (req, res) => {
     const isAuthenticated = req.isAuthenticated()
     if (!isAuthenticated) {
@@ -136,7 +184,27 @@ app.get("/auth/google/success", async (req, res) => {
         message: SUCCESS_CODES.LOGIN_WITH_GOOGLE_SUCCESS
     })
 })
-
+/**
+ * @swagger
+ * /auth/facebook/success:
+ *   get:
+ *     summary: Login With Facebook Success
+ *     tags: [Login With Facebook Success]
+ *     produces:
+ *       - application/json
+ *     responses:
+ *       200:
+ *         description: The response has fields
+ *           <br> - data=User
+ *           <br> - accessToken
+ *           <br> - refreshToken
+ *           <br> - message=LOGIN_WITH_FACEBOOK_SUCCESS
+ *       401:
+ *         description: Unauthorized
+ *           <br> - ERROR_LOGIN_FACEBOOK_UNAUTHORIZED
+ *       500:
+ *         description: Server Error
+ */
 app.get("/auth/facebook/success", async (req, res) => {
     const isAuthenticated = req.isAuthenticated()
     if (!isAuthenticated) {
