@@ -109,7 +109,7 @@ class AuthService {
 
     async createUserLoginGoogle({ profileId, name, picture, email }) {
         const [userName] = email.split("@")
-        const condition = { email, userName }
+        const condition = { email }
         const key = (Math.random() + 1).toString(36).substring(2)
         const dataCreate = {
             googleId: profileId,
