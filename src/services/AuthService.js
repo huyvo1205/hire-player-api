@@ -86,15 +86,14 @@ class AuthService {
     }
 
     async createUserLoginFacebook({ profileId, name, picture, email }) {
-        const condition = { email }
-        const [userName] = email.split("@")
+        const condition = { email, userName: email }
         const key = (Math.random() + 1).toString(36).substring(2)
 
         const dataCreate = {
             facebookId: profileId,
             fullName: name,
             avatar: { link: picture },
-            userName,
+            userName: email,
             email,
             emailVerifiedAt: new Date(),
             password: `${Config.SESSION_SECRET}${key}`
@@ -106,14 +105,13 @@ class AuthService {
     }
 
     async createUserLoginGoogle({ profileId, name, picture, email }) {
-        const condition = { email }
-        const [userName] = email.split("@")
+        const condition = { email, userName: email }
         const key = (Math.random() + 1).toString(36).substring(2)
         const dataCreate = {
             googleId: profileId,
             fullName: name,
             avatar: { link: picture },
-            userName,
+            userName: email,
             email,
             emailVerifiedAt: new Date(),
             password: `${Config.SESSION_SECRET}${key}`
