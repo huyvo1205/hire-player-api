@@ -86,7 +86,8 @@ class AuthService {
     }
 
     async createUserLoginFacebook({ profileId, name, picture, email }) {
-        const condition = { email, userName: email }
+        const [userName] = email.split("@")
+        const condition = { email }
         const key = (Math.random() + 1).toString(36).substring(2)
 
         const dataCreate = {
@@ -100,12 +101,15 @@ class AuthService {
         }
         const userFound = await UserModel.findOne(condition)
         if (userFound) return userFound
+        const countUserName = await UserModel.countDocuments({ userName: email })
+        if (countUserName) dataCreate.userName = `${userName}_${+new Date()}`
         const newUser = await UserModel.create(dataCreate)
         return newUser
     }
 
     async createUserLoginGoogle({ profileId, name, picture, email }) {
-        const condition = { email, userName: email }
+        const [userName] = email.split("@")
+        const condition = { email, userName }
         const key = (Math.random() + 1).toString(36).substring(2)
         const dataCreate = {
             googleId: profileId,
@@ -118,6 +122,8 @@ class AuthService {
         }
         const userFound = await UserModel.findOne(condition)
         if (userFound) return userFound
+        const countUserName = await UserModel.countDocuments({ userName: email })
+        if (countUserName) dataCreate.userName = `${userName}_${+new Date()}`
         const newUser = await UserModel.create(dataCreate)
         return newUser
     }
