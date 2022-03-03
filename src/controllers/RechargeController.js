@@ -173,13 +173,11 @@ class TransactionController {
             }
             await BalanceFluctuationService.createBalanceFluctuationNotSession(dataCreateBalance)
         }
-        return res.status(200).send({
-            message: RechargeConstant.SUCCESS_CODES.RECHARGE_SUCCESS
-        })
+        return res.redirect("/paypal-recharge-success")
     }
 
     async rechargeCancel(req, res) {
-        return res.status(200).send({ message: RechargeConstant.SUCCESS_CODES.RECHARGE_CANCEL })
+        return res.redirect("/paypal-recharge-cancel")
     }
 }
 

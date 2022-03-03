@@ -1,12 +1,14 @@
 import "./config/bootstrap"
 import http from "http"
 import express from "express"
+import url from "url"
 import session from "express-session"
 import path from "path"
 import morgan from "morgan"
 import cors from "cors"
 import passport from "passport"
 import mongoose from "mongoose"
+import RechargeConstant from "./constants/RechargeConstant"
 import winston from "./config/winston"
 import { ERROR_CODES, SUCCESS_CODES } from "./constants/UserConstant"
 import AppConf from "./config/application"
@@ -93,6 +95,17 @@ app.get("/healthcheck", (req, res) => {
 
 app.get("/recharges/paypal-success", RechargeController.rechargeSuccess)
 app.get("/recharges/paypal-cancel", RechargeController.rechargeCancel)
+
+// app.get("/paypal-recharge-success", (req, res) => {
+//     res.status(200).send({
+//         message: RechargeConstant.SUCCESS_CODES.RECHARGE_SUCCESS
+//     })
+// })
+// app.get("/paypal-recharge-cancel", (req, res) => {
+//     res.status(200).send({
+//         message: RechargeConstant.SUCCESS_CODES.RECHARGE_CANCEL
+//     })
+// })
 /* facebook callback */
 app.get(
     "/auth/facebook/callback",
@@ -128,7 +141,7 @@ app.get(
  *         description: Server Error
  */
 app.get("/auth/facebook/failed", (req, res) => {
-    res.status(400).send({ data: {}, message: ERROR_CODES.ERROR_LOGIN_FACEBOOK_FAIL })
+    res.redirect("/login/facebook/failed")
 })
 /**
  * @swagger
@@ -146,7 +159,7 @@ app.get("/auth/facebook/failed", (req, res) => {
  *         description: Server Error
  */
 app.get("/auth/google/failed", (req, res) => {
-    res.status(400).send({ data: {}, message: ERROR_CODES.ERROR_LOGIN_GOOGLE_FAIL })
+    res.redirect("/login/google/failed")
 })
 /**
  * @swagger
@@ -177,13 +190,24 @@ app.get("/auth/google/success", async (req, res) => {
     const userInfo = req.user
     const payload = { id: userInfo.id }
     const { accessToken, refreshToken } = await AuthHelper.generateTokens(payload)
-    return res.status(200).send({
-        data: userInfo,
-        accessToken,
-        refreshToken,
-        message: SUCCESS_CODES.LOGIN_WITH_GOOGLE_SUCCESS
-    })
+    return res.redirect(url.format({
+        pathname: "/login/google/success",
+        query: {
+            userId: userInfo.id,
+            accessToken,
+            refreshToken
+        }
+    }));
 })
+
+// app.get("/login/google/success", (req, res) => {
+//     res.status(200).send({ message: SUCCESS_CODES.LOGIN_WITH_GOOGLE_SUCCESS })
+// })
+
+// app.get("/login/facebook/success", (req, res) => {
+//     res.status(200).send({ message: SUCCESS_CODES.LOGIN_WITH_FACEBOOK_SUCCESS })
+// })
+
 /**
  * @swagger
  * /auth/facebook/success:
@@ -213,12 +237,14 @@ app.get("/auth/facebook/success", async (req, res) => {
     const userInfo = req.user
     const payload = { id: userInfo.id }
     const { accessToken, refreshToken } = await AuthHelper.generateTokens(payload)
-    return res.status(200).send({
-        data: userInfo,
-        accessToken,
-        refreshToken,
-        message: SUCCESS_CODES.LOGIN_WITH_FACEBOOK_SUCCESS
-    })
+    return res.redirect(url.format({
+        pathname: "/login/facebook/success",
+        query: {
+            userId: userInfo.id,
+            accessToken,
+            refreshToken
+        }
+    }));
 })
 
 app.set("port", port)
