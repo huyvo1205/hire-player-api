@@ -114,6 +114,12 @@ router.get("/", auth(), WithdrawController.getWithdraws)
  *         required: true
  *         schema:
  *              type: number
+ *       - name: email
+ *         description: "email paypal"
+ *         in: body
+ *         required: true
+ *         schema:
+ *              type: string
  *     responses:
  *       200:
  *         description: The response has fields
